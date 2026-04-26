@@ -1,4 +1,3 @@
-import { AsyncResource } from "async_hooks";
 import type { Color, Coords, LayerMeta, RGBLayer } from "./d.ts";
 
 export type Layer = {
@@ -36,8 +35,6 @@ export const getPixelFromLayer = (
   }
 
   const charPixelPos = (x + y * layer.width) * 3;
-
-  console.log(x, y, charPixelPos);
 
   return [
     layer.data[charPixelPos],

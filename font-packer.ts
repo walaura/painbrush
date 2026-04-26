@@ -34,7 +34,6 @@ const colspan = COLS * CHAR_WIDTH;
 
   const charPixelPos = charXPixelOffset + charYPixelOffset * CHAR_WIDTH;
 
-  console.log(charXPixelOffset, charYPixelOffset, charPixelPos);
   characters[charPos][charPixelPos] = item;
 });
 
