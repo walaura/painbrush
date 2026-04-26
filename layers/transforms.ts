@@ -6,7 +6,7 @@ import type {
   SingleChannelLayer,
 } from "./d.ts";
 import { getLayerPixelData, getPixelFromLayer } from "./data.ts";
-import { solidFillBrush } from "./draw.ts";
+import { createRGBLayer, solidFillBrush } from "./draw.ts";
 
 /*
 Put a layer over another, apply an offset and a blend mode if desired
@@ -34,8 +34,27 @@ export const overlayLayerOver = (
   return { ...source, data: newData };
 };
 
+export const scaleLayer = (source: RGBLayer, scale: number): RGBLayer => {
+  return createRGBLayer(
+    Math.floor(source.width * scale),
+    Math.floor(source.height * scale),
+    (index, meta) => {
+      const { x, y } = getLayerPixelData(index, meta);
+      const maybeTargetPixel = getPixelFromLayer(
+        {
+          x: Math.floor(x / scale),
+          y: Math.floor(y / scale),
+        },
+        source,
+      );
+
+      return maybeTargetPixel ?? [0, 255, 0];
+    },
+  );
+};
+
 /* turns a 1 bit layer into a 3 bit layer */
-export const inflate = <L = SingleChannelLayer>(
+export const inflateLayer = <L = SingleChannelLayer>(
   layer: L,
   fillerFn?: Brush<L> = solidFillBrush([255, 255, 0]),
 ) => {};

@@ -9,7 +9,7 @@ const data = decode(img);
 const CHAR_HEIGHT = 8;
 const CHAR_WIDTH = 6;
 
-const ROWS = 1;
+const ROWS = 3;
 const COLS = 11;
 
 const characters: (0 | 1)[][] = [[]];
@@ -38,7 +38,7 @@ const colspan = COLS * CHAR_WIDTH;
 });
 
 console.log("");
-characters[9].forEach((element, index) => {
+characters[12].forEach((element, index) => {
   process.stdout.write(`${element ? "X" : " "}`);
   if (index % CHAR_WIDTH === 0) {
     console.log("");
@@ -48,7 +48,7 @@ characters[9].forEach((element, index) => {
 const exportt = {
   CHAR_HEIGHT,
   CHAR_WIDTH,
-  alphabet: "?1234567890",
+  alphabet: "?1234567890ABCDEFGHIJKLMNOPQRSTUV",
   characters,
 };
 
