@@ -7,22 +7,22 @@ import {
 } from "./layers/draw.ts";
 import { overlayLayerOver, scaleLayer } from "./layers/transforms.ts";
 
-const bg = createRGBLayer(200, 50, () => [0, 125, 255]);
+const bg = createRGBLayer(360, 360, () => [0, 125, 255]);
 
-const blue = createTextLayer(
+const text = createTextLayer(
   "HELLO HI asdf",
   solidFillBrush([0, 125, 60]),
   solidFillBrush([0, 0, 120]),
 );
-const red = createRGBLayer(2, 2, solidFillBrush([255, 30, 40]));
+const sun = createRGBLayer(30, 30, solidFillBrush([255, 255, 0]));
 
 const imageData = {
   ...overlayLayerOver(
-    overlayLayerOver(bg, scaleLayer(blue, 1), { x: 10, y: 10 }),
-    red,
+    overlayLayerOver(bg, scaleLayer(text, 4), { x: 10, y: 10 }),
+    sun,
     {
-      x: 1,
-      y: 1,
+      x: 20,
+      y: 40,
     },
   ),
   bitsPerPixel: 24,
