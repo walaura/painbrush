@@ -2,7 +2,7 @@ import { decode } from "fast-bmp";
 import { writeFile } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 
-const img = await readFile("./font-packer/font.bmp");
+const img = await readFile("./font/font.bmp");
 
 const data = decode(img);
 
@@ -53,4 +53,4 @@ const exportt = {
   characters,
 };
 
-await writeFile("./font/chars.json", JSON.stringify(exportt));
+await writeFile("./font/chars.json", JSON.stringify(exportt, null, 2));
