@@ -2,7 +2,7 @@
 
 <div align="center">
   
-![""](./packages/example/image.bmp)
+![""](../example/image.bmp)
 
 to my knowledge, the only node-based bitmap raster drawing program - i do not wish to be challenged on this.
 
