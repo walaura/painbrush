@@ -1,0 +1,22 @@
+{
+  "metrics": {
+    "height": 13,
+    "width": 10,
+    "spaces": 4
+  },
+  "cols": 11,
+  "alphabet": [
+    "*1234567890",
+    "           ",
+    "ABCDEFGHIJK",
+    "LMNOPQRSTUV",
+    "WXYZ       "
+  ],
+  "specimen": {
+    "background": [0, 0, 0],
+    "color": [140, 47, 222]
+  },
+  "trim": {
+    "__DEFAULT__": 1
+  }
+}
