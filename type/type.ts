@@ -1,6 +1,5 @@
 import chars from "../fonts/chars.json" with { type: "json" };
 import type { SingleChannelLayer } from "../layers/d.ts";
-import { createLayer } from "../layers/create-layer.ts";
 
 type FontMetrics = {
   space: number;

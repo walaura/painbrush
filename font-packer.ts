@@ -54,23 +54,44 @@ const colspan = fontMeta.cols * fontMeta.width;
   characters[charPos][charPixelPos] = item as 0 | 1;
 });
 
-console.log("");
-characters.forEach((c) => {
-  console.log("");
-
+const print = (c: any[]) => {
   c.forEach((element, index) => {
     process.stdout.write(`${element ? "X" : " "}`);
     if (index % fontMeta.width === 0) {
       console.log("");
     }
   });
+};
+
+characters.forEach((c) => {
+  // print(c);
 });
+
+const charactersV2 = characters.map((char, index) => {
+  const letter = fontMeta.alphabet[index];
+  const maybeTrim = fontMeta.trim[letter];
+  if (!maybeTrim) {
+    return [fontMeta.width, char];
+  }
+
+  let newChar = [];
+  for (let i = 0; i < char.length; i++) {
+    const pos = i % fontMeta.width;
+    if (pos < fontMeta.width - maybeTrim) {
+      newChar.push(char[i]);
+    }
+  }
+  return [fontMeta.width, newChar];
+});
+
+type Character = [width: number, (0 | 1)[]];
 
 const exportt = {
   CHAR_HEIGHT: fontMeta.height,
   CHAR_WIDTH: fontMeta.width,
   alphabet: "?1234567890ABCDEFGHIJKLMNOPQRSTUV",
   characters,
+  charactersV2,
 };
 
 await writeFile(
