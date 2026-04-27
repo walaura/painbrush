@@ -1,5 +1,4 @@
 import type { Layer, Coords } from "./d.ts";
-import { getLayerPixelData } from "./data.ts";
 import { useFont } from "../type/type.ts";
 import { inflateLayer } from "./transform-layer.ts";
 import { overlayLayersOver } from "./transform-layer.ts";
@@ -12,12 +11,12 @@ import {
 } from "./brush.ts";
 
 /**
- * Writes the text , for now in the default and only font
+ * Writes the text, for now in the default and only font
  */
 export const createTextLayer = (
   text: string,
-  fgBrush: Brush = solidFillBrush([255, 255, 255]),
-  bgBrush: Brush = transparentBrush(),
+  brush: Brush = solidFillBrush([255, 255, 255]),
+  textPlateBrush_DO_NOT_USE: Brush = transparentBrush(),
 ): Layer => {
   const { getCharacter } = useFont("chars");
 
@@ -31,8 +30,8 @@ export const createTextLayer = (
   for (let character of text) {
     const char = inflateLayer(
       getCharacter(character),
-      fgBrush,
-      bgBrush,
+      brush,
+      textPlateBrush_DO_NOT_USE,
     );
 
     /* height is constant per line */
@@ -50,7 +49,7 @@ export const createTextLayer = (
     offsetX += char.width;
   }
 
-  let bg = createLayer([width, height], bgBrush);
+  let bg = createLayer([width, height], transparentBrush());
   const textLayer = overlayLayersOver(
     ...[...charLayers, [bg] as [Layer]],
   );

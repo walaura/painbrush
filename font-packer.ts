@@ -2,54 +2,78 @@ import { decode } from "fast-bmp";
 import { writeFile } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 
-const img = await readFile("./font/font.bmp");
+/**
+ * This needs to be an indexed 1 bit bmp
+ * good luck lololololol
+ * I used aseprite on indexed color
+ */
+const img = await readFile("./raw-fonts/chars.bmp");
+const fontMeta = JSON.parse(
+  (await readFile("./raw-fonts/chars.json")).toString(),
+) as {
+  height: number;
+  width: number;
+  cols: number;
+  /**
+   * Long string with the letters represented in the bmp in the same order
+   */
+  alphabet: string;
+  /**
+   * Keyed object specifying how many trailing horizontal pixel columns to trim from the character, for narrow characters
+   */
+  trim: {
+    [key: string]: number;
+  };
+};
 
 const data = decode(img);
 
-const CHAR_HEIGHT = 8;
-const CHAR_WIDTH = 6;
-
-const ROWS = 3;
-const COLS = 11;
-
 const characters: (0 | 1)[][] = [[]];
 
-const colspan = COLS * CHAR_WIDTH;
+const colspan = fontMeta.cols * fontMeta.width;
 
 (data.data as Uint8Array).forEach((item, index) => {
   const pixelX = index % colspan;
   const pixelY = Math.floor(index / colspan);
 
-  const charX = Math.floor(pixelX / CHAR_WIDTH);
-  const charY = Math.floor(pixelY / CHAR_HEIGHT);
+  const charX = Math.floor(pixelX / fontMeta.width);
+  const charY = Math.floor(pixelY / fontMeta.height);
 
-  const charXPixelOffset = pixelX - charX * CHAR_WIDTH;
-  const charYPixelOffset = pixelY - charY * CHAR_HEIGHT;
+  const charXPixelOffset = pixelX - charX * fontMeta.width;
+  const charYPixelOffset = pixelY - charY * fontMeta.height;
 
-  const charPos = charX + charY * COLS;
+  const charPos = charX + charY * fontMeta.cols;
 
   if (!characters[charPos]) {
     characters[charPos] = [];
   }
 
-  const charPixelPos = charXPixelOffset + charYPixelOffset * CHAR_WIDTH;
+  const charPixelPos =
+    charXPixelOffset + charYPixelOffset * fontMeta.width;
 
-  characters[charPos][charPixelPos] = item;
+  characters[charPos][charPixelPos] = item as 0 | 1;
 });
 
 console.log("");
-characters[12].forEach((element, index) => {
-  process.stdout.write(`${element ? "X" : " "}`);
-  if (index % CHAR_WIDTH === 0) {
-    console.log("");
-  }
+characters.forEach((c) => {
+  console.log("");
+
+  c.forEach((element, index) => {
+    process.stdout.write(`${element ? "X" : " "}`);
+    if (index % fontMeta.width === 0) {
+      console.log("");
+    }
+  });
 });
 
 const exportt = {
-  CHAR_HEIGHT,
-  CHAR_WIDTH,
+  CHAR_HEIGHT: fontMeta.height,
+  CHAR_WIDTH: fontMeta.width,
   alphabet: "?1234567890ABCDEFGHIJKLMNOPQRSTUV",
   characters,
 };
 
-await writeFile("./font/chars.json", JSON.stringify(exportt, null, 2));
+await writeFile(
+  "./fonts/chars.json",
+  JSON.stringify(exportt, null, 2),
+);

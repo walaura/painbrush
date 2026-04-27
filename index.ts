@@ -25,7 +25,20 @@ const bg = createLayer([360, 360], (index, layer) => {
 });
 
 const text = scaleLayer(
-  createTextLayer("HELLO HI asdf", solidFillBrush([0, 0, 60])),
+  createTextLayer(
+    "HELLO HI asdf",
+    solidFillBrush([255, 255, 255]),
+    (index, layer) => {
+      const {
+        pos: [x, y],
+      } = getLayerPixelData(index, layer);
+      return [
+        0,
+        (x / layer.width) * 255,
+        (y / layer.height) * 255,
+      ] as Color;
+    },
+  ),
   [3, 4],
 );
 const textShadow = paintLayer(text, (existingColor) =>
