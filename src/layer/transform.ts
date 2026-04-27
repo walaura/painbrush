@@ -1,17 +1,17 @@
-import type { Coords, Layer, SingleChannelLayer } from "./d.ts";
+import type { XYCoords, Layer, SingleChannelLayer } from "../_d.ts";
 import {
-  getLayerPixelData,
-  getPixelFromLayer,
+  getPixelXYCoords,
+  getPixelColor,
   getPixelFromSingleChannelLayer,
-} from "./data.ts";
-import { createLayer } from "./create-layer.ts";
+} from "../pixel.ts";
+import { createLayer } from "./create.ts";
 import {
   blendColor,
   solidFillBrush,
   transparentBrush,
   type Brush,
   type Color,
-} from "./brush.ts";
+} from "../color.ts";
 import { report, WarnError } from "../sys/report.ts";
 
 /**
@@ -19,7 +19,7 @@ import { report, WarnError } from "../sys/report.ts";
  * */
 export const scaleLayer = (
   source: Layer,
-  [scaleX, scaleY]: Coords,
+  [scaleX, scaleY]: XYCoords,
 ): Layer => {
   return createLayer(
     [
@@ -29,8 +29,8 @@ export const scaleLayer = (
     (index, meta) => {
       const {
         pos: [x, y],
-      } = getLayerPixelData(index, meta);
-      const maybeTargetPixel = getPixelFromLayer(
+      } = getPixelXYCoords(index, meta);
+      const maybeTargetPixel = getPixelColor(
         [Math.floor(x / scaleX), Math.floor(y / scaleY)],
         source,
       );
@@ -50,8 +50,8 @@ export const paintLayer = (
     index < layer.width * layer.height * 3;
     index = index + 3
   ) {
-    const { pos } = getLayerPixelData(index, layer);
-    const sourcePixelColor = getPixelFromLayer(
+    const { pos } = getPixelXYCoords(index, layer);
+    const sourcePixelColor = getPixelColor(
       pos,
       layer,
     ) as NonNullable<Color>;
@@ -80,7 +80,7 @@ export const inflateLayer = (
     (index, meta) => {
       const {
         pos: [x, y],
-      } = getLayerPixelData(index, meta);
+      } = getPixelXYCoords(index, meta);
       const maybeTargetPixel = getPixelFromSingleChannelLayer(
         [x, y],
         layer,
@@ -92,7 +92,7 @@ export const inflateLayer = (
     },
   );
 };
-type LayerParams = { offset?: Coords };
+type LayerParams = { offset?: XYCoords };
 
 /*
 Put a layer over another, apply an offset and a blend mode if desired
@@ -109,12 +109,12 @@ export const overlayLayerOver = (
     index < source.width * source.height * 3;
     index = index + 3
   ) {
-    const { pos } = getLayerPixelData(index, source);
-    const sourcePixelColor = getPixelFromLayer(
+    const { pos } = getPixelXYCoords(index, source);
+    const sourcePixelColor = getPixelColor(
       pos,
       source,
     ) as NonNullable<Color>;
-    const maybeTargetPixelColor = getPixelFromLayer(
+    const maybeTargetPixelColor = getPixelColor(
       [pos[0] - offsetX, pos[1] - offsetY],
       target,
     );

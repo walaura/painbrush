@@ -3,7 +3,7 @@
  * TYPES!
  */
 
-import type { LayerMeta } from "./d.ts";
+import type { LayerMeta } from "./_d.ts";
 
 /**
  * This is cheeky, but this would be impossible in normal colorspace and makes the math so easy

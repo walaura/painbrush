@@ -1,15 +1,14 @@
-import type { Layer, Coords } from "./d.ts";
-import { useFont } from "../type/type.ts";
-import { inflateLayer } from "./transform-layer.ts";
-import { overlayLayersOver } from "./transform-layer.ts";
+import type { Layer, XYCoords } from "../_d.ts";
+import { useFont } from "../typography/typography.ts";
+import { inflateLayer } from "./transform.ts";
+import { overlayLayersOver } from "./transform.ts";
 import { FatalError } from "../sys/report.ts";
 import {
   blendColor,
   solidFillBrush,
   transparentBrush,
   type Brush,
-} from "./brush.ts";
-import { options } from "prettier-plugin-multiline-arrays";
+} from "../color.ts";
 
 /**
  * Writes the text, for now in the default and only font
@@ -95,7 +94,7 @@ export const createTextLayer = async (
 This makes a rectangle with any fill. useful for your initial canvas
 */
 export const createLayer = (
-  [width, height]: Coords,
+  [width, height]: XYCoords,
   brush: Brush = solidFillBrush([255, 255, 255]),
 ): Layer => {
   let data = [];

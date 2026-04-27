@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import type { SingleChannelLayer } from "../layers/d.ts";
+import type { SingleChannelLayer } from "../_d.ts";
 import path from "path";
 
 type FontMetrics = {

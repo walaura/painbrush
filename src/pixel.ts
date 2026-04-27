@@ -1,17 +1,20 @@
-import type { Color } from "./brush.ts";
+import type { Color } from "./color.ts";
 import type {
-  Coords,
+  XYCoords,
   LayerMeta,
   Layer,
   SingleChannelLayer,
-} from "./d.ts";
+} from "./_d.ts";
 
-export const getLayerPixelData = (
+export const getPixelXYCoords = (
+  /**
+   * index when looping over Layer.data
+   */
   index: number,
   { width }: LayerMeta,
 ): {
   pixelIndex: number;
-  pos: Coords;
+  pos: XYCoords;
 } => {
   const pixelIndex = Math.floor(index / 3);
 
@@ -21,31 +24,34 @@ export const getLayerPixelData = (
   return { pos: [x, y], pixelIndex };
 };
 
-export const getPixelFromLayer = (
-  coords: Coords,
+export const getPixelColor = (
+  coords: XYCoords,
   layer: Layer,
 ): Color | null => {
-  const normalCoords = normalize(coords, layer);
-  if (!normalCoords) return null;
-  const [x, y] = normalCoords;
+  const normalXYCoords = normalize(coords, layer);
+  if (!normalXYCoords) return null;
+  const [x, y] = normalXYCoords;
 
   const pos = (x + y * layer.width) * 3;
   return [layer.data[pos], layer.data[pos + 1], layer.data[pos + 2]];
 };
 
 export const getPixelFromSingleChannelLayer = (
-  coords: Coords,
+  coords: XYCoords,
   layer: SingleChannelLayer,
 ): number | null => {
-  const normalCoords = normalize(coords, layer);
-  if (!normalCoords) return null;
-  const [x, y] = normalCoords;
+  const normalXYCoords = normalize(coords, layer);
+  if (!normalXYCoords) return null;
+  const [x, y] = normalXYCoords;
 
   const pos = x + y * layer.width;
   return layer.data[pos];
 };
 
-const normalize = (coords: Coords, layer: Layer): Coords | null => {
+const normalize = (
+  coords: XYCoords,
+  layer: Layer,
+): XYCoords | null => {
   const x = Math.floor(coords[0]);
   const y = Math.floor(coords[1]);
 

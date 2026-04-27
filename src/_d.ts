@@ -16,4 +16,4 @@ export interface Layer extends LayerMeta {
 /**
  * [x,y] - dont get the backwards
  */
-export type Coords = [x: number, y: number];
+export type XYCoords = [x: number, y: number];

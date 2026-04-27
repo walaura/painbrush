@@ -1,22 +1,19 @@
-import { encode } from "fast-bmp";
 import fs from "fs";
-import {
-  createLayer,
-  createTextLayer,
-} from "./layers/create-layer.ts";
+import { createLayer, createTextLayer } from "./src/layer/create.ts";
 import {
   solidFillBrush,
   transparentBrush,
   type Color,
-} from "./layers/brush.ts";
-import { scaleLayer } from "./layers/transform-layer.ts";
-import { overlayLayersOver } from "./layers/transform-layer.ts";
-import { getLayerPixelData } from "./layers/data.ts";
+} from "./src/color.ts";
+import { scaleLayer } from "./src/layer/transform.ts";
+import { overlayLayersOver } from "./src/layer/transform.ts";
+import { getPixelXYCoords } from "./src/pixel.ts";
+import { toImage } from "./src/image.ts";
 
 const bg = createLayer([360, 360], (index, layer) => {
   const {
     pos: [x, y],
-  } = getLayerPixelData(index, layer);
+  } = getPixelXYCoords(index, layer);
   return [
     (x / layer.width) * 255,
     (y / layer.height) * 255,
@@ -34,7 +31,7 @@ const text = scaleLayer(
         return transparentBrush()();
         const {
           pos: [x, y],
-        } = getLayerPixelData(index, layer);
+        } = getPixelXYCoords(index, layer);
         return [
           0,
           (x / layer.width) * 255,
@@ -79,17 +76,4 @@ if (layers == null) {
   throw "no layer data";
 }
 
-const imageData = {
-  ...layers,
-  bitsPerPixel: 24,
-  compression: 0,
-  colorMasks: [],
-  components: 1,
-};
-
-const encoded = encode({
-  ...imageData,
-  channels: 3,
-  data: new Uint8Array(imageData.data),
-});
-fs.writeFileSync("image.bmp", encoded);
+fs.writeFileSync("image.bmp", toImage(layers));
