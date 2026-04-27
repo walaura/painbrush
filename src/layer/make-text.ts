@@ -1,5 +1,5 @@
 import type { Layer } from "../_d.ts";
-import { useFont } from "../typography.ts";
+import { useFont, type Typefaces } from "../typography.ts";
 import { inflateLayer } from "./transform.ts";
 import { overlayLayersOver } from "./transform.ts";
 import { FatalError } from "../sys/report.ts";
@@ -30,6 +30,7 @@ type TextLayerProps = {
  */
 export const makeTextLayer = async (
   text: string,
+  font: Typefaces,
   brush: Brush = solidFillBrush([255, 255, 255]),
   {
     letterPlateBrush = transparentBrush(),
@@ -37,7 +38,7 @@ export const makeTextLayer = async (
     maxLength = Infinity,
   }: TextLayerProps = {},
 ): Promise<Layer> => {
-  const { getCharacter } = await useFont("poxel");
+  const { getCharacter } = await useFont(font);
 
   let offsetX = 0;
 

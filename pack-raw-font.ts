@@ -56,6 +56,7 @@ const fontMeta = JSON.parse(
 const { metrics } = fontMeta;
 
 const data = decode(img);
+console.log(data);
 const rawCharacters: (0 | 1)[][] = [[]];
 
 const colspan = fontMeta.cols * metrics.width;
@@ -141,6 +142,7 @@ const specimenImg = padLayer(
         .filter(Boolean)
         .sort()
         .join(""),
+    FONT_NAME,
     solidFillBrush(fontMeta.specimen?.color ?? [0, 0, 0]),
     {
       maxLength: metrics.width * 12,

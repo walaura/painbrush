@@ -13,10 +13,16 @@
     "WXYZ       "
   ],
   "specimen": {
-    "background": [0, 0, 0],
-    "color": [140, 47, 222]
+    "background": [0, 13, 48],
+    "color": [250, 180, 13]
   },
   "trim": {
-    "__DEFAULT__": 1
+    "__DEFAULT__": 2,
+    "L": 3,
+    "C": 3,
+    "I": 4,
+    "M": 0,
+    "W": 0,
+    "N": 1
   }
 }

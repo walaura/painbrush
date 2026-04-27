@@ -10,6 +10,8 @@ import { scaleLayer } from "./src/layer/transform.ts";
 import { overlayLayersOver } from "./src/layer/transform.ts";
 import { getPixelXYCoords } from "./src/pixel.ts";
 import { toImage } from "./src/image.ts";
+import { readFile, writeFile } from "fs/promises";
+import { makeImageLayer } from "./src/layer/make-image.ts";
 
 const bg = makeRectangleLayer([360, 360], (index, layer) => {
   const {
@@ -25,6 +27,7 @@ const bg = makeRectangleLayer([360, 360], (index, layer) => {
 const text = scaleLayer(
   await makeTextLayer(
     "the quick brown fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+    "poxel",
     solidFillBrush([255, 255, 255]),
     {
       maxLength: 110,
@@ -47,6 +50,7 @@ const text = scaleLayer(
 const textHi = scaleLayer(
   await makeTextLayer(
     "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+    "poxel",
     solidFillBrush([255, 255, 255]),
   ),
   [1, 1],
@@ -58,6 +62,7 @@ const textHi = scaleLayer(
 // );
 const date = await makeTextLayer(
   Date.now().toString(),
+  "poxel",
   solidFillBrush([255, 255, 255]),
 );
 const sun = makeRectangleLayer(
@@ -66,7 +71,11 @@ const sun = makeRectangleLayer(
 );
 
 const layers = overlayLayersOver(
-  [text, { offset: [10, 10] }],
+  [makeImageLayer(await readFile("./junk/goomba-rgb.bmp"))],
+  [
+    text,
+    { offset: [10, 10] },
+  ],
   [textHi, { offset: [10, text.height + 10] }],
   [
     scaleLayer(date, [2, 4]),
@@ -80,4 +89,4 @@ if (layers == null) {
   throw "no layer data";
 }
 
-fs.writeFileSync("image.bmp", toImage(layers));
+await writeFile("image.bmp", toImage(layers));

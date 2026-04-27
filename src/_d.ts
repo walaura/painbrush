@@ -9,11 +9,16 @@ export interface LayerMeta {
    */
   id: LayerId;
   isSingleChannel?: true;
+  isFourChannel?: true;
 }
 
 export interface SingleChannelLayer extends LayerMeta {
   data: number[];
   isSingleChannel: true;
+}
+export interface FourChannelLayer extends LayerMeta {
+  data: number[];
+  isFourChannel: true;
 }
 
 export interface Layer extends LayerMeta {

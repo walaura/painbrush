@@ -1,11 +1,20 @@
-import type { XYCoords, Layer, SingleChannelLayer } from "../_d.ts";
+import type {
+  XYCoords,
+  Layer,
+  SingleChannelLayer,
+  FourChannelLayer,
+} from "../_d.ts";
 import {
   getPixelXYCoords,
   getPixelColor,
   getPixelFromSingleChannelLayer,
 } from "../pixel.ts";
 import { makeRectangleLayer } from "./make-rectangle.ts";
-import { blendColor, type Color } from "../color/utils.ts";
+import {
+  blendColor,
+  COLOR_ALPHA,
+  type Color,
+} from "../color/utils.ts";
 import {
   solidFillBrush,
   transparentBrush,
@@ -83,6 +92,27 @@ export const padLayer = (
   return overlayLayerOver(target, source, {
     offset: [spacingX, spacingY],
   });
+};
+
+/**
+ * Turns a 4 bit layer into a 3 bit layer.
+ * */
+export const deflateLayer = (layer: FourChannelLayer): Layer => {
+  let data = [];
+  for (let i = 0; i < [...layer.data].length; i += 4) {
+    if (layer.data[i + 3] === 0) {
+      data.push(...COLOR_ALPHA);
+      continue;
+    }
+    data.push(layer.data[i]);
+    data.push(layer.data[i + 1]);
+    data.push(layer.data[i + 2]);
+  }
+  const { isFourChannel, ...otherLayerStuff } = layer;
+  return {
+    ...otherLayerStuff,
+    data,
+  };
 };
 
 /**
