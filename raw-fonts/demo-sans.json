@@ -2,7 +2,7 @@
   "height": 8,
   "width": 6,
   "cols": 11,
-  "alphabet": "?1234567890ABCDEFGHIJKLMNOPQRSTUV",
+  "alphabet": ["?1234567890ABCDEFGHIJKLMNOPQRSTUV"],
   "trim": {
     "I": 1,
     "T": 2

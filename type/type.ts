@@ -1,5 +1,6 @@
-import chars from "../fonts/chars.json" with { type: "json" };
+import { readFile } from "fs/promises";
 import type { SingleChannelLayer } from "../layers/d.ts";
+import path from "path";
 
 type FontMetrics = {
   space: number;
@@ -13,13 +14,31 @@ interface Font {
   getCharacter: (c: string) => SingleChannelLayer;
 }
 
-const charmap = Object.fromEntries(
-  chars.alphabet.split("").map((l, index) => {
-    return [l, chars.characters[index]];
-  }),
-);
+export const useFont = async (
+  typeface: "chars" | "poxel",
+): Promise<Font> => {
+  const chars = JSON.parse(
+    (
+      await readFile(
+        path.resolve(
+          import.meta.dirname,
+          "./../fonts/" + typeface + ".json",
+        ),
+      )
+    ).toString(),
+  ) as {
+    alphabet: string;
+    characters: [number, number[]][];
+    CHAR_HEIGHT: number;
+    CHAR_WIDTH: number;
+  };
 
-export const useFont = (typeface: "chars"): Font => {
+  const charmap = Object.fromEntries(
+    chars.alphabet.split("").map((l, index) => {
+      return [l, chars.characters[index]];
+    }),
+  );
+
   const getCharacterFromFont = (c: string) => {
     if (c in charmap) {
       return charmap[c];

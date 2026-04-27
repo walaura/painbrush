@@ -17,9 +17,9 @@ const fontMeta = JSON.parse(
   width: number;
   cols: number;
   /**
-   * Long string with the letters represented in the bmp in the same order
+   * row-separated array of strings representing the characters shown in the bmp
    */
-  alphabet: string;
+  alphabet: string[];
   /**
    * Keyed object specifying how many trailing horizontal pixel columns to trim from the character, for narrow characters
    */
@@ -69,12 +69,17 @@ rawCharacters.forEach((c) => {
   // print(c);
 });
 
+const alphabet = fontMeta.alphabet.join("");
+
 const characters = rawCharacters.map((char, index) => {
-  const letter = fontMeta.alphabet[index];
+  const letter = alphabet[index];
   const maybeTrim = fontMeta.trim[letter];
   if (!maybeTrim) {
     return [fontMeta.width, char];
   }
+
+  print(char);
+  console.log(letter);
 
   let newChar = [];
   for (let i = 0; i < char.length; i++) {
@@ -86,12 +91,10 @@ const characters = rawCharacters.map((char, index) => {
   return [fontMeta.width - maybeTrim, newChar];
 });
 
-type Character = [width: number, (0 | 1)[]];
-
 const exportt = {
   CHAR_HEIGHT: fontMeta.height,
   CHAR_WIDTH: fontMeta.width,
-  alphabet: "?1234567890ABCDEFGHIJKLMNOPQRSTUV",
+  alphabet,
   characters,
 };
 

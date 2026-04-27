@@ -25,8 +25,8 @@ const bg = createLayer([360, 360], (index, layer) => {
 });
 
 const text = scaleLayer(
-  createTextLayer(
-    "HELLO HI asdf",
+  await createTextLayer(
+    "the quick brown fox jumps over the lazy dog",
     solidFillBrush([255, 255, 255]),
     (index, layer) => {
       const {
@@ -39,14 +39,31 @@ const text = scaleLayer(
       ] as Color;
     },
   ),
-  [3, 4],
+  [1, 1],
 );
-const textShadow = paintLayer(text, (existingColor) =>
-  isAlphaColor(existingColor)
-    ? () => existingColor
-    : solidFillBrush([255, 255, 255]),
+const textHi = scaleLayer(
+  await createTextLayer(
+    "12AbcTHE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+    solidFillBrush([255, 255, 255]),
+    (index, layer) => {
+      const {
+        pos: [x, y],
+      } = getLayerPixelData(index, layer);
+      return [
+        0,
+        (x / layer.width) * 255,
+        (y / layer.height) * 255,
+      ] as Color;
+    },
+  ),
+  [1, 1],
 );
-const date = createTextLayer(
+// const textShadow = paintLayer(text, (existingColor) =>
+//   isAlphaColor(existingColor)
+//     ? () => existingColor
+//     : solidFillBrush([255, 255, 255]),
+// );
+const date = await createTextLayer(
   Date.now().toString(),
   solidFillBrush([255, 255, 255]),
   solidFillBrush([0, 0, 0]),
@@ -55,8 +72,11 @@ const sun = createLayer([30, 30], solidFillBrush([255, 255, 0]));
 
 const layers = overlayLayersOver(
   [text, { offset: [10, 10] }],
-  [textShadow, { offset: [12, 12] }],
-  [scaleLayer(date, [2, 4]), { offset: [10, text.height + 10 + 4] }],
+  [textHi, { offset: [10, text.height + 10] }],
+  [
+    scaleLayer(date, [2, 4]),
+    { offset: [10, textHi.height + 10 + text.height + 10 + 4] },
+  ],
   [sun, { offset: [100, 200] }],
   [bg],
 );

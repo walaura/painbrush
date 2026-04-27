@@ -13,12 +13,12 @@ import {
 /**
  * Writes the text, for now in the default and only font
  */
-export const createTextLayer = (
+export const createTextLayer = async (
   text: string,
   brush: Brush = solidFillBrush([255, 255, 255]),
   textPlateBrush_DO_NOT_USE: Brush = transparentBrush(),
-): Layer => {
-  const { getCharacter } = useFont("chars");
+): Promise<Layer> => {
+  const { getCharacter } = await useFont("poxel");
 
   let offsetX = 0;
 
