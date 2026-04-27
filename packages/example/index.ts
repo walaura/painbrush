@@ -23,11 +23,15 @@ import type { Layer } from "../painbrush/src/_.js";
 
 FONT LOADING
 
-You wanna get this out of the way once since its doing some parsing behind the scenes.
+You wanna get this out of the way once since its doing some parsing 
+behind the scenes.
 
-Poxel is bundled (as loadBuiltInFont) so you can get writing ascii out of the park. 
+Poxel is bundled (as loadBuiltInFont) so you can get writing ascii 
+out of the park. 
 
-Custom fonts are really fun to make! theres some easy-to-run examples (Including Lucas) on this project so you can have a starting point, check out nom run pack-font on this project.
+Custom fonts are really fun to make! theres some easy-to-run 
+examples (Including Lucas) on this project so you can have a 
+starting point, check out nom run pack-font on this project.
 */
 
 const [LUCAS, POXEL] = await Promise.all([
@@ -38,9 +42,14 @@ const [LUCAS, POXEL] = await Promise.all([
 /*
 LAYERS
 
-Everything you add to an image is a layer first. layers have a width and height, can be transformed, and can be transparent. You will create a bunch of layers and then compose them at the end, but you can also compose them before. (you can't un-compose them tho!)
+Everything you add to an image is a layer first. layers have a 
+width and height, can be transformed, and can be transparent. 
+You will create a bunch of layers and then compose them at the end, 
+but you can also compose them before. (you can't un-compose them 
+tho!)
 
-Everything is layers. In fairness your actual image is also a 'layer', just with extra data
+Everything is layers. In fairness your actual image is also a 
+'layer', just with extra data
 */
 const sun = makeRectangleLayer(
   [30, 30],
@@ -50,12 +59,16 @@ const sun = makeRectangleLayer(
 /*
 TEXT
 
-Not a lot to these ones, by default they wont wrap so make sure to set your maxLengthPx (in px) to break on spaces. no spaces? add linebreaks manually with \n and that'll do it
+Not a lot to these ones, by default they wont wrap so make sure 
+to set your maxLengthPx (in px) to break on spaces (config w/ breakLinesOn). 
+or add linebreaks manually with \n and that'll do it too.
 
-You can customize a bunch of brushes (well get to that) to paint the characters, the back plate of a character, or the bounding box of the text. lots of fun to be had!
+You can customize a bunch of brushes (well get to that) to paint 
+the characters, the back plate of a character, or the bounding box 
+of the text. lots of fun to be had!
 */
 const text = makeTextLayer(
-  "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG - Why are you reading this far you are not supposed to be reading this stop",
+  "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
   POXEL,
   solidFillBrush([255, 255, 255]),
   {
@@ -67,9 +80,13 @@ const text = makeTextLayer(
 BRUSHES
 
 Brushes are an advanced concept you've seen around. 
-Anything that paints on a layer is a brush function. Brushes get the pixel position and layer metadata and decide what color to paint.
+Anything that paints on a layer is a brush function. 
+Brushes get the pixel position and layer metadata and 
+decide what color to paint based on that.
 
-Normally you just wanna use a solid color and theres solidFillBrush for that. This is a fancier one that makes a gradient:
+Normally you just wanna use a solid color and theres 
+solidFillBrush for that. This is a fancier one that 
+makes a gradient:
 */
 const bg = makeRectangleLayer([280, 360], (index, layer) => {
   const {
@@ -83,7 +100,9 @@ const bg = makeRectangleLayer([280, 360], (index, layer) => {
 });
 
 /*
-Theres a lot of helpful methods like scaleLayer that let you manipulate layers like this is an actual image editor.
+Theres a lot of helpful methods like scaleLayer 
+that let you manipulate layers like this is an 
+actual image editor.
 */
 const clock = scaleLayer(
   makeTextLayer(
@@ -111,9 +130,12 @@ const clockWithShadow = overlayLayersOver(
 /*
 IMAGES
 
-You can import other bmps like this. Note that anything thats not already 32 bit will go through conversion and maybe get messed up?
+You can import other bmps like this. Note that 
+anything thats not already 32 bit will go through
+conversion and maybe get messed up?
 
-I merged all three images in a single layer using overlayLayersOver but you don't have to!
+I merged all three images in a single layer using
+overlayLayersOver but you don't have to!
 */
 const images = overlayLayersOver(
   [makeImageLayer(await readFile("./test-junk/goomba-rgb.bmp"))],
@@ -133,8 +155,11 @@ const images = overlayLayersOver(
 ) as Layer;
 
 /*
-You can go crazy with the nesting, make some layout helpers even.
-If you are perf-focused you wanna keep your layer operations low, haven't benchmarked this or anything, it just feels nasty
+You can go crazy with the nesting, make some 
+layout helpers even.
+If you are perf-focused you wanna keep your 
+layer operations low, haven't benchmarked this 
+or anything, it just feels nasty.
 */
 const withTitle = (layer: Layer, title: string) => {
   const titleLayer = makeTextLayer(

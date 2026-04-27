@@ -53,8 +53,16 @@ export const makeTextLayer = (
   const words = text
     .split(breakLinesOn)
     .map((word, idx, arr) =>
-      arr.length === idx ? word : word + breakLinesOn,
-    );
+      arr.length === idx + 1 ? word : word + breakLinesOn,
+    )
+    .map((word) =>
+      word
+        .split("\n")
+        .map((word, idx, arr) =>
+          arr.length === idx + 1 ? word : [word, "\n"],
+        ),
+    )
+    .flat(2);
 
   let lineOffset = 0;
   let maxWidth = 0;
@@ -69,16 +77,16 @@ export const makeTextLayer = (
     let wordOffset = 0;
 
     for (let character of word) {
+      if (character === "\n") {
+        newline();
+        continue;
+      }
+      console.log(character);
       const char = inflateLayer(
         getCharacter(character),
         brush,
         letterPlateBrush,
       );
-
-      if (character === "\n") {
-        newline();
-        continue;
-      }
 
       wordLayers.push([
         char,
