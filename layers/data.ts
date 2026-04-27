@@ -1,22 +1,15 @@
-import type { Color, Coords, LayerMeta, RGBLayer } from "./d.ts";
-
-export type Layer = {
-  data: number[];
-  width: number;
-  height: number;
-  channels: 1 | 3;
-};
+import type { Color, Coords, LayerMeta, Layer } from "./d.ts";
 
 export const getLayerPixelData = (
   index: number,
-  { channels, width }: LayerMeta,
+  { width }: LayerMeta,
 ): {
   currentSubpixelElement: number;
   pixelIndex: number;
   pos: Coords;
 } => {
-  const currentSubpixelElement = index % channels;
-  const pixelIndex = Math.floor(index / channels);
+  const currentSubpixelElement = index % 3;
+  const pixelIndex = Math.floor(index / 3);
 
   const x = pixelIndex % width;
   const y = Math.floor(pixelIndex / width);
@@ -26,7 +19,7 @@ export const getLayerPixelData = (
 
 export const getPixelFromLayer = (
   [x, y]: Coords,
-  layer: RGBLayer,
+  layer: Layer,
 ): Color | null => {
   if (x >= layer.width || x < 0) {
     return null;

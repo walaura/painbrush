@@ -1,4 +1,4 @@
-import type { Brush, Color, LayerMeta, RGBLayer } from "./d.ts";
+import type { Brush, Color, LayerMeta, Layer } from "./d.ts";
 import { getLayerPixelData } from "./data.ts";
 import { useFont } from "../type/type.ts";
 
@@ -11,7 +11,7 @@ export const createTextLayer = (
   text: string,
   fgBrush: Brush = solidFillBrush([255, 255, 255]),
   bgBrush: Brush = solidFillBrush([0, 0, 0]),
-): RGBLayer => {
+): Layer => {
   const textLength = text.length;
   const { getCharacter, monoSize } = useFont("chars");
 
@@ -22,7 +22,6 @@ export const createTextLayer = (
   const layerMeta = {
     width: layerWidth,
     height: layerHeight,
-    channels: 3,
   };
 
   for (let index = 0; index < layerWidth * layerHeight * 3; index++) {
@@ -37,7 +36,7 @@ export const createTextLayer = (
     const charYPixelOffset = pixelY - 0 * monoSize.x;
 
     const charPixelPos = charXPixelOffset + charYPixelOffset * monoSize.x;
-    console.log(text);
+
     const character = getCharacter(text[charX]);
     data.push(
       (character[charPixelPos]
@@ -55,11 +54,11 @@ export const createTextLayer = (
 /**
 This makes a rectangle with any fill. useful for your initial canvas
 */
-export const createRGBLayer = (
+export const createLayer = (
   width: number,
   height: number,
   brush: Brush<LayerMeta> = solidFillBrush([255, 255, 255]),
-): RGBLayer => {
+): Layer => {
   let data = [];
   const meta = { width, height, channels: 3 };
 

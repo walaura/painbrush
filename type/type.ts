@@ -16,7 +16,6 @@ export const useFont = (_: "chars") => {
       if (c in charmap) {
         return charmap[c];
       }
-      console.log(c);
       const upper = c.toUpperCase();
       if (upper in charmap) {
         return charmap[upper];

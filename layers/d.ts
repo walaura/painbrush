@@ -1,20 +1,21 @@
 export interface LayerMeta {
   width: number;
   height: number;
-  channels: number;
 }
 
 export interface SingleChannelLayer extends LayerMeta {
   data: number[];
+  isSingleChannel: true;
 }
 
-export interface RGBLayer extends LayerMeta {
+export interface Layer extends LayerMeta {
   data: number[];
 }
 
+/**
+ * [x,y] - dont get the backwards
+ */
 export type Coords = [x: number, y: number];
-
-export type Layer = SingleChannelLayer | RGBLayer;
 
 export type Brush<L = LayerMeta> = (index: number, layer: L) => Color;
 
