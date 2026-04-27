@@ -10,9 +10,10 @@ export type Layer = {
 export const getLayerPixelData = (
   index: number,
   { channels, width }: LayerMeta,
-): Coords & {
+): {
   currentSubpixelElement: number;
   pixelIndex: number;
+  pos: Coords;
 } => {
   const currentSubpixelElement = index % channels;
   const pixelIndex = Math.floor(index / channels);
@@ -20,11 +21,11 @@ export const getLayerPixelData = (
   const x = pixelIndex % width;
   const y = Math.floor(pixelIndex / width);
 
-  return { x, y, currentSubpixelElement, pixelIndex };
+  return { pos: [x, y], currentSubpixelElement, pixelIndex };
 };
 
 export const getPixelFromLayer = (
-  { x, y }: Coords,
+  [x, y]: Coords,
   layer: RGBLayer,
 ): Color | null => {
   if (x >= layer.width || x < 0) {

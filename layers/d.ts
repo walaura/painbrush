@@ -12,10 +12,10 @@ export interface RGBLayer extends LayerMeta {
   data: number[];
 }
 
-export type Coords = { x: number; y: number };
+export type Coords = [x: number, y: number];
 
 export type Layer = SingleChannelLayer | RGBLayer;
 
-export type Brush<L = LayerMeta> = (index: number, layer: LayerMeta) => Color;
+export type Brush<L = LayerMeta> = (index: number, layer: L) => Color;
 
 export type Color = [r: number, g: number, b: number];

@@ -1,4 +1,4 @@
-import chars from "../font/chars.json" with { type: "json" };
+import chars from "../fonts/chars.json" with { type: "json" };
 
 const charmap = Object.fromEntries(
   chars.alphabet.split("").map((l, index) => {
@@ -16,6 +16,7 @@ export const useFont = (_: "chars") => {
       if (c in charmap) {
         return charmap[c];
       }
+      console.log(c);
       const upper = c.toUpperCase();
       if (upper in charmap) {
         return charmap[upper];
