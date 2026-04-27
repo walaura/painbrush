@@ -10,6 +10,9 @@ import {
   makeImageLayer,
 } from "painbrush/layer";
 import { getPixelXYCoords } from "painbrush/pixel";
+import { loadFont } from "painbrush/typography";
+
+const POXEL = await loadFont(readFile("./fonts/poxel.pxfont"));
 
 const bg = makeRectangleLayer([360, 360], (index, layer) => {
   const {
@@ -23,9 +26,9 @@ const bg = makeRectangleLayer([360, 360], (index, layer) => {
 });
 
 const text = scaleLayer(
-  await makeTextLayer(
+  makeTextLayer(
     "the quick brown fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
-    "poxel",
+    POXEL,
     solidFillBrush([255, 255, 255]),
     {
       maxLength: 110,
@@ -48,7 +51,7 @@ const text = scaleLayer(
 const textHi = scaleLayer(
   await makeTextLayer(
     "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
-    "poxel",
+    POXEL,
     solidFillBrush([255, 255, 255]),
   ),
   [1, 1],
@@ -60,7 +63,7 @@ const textHi = scaleLayer(
 // );
 const date = await makeTextLayer(
   Date.now().toString(),
-  "poxel",
+  POXEL,
   solidFillBrush([255, 255, 255]),
 );
 const sun = makeRectangleLayer(
@@ -69,15 +72,15 @@ const sun = makeRectangleLayer(
 );
 
 const layers = overlayLayersOver(
-  [makeImageLayer(await readFile("./junk/goomba-rgb.bmp"))],
+  [makeImageLayer(await readFile("./test-junk/goomba-rgb.bmp"))],
   [
-    makeImageLayer(await readFile("./junk/goomba-24.bmp")),
+    makeImageLayer(await readFile("./test-junk/goomba-24.bmp")),
     {
       offset: [16, 0],
     },
   ],
   [
-    makeImageLayer(await readFile("./junk/goomba-8.bmp")),
+    makeImageLayer(await readFile("./test-junk/goomba-8.bmp")),
     {
       offset: [32, 0],
     },

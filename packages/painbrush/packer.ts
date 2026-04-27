@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-import { format } from "prettier";
 import { program } from "commander";
 import { decode } from "fast-bmp";
-import { readdir, writeFile } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 import { makeTextLayer } from "./src/layer/make-text.ts";
 import { toImage } from "./src/image.ts";

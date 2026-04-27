@@ -1,0 +1,12 @@
+{
+  "name": "painbrush-example",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack-font": "painbrush-font-packer"
+  },
+  "dependencies": {
+    "@types/node": "^25.6.0",
+    "painbrush": "file:./../painbrush"
+  }
+}

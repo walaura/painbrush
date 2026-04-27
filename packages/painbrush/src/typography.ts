@@ -1,8 +1,5 @@
 import type { SingleChannelLayer } from "./_.js";
 
-import type { TypefaceNames } from "../fonts/d.ts";
-export type { TypefaceNames };
-
 export type FontMetrics = {
   height: number;
   width: number;

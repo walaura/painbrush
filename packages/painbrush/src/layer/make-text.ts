@@ -28,7 +28,7 @@ type TextLayerProps = {
 /**
  * Writes the text, for now in the default and only font
  */
-export const makeTextLayer = async (
+export const makeTextLayer = (
   text: string,
   font: Font,
   brush: Brush = solidFillBrush([255, 255, 255]),
@@ -37,7 +37,7 @@ export const makeTextLayer = async (
     bgPlateBrush = transparentBrush(),
     maxLength = Infinity,
   }: TextLayerProps = {},
-): Promise<Layer> => {
+): Layer => {
   const { getCharacter } = font;
 
   let offsetX = 0;

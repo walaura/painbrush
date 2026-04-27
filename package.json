@@ -2,24 +2,9 @@
   "name": "painbrush-mono",
   "version": "1.0.0",
   "description": "",
-  "homepage": "https://github.com/walaura/bmp-og#readme",
-  "bugs": {
-    "url": "https://github.com/walaura/bmp-og/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/walaura/bmp-og.git"
-  },
-  "license": "ISC",
-  "author": "",
-  "type": "module",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "pack-font": "painbrush-font-packer"
-  },
+  "author": "walaura",
   "dependencies": {
-    "@types/node": "^25.6.0",
-    "painbrush": "file:./packages/painbrush"
+    "wah": "file:./packages/painbrush",
+    "woo": "file:./packages/example"
   }
 }
