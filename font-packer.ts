@@ -1,8 +1,17 @@
+import { program } from "commander";
 import { decode } from "fast-bmp";
 import { writeFile } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 
-const FONT_NAME = "demo-sans";
+program.requiredOption(
+  "-n, --name <font-name>",
+  "name of the font in /raw-fonts/ - make sure theres a bmp and json",
+);
+program.option("-p, --print", "Show the font characters");
+program.parse();
+
+const options = program.opts();
+const FONT_NAME = options.name;
 
 /**
  * This needs to be an indexed 1 bit bmp
@@ -65,22 +74,20 @@ const print = (c: any[]) => {
   });
 };
 
-rawCharacters.forEach((c) => {
-  // print(c);
-});
-
 const alphabet = fontMeta.alphabet.join("");
 
 const characters = rawCharacters.map((char, index) => {
   const letter = alphabet[index];
+  if (options.print) {
+    print(char);
+    console.log("- " + letter);
+  }
+
   const maybeTrim =
     fontMeta.trim[letter] ?? fontMeta.trim["__DEFAULT__"];
   if (!maybeTrim) {
     return [fontMeta.width, char];
   }
-
-  print(char);
-  console.log(letter);
 
   let newChar = [];
   for (let i = 0; i < char.length; i++) {
