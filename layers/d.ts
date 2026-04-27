@@ -1,6 +1,7 @@
 export interface LayerMeta {
   width: number;
   height: number;
+  isSingleChannel?: true;
 }
 
 export interface SingleChannelLayer extends LayerMeta {
@@ -17,6 +18,6 @@ export interface Layer extends LayerMeta {
  */
 export type Coords = [x: number, y: number];
 
-export type Brush<L = LayerMeta> = (index: number, layer: L) => Color;
+export type Brush = (index: number, layer: LayerMeta) => Color;
 
 export type Color = [r: number, g: number, b: number];

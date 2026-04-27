@@ -1,6 +1,10 @@
 import { report, WarnError } from "../sys/report.ts";
 import type { Brush, Coords, Layer, SingleChannelLayer } from "./d.ts";
-import { getLayerPixelData, getPixelFromLayer } from "./data.ts";
+import {
+  getLayerPixelData,
+  getPixelFromLayer,
+  getPixelFromSingleChannelLayer,
+} from "./data.ts";
 import { createLayer, solidFillBrush } from "./draw.ts";
 
 type LayerParams = { offset?: Coords };
@@ -76,8 +80,27 @@ export const scaleLayer = (source: Layer, [scaleX, scaleY]: Coords): Layer => {
   );
 };
 
-/* turns a 1 bit layer into a 3 bit layer */
-export const inflateLayer = <L = SingleChannelLayer>(
-  layer: L,
-  fillerFn: undefined | Brush<L> = solidFillBrush([255, 255, 0]),
-) => {};
+/**
+ * Turns a 1 bit layer into a 3 bit layer.
+ *
+ * Note!!! 1 bit layers are only really supported for fonts bc its a pain to reason about both at once
+ * */
+export const inflateLayer = (
+  layer: SingleChannelLayer,
+  fgBrush: Brush = solidFillBrush([255, 255, 255]),
+  bgBrush: Brush = solidFillBrush([0, 0, 0]),
+): Layer => {
+  return createLayer(
+    Math.floor(layer.width),
+    Math.floor(layer.height),
+    (index, meta) => {
+      const {
+        pos: [x, y],
+        currentSubpixelElement,
+      } = getLayerPixelData(index, meta);
+      const maybeTargetPixel = getPixelFromSingleChannelLayer([x, y], layer);
+
+      return maybeTargetPixel ? fgBrush(index, meta) : bgBrush(index, meta);
+    },
+  );
+};

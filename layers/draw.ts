@@ -57,7 +57,7 @@ This makes a rectangle with any fill. useful for your initial canvas
 export const createLayer = (
   width: number,
   height: number,
-  brush: Brush<LayerMeta> = solidFillBrush([255, 255, 255]),
+  brush: Brush = solidFillBrush([255, 255, 255]),
 ): Layer => {
   let data = [];
   const meta = { width, height, channels: 3 };

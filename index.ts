@@ -2,10 +2,12 @@ import { encode } from "fast-bmp";
 import fs from "fs";
 import { createLayer, createTextLayer, solidFillBrush } from "./layers/draw.ts";
 import {
+  inflateLayer,
   overlayLayerOver,
   overlayLayersOver,
   scaleLayer,
 } from "./layers/transforms.ts";
+import { useFont } from "./type/type.ts";
 
 const bg = createLayer(360, 360, () => [0, 125, 255]);
 
@@ -24,10 +26,14 @@ const date = createTextLayer(
 );
 const sun = createLayer(30, 30, solidFillBrush([255, 255, 0]));
 
+const f = useFont("chars");
+const a = inflateLayer(f.getCharacterLayer("a"));
+
 const layers = overlayLayersOver(
+  [scaleLayer(a, [10, 10]), { offset: [50, 50] }],
   [scaleLayer(date, [2, 4]), { offset: [10, text.height + 10] }],
   [text, { offset: [10, 10] }],
-  [sun],
+  [sun, { offset: [100, 200] }],
   [bg],
 );
 

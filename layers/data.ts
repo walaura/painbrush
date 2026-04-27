@@ -1,4 +1,10 @@
-import type { Color, Coords, LayerMeta, Layer } from "./d.ts";
+import type {
+  Color,
+  Coords,
+  LayerMeta,
+  Layer,
+  SingleChannelLayer,
+} from "./d.ts";
 
 export const getLayerPixelData = (
   index: number,
@@ -18,9 +24,33 @@ export const getLayerPixelData = (
 };
 
 export const getPixelFromLayer = (
-  [x, y]: Coords,
+  coords: Coords,
   layer: Layer,
 ): Color | null => {
+  const normalCoords = normalize(coords, layer);
+  if (!normalCoords) return null;
+  const [x, y] = normalCoords;
+
+  const pos = (x + y * layer.width) * 3;
+  return [layer.data[pos], layer.data[pos + 1], layer.data[pos + 2]];
+};
+
+export const getPixelFromSingleChannelLayer = (
+  coords: Coords,
+  layer: SingleChannelLayer,
+): number | null => {
+  const normalCoords = normalize(coords, layer);
+  if (!normalCoords) return null;
+  const [x, y] = normalCoords;
+
+  const pos = x + y * layer.width;
+  return layer.data[pos];
+};
+
+const normalize = (coords: Coords, layer: Layer): Coords | null => {
+  const x = Math.floor(coords[0]);
+  const y = Math.floor(coords[1]);
+
   if (x >= layer.width || x < 0) {
     return null;
   }
@@ -28,11 +58,5 @@ export const getPixelFromLayer = (
     return null;
   }
 
-  const charPixelPos = (x + y * layer.width) * 3;
-
-  return [
-    layer.data[charPixelPos],
-    layer.data[charPixelPos + 1],
-    layer.data[charPixelPos + 2],
-  ];
+  return [x, y];
 };
