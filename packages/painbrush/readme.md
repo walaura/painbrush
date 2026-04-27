@@ -91,7 +91,7 @@ You'll get a cool specimen file for your troubles, with all the characters. this
 
 <div align=center>
 
-![""](./packages/example/fonts/poxel-specimen.bmp)
+![""](../example/fonts/poxel-specimen.bmp)
 
 </div>
 
