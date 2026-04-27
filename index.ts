@@ -46,7 +46,6 @@ const text = scaleLayer(
   [3, 3],
 );
 
-console.log(text.height);
 const textHi = scaleLayer(
   await createTextLayer(
     "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
