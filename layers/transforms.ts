@@ -64,8 +64,7 @@ export const overlayLayersOver = (...args: [Layer, LayerParams?][]) => {
  * */
 export const scaleLayer = (source: Layer, [scaleX, scaleY]: Coords): Layer => {
   return createLayer(
-    Math.floor(source.width * scaleX),
-    Math.floor(source.height * scaleY),
+    [Math.floor(source.width * scaleX), Math.floor(source.height * scaleY)],
     (index, meta) => {
       const {
         pos: [x, y],
@@ -91,8 +90,7 @@ export const inflateLayer = (
   bgBrush: Brush = solidFillBrush([0, 0, 0]),
 ): Layer => {
   return createLayer(
-    Math.floor(layer.width),
-    Math.floor(layer.height),
+    [Math.floor(layer.width), Math.floor(layer.height)],
     (index, meta) => {
       const {
         pos: [x, y],

@@ -1,62 +1,71 @@
-import type { Brush, Color, LayerMeta, Layer } from "./d.ts";
+import type { Brush, Color, LayerMeta, Layer, Coords } from "./d.ts";
 import { getLayerPixelData } from "./data.ts";
 import { useFont } from "../type/type.ts";
+import {
+  inflateLayer,
+  overlayLayerOver,
+  overlayLayersOver,
+} from "./transforms.ts";
+import { FatalError } from "../sys/report.ts";
 
 export const solidFillBrush = (color: Color) => () => color;
 
 /**
-kk this is a fuck but il deal w it tomo
-*/
+ * NOTE: BG Brush will run twice.
+ * Once For the whole bg and then on each character box. this is fine for solid colors but anything fancier may get messy
+ */
 export const createTextLayer = (
   text: string,
   fgBrush: Brush = solidFillBrush([255, 255, 255]),
   bgBrush: Brush = solidFillBrush([0, 0, 0]),
 ): Layer => {
   const textLength = text.length;
-  const { getCharacter, monoSize } = useFont("chars");
+  const {
+    metrics: { monoSize },
+    getCharacter,
+  } = useFont("chars");
 
   const layerWidth = monoSize.x * textLength;
   const layerHeight = monoSize.y;
 
-  let data = [];
-  const layerMeta = {
-    width: layerWidth,
-    height: layerHeight,
-  };
+  let offsetX = 0;
 
-  for (let index = 0; index < layerWidth * layerHeight * 3; index++) {
-    const {
-      pos: [pixelX, pixelY],
-      currentSubpixelElement,
-    } = getLayerPixelData(index, layerMeta);
+  let height = 0;
+  let width = 0;
 
-    const charX = Math.floor(pixelX / monoSize.x);
+  let charLayers: Parameters<typeof overlayLayersOver> = [];
+  for (let character of text) {
+    const char = inflateLayer(getCharacter(character), fgBrush, bgBrush);
 
-    const charXPixelOffset = pixelX - charX * monoSize.x;
-    const charYPixelOffset = pixelY - 0 * monoSize.x;
+    /* height is constant per line */
+    height = Math.max(height, char.height);
 
-    const charPixelPos = charXPixelOffset + charYPixelOffset * monoSize.x;
+    /* width always grows */
+    width += char.width;
 
-    const character = getCharacter(text[charX]);
-    data.push(
-      (character[charPixelPos]
-        ? fgBrush(index, layerMeta)
-        : bgBrush(index, layerMeta))[currentSubpixelElement],
-    );
+    charLayers.push([
+      char,
+      {
+        offset: [offsetX, 0],
+      },
+    ]);
+    offsetX += char.width;
   }
 
-  return {
-    ...layerMeta,
-    data,
-  };
+  let bg = createLayer([width, height], bgBrush);
+  const textLayer = overlayLayersOver(...[...charLayers, [bg] as [Layer]]);
+
+  if (textLayer == null) {
+    throw new FatalError("No text layers");
+  }
+  return textLayer;
 };
 
 /**
 This makes a rectangle with any fill. useful for your initial canvas
 */
 export const createLayer = (
-  width: number,
-  height: number,
+  [width, height]: Coords,
   brush: Brush = solidFillBrush([255, 255, 255]),
 ): Layer => {
   let data = [];

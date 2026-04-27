@@ -4,6 +4,10 @@ export class WarnError extends Error {
   toString = () => this.message;
 }
 
+export class FatalError extends Error {
+  toString = () => this.message;
+}
+
 export const report = (makeError: () => void) => {
   try {
     makeError();

@@ -8,8 +8,15 @@ import {
   scaleLayer,
 } from "./layers/transforms.ts";
 import { useFont } from "./type/type.ts";
+import { getLayerPixelData } from "./layers/data.ts";
+import type { Color } from "./layers/d.ts";
 
-const bg = createLayer(360, 360, () => [0, 125, 255]);
+const bg = createLayer([360, 360], (index, layer) => {
+  const {
+    pos: [x, y],
+  } = getLayerPixelData(index, layer);
+  return [(x / layer.width) * 255, (y / layer.height) * 255, 255] as Color;
+});
 
 const text = scaleLayer(
   createTextLayer(
@@ -17,20 +24,16 @@ const text = scaleLayer(
     solidFillBrush([0, 125, 60]),
     solidFillBrush([0, 0, 120]),
   ),
-  [8, 4],
+  [3, 4],
 );
 const date = createTextLayer(
   Date.now().toString(),
   solidFillBrush([255, 255, 255]),
   solidFillBrush([0, 0, 0]),
 );
-const sun = createLayer(30, 30, solidFillBrush([255, 255, 0]));
-
-const f = useFont("chars");
-const a = inflateLayer(f.getCharacterLayer("a"));
+const sun = createLayer([30, 30], solidFillBrush([255, 255, 0]));
 
 const layers = overlayLayersOver(
-  [scaleLayer(a, [10, 10]), { offset: [50, 50] }],
   [scaleLayer(date, [2, 4]), { offset: [10, text.height + 10] }],
   [text, { offset: [10, 10] }],
   [sun, { offset: [100, 200] }],
