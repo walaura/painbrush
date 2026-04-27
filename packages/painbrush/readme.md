@@ -34,7 +34,7 @@ There's more good stuff in there and the code is typescripted and somewhat comme
 
 - The aforementioned [example](https://github.com/walaura/painbrush/blob/main/packages/example/index.ts)
 - i intend to put this on my website at a minimum but unfortunately i am awaiting for npm support to recover access to my account because i didnt set up a passkey or something
-- Packing a font creates a specimen file. [see how at the end of this](https://github.com/walaura/painbrush/blob/main/packages/example/index.ts).
+- Packing a font creates a specimen file. [see how at the end of this](https://github.com/walaura/painbrush/blob/main/packages/painbrush/packer.ts).
 
 ## Packing a font?
 
