@@ -1,5 +1,5 @@
+import type { Color } from "./brush.ts";
 import type {
-  Color,
   Coords,
   LayerMeta,
   Layer,
@@ -10,17 +10,15 @@ export const getLayerPixelData = (
   index: number,
   { width }: LayerMeta,
 ): {
-  currentSubpixelElement: number;
   pixelIndex: number;
   pos: Coords;
 } => {
-  const currentSubpixelElement = index % 3;
   const pixelIndex = Math.floor(index / 3);
 
   const x = pixelIndex % width;
   const y = Math.floor(pixelIndex / width);
 
-  return { pos: [x, y], currentSubpixelElement, pixelIndex };
+  return { pos: [x, y], pixelIndex };
 };
 
 export const getPixelFromLayer = (

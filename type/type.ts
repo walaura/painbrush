@@ -1,6 +1,6 @@
 import chars from "../fonts/chars.json" with { type: "json" };
 import type { SingleChannelLayer } from "../layers/d.ts";
-import { createLayer } from "../layers/draw.ts";
+import { createLayer } from "../layers/create-layer.ts";
 
 type FontMetrics = {
   space: number;
@@ -13,15 +13,6 @@ interface Font {
   metrics: FontMetrics;
   getCharacter: (c: string) => SingleChannelLayer;
 }
-
-/**
- * this is a list of widths of letters within an unbreakable part of a string (aka, stuff between spaces) but also lazy text rendering where we assume theres no line-breaks
- */
-type UnbreakableMeasures = number[];
-/**
- * and this is a list of UnbreakableMeasures that you can use to break apart your word if it doesnt fit
- */
-type BreakableMeasures = UnbreakableMeasures[];
 
 const charmap = Object.fromEntries(
   chars.alphabet.split("").map((l, index) => {

@@ -17,7 +17,3 @@ export interface Layer extends LayerMeta {
  * [x,y] - dont get the backwards
  */
 export type Coords = [x: number, y: number];
-
-export type Brush = (index: number, layer: LayerMeta) => Color;
-
-export type Color = [r: number, g: number, b: number];

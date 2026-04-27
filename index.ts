@@ -1,30 +1,37 @@
 import { encode } from "fast-bmp";
 import fs from "fs";
-import { createLayer, createTextLayer, solidFillBrush } from "./layers/draw.ts";
 import {
-  inflateLayer,
-  overlayLayerOver,
-  overlayLayersOver,
-  scaleLayer,
-} from "./layers/transforms.ts";
-import { useFont } from "./type/type.ts";
+  createLayer,
+  createTextLayer,
+} from "./layers/create-layer.ts";
+import {
+  isAlphaColor,
+  solidFillBrush,
+  type Color,
+} from "./layers/brush.ts";
+import { paintLayer, scaleLayer } from "./layers/transform-layer.ts";
+import { overlayLayersOver } from "./layers/transform-layer.ts";
 import { getLayerPixelData } from "./layers/data.ts";
-import type { Color } from "./layers/d.ts";
 
 const bg = createLayer([360, 360], (index, layer) => {
   const {
     pos: [x, y],
   } = getLayerPixelData(index, layer);
-  return [(x / layer.width) * 255, (y / layer.height) * 255, 255] as Color;
+  return [
+    (x / layer.width) * 255,
+    (y / layer.height) * 255,
+    255,
+  ] as Color;
 });
 
 const text = scaleLayer(
-  createTextLayer(
-    "HELLO HI asdf",
-    solidFillBrush([0, 125, 60]),
-    solidFillBrush([0, 0, 120]),
-  ),
+  createTextLayer("HELLO HI asdf", solidFillBrush([0, 0, 60])),
   [3, 4],
+);
+const textShadow = paintLayer(text, (existingColor) =>
+  isAlphaColor(existingColor)
+    ? () => existingColor
+    : solidFillBrush([255, 255, 255]),
 );
 const date = createTextLayer(
   Date.now().toString(),
@@ -34,8 +41,9 @@ const date = createTextLayer(
 const sun = createLayer([30, 30], solidFillBrush([255, 255, 0]));
 
 const layers = overlayLayersOver(
-  [scaleLayer(date, [2, 4]), { offset: [10, text.height + 10] }],
   [text, { offset: [10, 10] }],
+  [textShadow, { offset: [12, 12] }],
+  [scaleLayer(date, [2, 4]), { offset: [10, text.height + 10 + 4] }],
   [sun, { offset: [100, 200] }],
   [bg],
 );
@@ -50,8 +58,6 @@ const imageData = {
   compression: 0,
   colorMasks: [],
   components: 1,
-  yPixelsPerMeter: 2834,
-  xPixelsPerMeter: 2834,
 };
 
 const encoded = encode({
