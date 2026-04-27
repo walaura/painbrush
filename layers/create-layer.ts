@@ -9,6 +9,7 @@ import {
   transparentBrush,
   type Brush,
 } from "./brush.ts";
+import { options } from "prettier-plugin-multiline-arrays";
 
 /**
  * Writes the text, for now in the default and only font
@@ -16,14 +17,33 @@ import {
 export const createTextLayer = async (
   text: string,
   brush: Brush = solidFillBrush([255, 255, 255]),
-  textPlateBrush_DO_NOT_USE: Brush = transparentBrush(),
+  {
+    letterPlateBrush = transparentBrush(),
+    bgPlateBrush = transparentBrush(),
+    maxLength = Infinity,
+  }: {
+    /**
+     * Total pixels before truncating the text
+     */
+    maxLength?: number;
+    /**
+     * Background behind each individual character
+     */
+    letterPlateBrush?: Brush;
+    /**
+     * Background for the whole bounding box of the text
+     *  */
+    bgPlateBrush?: Brush;
+  } = {},
 ): Promise<Layer> => {
   const { getCharacter } = await useFont("poxel");
 
   let offsetX = 0;
 
-  let height = 0;
-  let width = 0;
+  const lineHeight = getCharacter("X").height;
+
+  let maxWidth = 0;
+  let lines = 1;
 
   let charLayers: Parameters<typeof overlayLayersOver> = [];
 
@@ -31,25 +51,36 @@ export const createTextLayer = async (
     const char = inflateLayer(
       getCharacter(character),
       brush,
-      textPlateBrush_DO_NOT_USE,
+      letterPlateBrush,
     );
 
-    /* height is constant per line */
-    height = Math.max(height, char.height);
-
-    /* width always grows */
-    width += char.width;
+    /* 
+    lazy newlines on char for now, 
+    commit the line sizes and move on 
+    */
+    const nextOffsetX = offsetX + char.width;
+    if (nextOffsetX > maxLength) {
+      maxWidth = Math.max(nextOffsetX, maxWidth);
+      offsetX = 0;
+      lines++;
+    }
 
     charLayers.push([
       char,
       {
-        offset: [offsetX, 0],
+        offset: [offsetX, lineHeight * (lines - 1)],
       },
     ]);
     offsetX += char.width;
   }
 
-  let bg = createLayer([width, height], transparentBrush());
+  let bg = createLayer(
+    [
+      (maxWidth = Math.max(offsetX, maxWidth)),
+      lineHeight * lines,
+    ],
+    bgPlateBrush,
+  );
   const textLayer = overlayLayersOver(
     ...[...charLayers, [bg] as [Layer]],
   );

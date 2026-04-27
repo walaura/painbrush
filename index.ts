@@ -5,11 +5,11 @@ import {
   createTextLayer,
 } from "./layers/create-layer.ts";
 import {
-  isAlphaColor,
   solidFillBrush,
+  transparentBrush,
   type Color,
 } from "./layers/brush.ts";
-import { paintLayer, scaleLayer } from "./layers/transform-layer.ts";
+import { scaleLayer } from "./layers/transform-layer.ts";
 import { overlayLayersOver } from "./layers/transform-layer.ts";
 import { getLayerPixelData } from "./layers/data.ts";
 
@@ -26,35 +26,31 @@ const bg = createLayer([360, 360], (index, layer) => {
 
 const text = scaleLayer(
   await createTextLayer(
-    "the quick brown fox jumps over the lazy dog",
+    "the quick brown fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
     solidFillBrush([255, 255, 255]),
-    (index, layer) => {
-      const {
-        pos: [x, y],
-      } = getLayerPixelData(index, layer);
-      return [
-        0,
-        (x / layer.width) * 255,
-        (y / layer.height) * 255,
-      ] as Color;
+    {
+      maxLength: 110,
+      bgPlateBrush: (index, layer) => {
+        return transparentBrush()();
+        const {
+          pos: [x, y],
+        } = getLayerPixelData(index, layer);
+        return [
+          0,
+          (x / layer.width) * 255,
+          (y / layer.height) * 255,
+        ] as Color;
+      },
     },
   ),
-  [1, 1],
+  [3, 3],
 );
+
+console.log(text.height);
 const textHi = scaleLayer(
   await createTextLayer(
-    "12AbcTHE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+    "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
     solidFillBrush([255, 255, 255]),
-    (index, layer) => {
-      const {
-        pos: [x, y],
-      } = getLayerPixelData(index, layer);
-      return [
-        0,
-        (x / layer.width) * 255,
-        (y / layer.height) * 255,
-      ] as Color;
-    },
   ),
   [1, 1],
 );
@@ -66,7 +62,6 @@ const textHi = scaleLayer(
 const date = await createTextLayer(
   Date.now().toString(),
   solidFillBrush([255, 255, 255]),
-  solidFillBrush([0, 0, 0]),
 );
 const sun = createLayer([30, 30], solidFillBrush([255, 255, 0]));
 

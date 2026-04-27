@@ -2,7 +2,7 @@ import { decode } from "fast-bmp";
 import { writeFile } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 
-const FONT_NAME = "poxel";
+const FONT_NAME = "demo-sans";
 
 /**
  * This needs to be an indexed 1 bit bmp
@@ -73,7 +73,8 @@ const alphabet = fontMeta.alphabet.join("");
 
 const characters = rawCharacters.map((char, index) => {
   const letter = alphabet[index];
-  const maybeTrim = fontMeta.trim[letter];
+  const maybeTrim =
+    fontMeta.trim[letter] ?? fontMeta.trim["__DEFAULT__"];
   if (!maybeTrim) {
     return [fontMeta.width, char];
   }
@@ -99,6 +100,6 @@ const exportt = {
 };
 
 await writeFile(
-  "./fonts/" + FONT_NAME + ".json",
+  "./fonts/" + FONT_NAME + ".pxfont",
   JSON.stringify(exportt, null, 2),
 );

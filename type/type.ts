@@ -15,14 +15,14 @@ interface Font {
 }
 
 export const useFont = async (
-  typeface: "chars" | "poxel",
+  typeface: "demo-sans" | "poxel",
 ): Promise<Font> => {
   const chars = JSON.parse(
     (
       await readFile(
         path.resolve(
           import.meta.dirname,
-          "./../fonts/" + typeface + ".json",
+          "./../fonts/" + typeface + ".pxfont",
         ),
       )
     ).toString(),
