@@ -1,8 +1,15 @@
 {
-  "height": 8,
-  "width": 6,
+  "metrics": {
+    "height": 8,
+    "width": 6,
+    "spaces": 4
+  },
   "cols": 11,
   "alphabet": ["?1234567890ABCDEFGHIJKLMNOPQRSTUV"],
+  "specimen": {
+    "background": [0, 0, 205],
+    "color": [255, 191, 0]
+  },
   "trim": {
     "I": 1,
     "T": 2

@@ -1,18 +1,19 @@
 import fs from "fs";
-import { createLayer, createTextLayer } from "./src/layer/create.ts";
+import { makeTextLayer } from "./src/layer/make-text.ts";
+import { makeRectangleLayer } from "./src/layer/make-rectangle.ts";
+import { type Color } from "./src/color/utils.ts";
 import {
   solidFillBrush,
   transparentBrush,
-  type Color,
-} from "./src/color.ts";
+} from "./src/color/brush.ts";
 import { scaleLayer } from "./src/layer/transform.ts";
 import { overlayLayersOver } from "./src/layer/transform.ts";
 import { getPixelXYCoords } from "./src/pixel.ts";
 import { toImage } from "./src/image.ts";
 
-const bg = createLayer([360, 360], (index, layer) => {
+const bg = makeRectangleLayer([360, 360], (index, layer) => {
   const {
-    pos: [x, y],
+    coords: [x, y],
   } = getPixelXYCoords(index, layer);
   return [
     (x / layer.width) * 255,
@@ -22,15 +23,15 @@ const bg = createLayer([360, 360], (index, layer) => {
 });
 
 const text = scaleLayer(
-  await createTextLayer(
+  await makeTextLayer(
     "the quick brown fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
     solidFillBrush([255, 255, 255]),
     {
       maxLength: 110,
       bgPlateBrush: (index, layer) => {
-        return transparentBrush()();
+        return transparentBrush()(index, layer);
         const {
-          pos: [x, y],
+          coords: [x, y],
         } = getPixelXYCoords(index, layer);
         return [
           0,
@@ -44,7 +45,7 @@ const text = scaleLayer(
 );
 
 const textHi = scaleLayer(
-  await createTextLayer(
+  await makeTextLayer(
     "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
     solidFillBrush([255, 255, 255]),
   ),
@@ -55,11 +56,14 @@ const textHi = scaleLayer(
 //     ? () => existingColor
 //     : solidFillBrush([255, 255, 255]),
 // );
-const date = await createTextLayer(
+const date = await makeTextLayer(
   Date.now().toString(),
   solidFillBrush([255, 255, 255]),
 );
-const sun = createLayer([30, 30], solidFillBrush([255, 255, 0]));
+const sun = makeRectangleLayer(
+  [30, 30],
+  solidFillBrush([255, 255, 0]),
+);
 
 const layers = overlayLayersOver(
   [text, { offset: [10, 10] }],

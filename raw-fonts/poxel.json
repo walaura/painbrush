@@ -1,6 +1,9 @@
 {
-  "height": 9,
-  "width": 7,
+  "metrics": {
+    "height": 9,
+    "width": 7,
+    "spaces": 4
+  },
   "cols": 11,
   "alphabet": [
     "?1234567890",
@@ -12,6 +15,10 @@
     "WXYZ       ",
     "wxyz"
   ],
+  "specimen": {
+    "background": [218, 44, 67],
+    "color": [255, 191, 0]
+  },
   "trim": {
     "__DEFAULT__": 1,
     "!": 4,

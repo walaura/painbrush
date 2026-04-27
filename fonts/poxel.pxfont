@@ -1,6 +1,9 @@
 {
-  "CHAR_HEIGHT": 9,
-  "CHAR_WIDTH": 7,
+  "metrics": {
+    "height": 9,
+    "width": 7,
+    "spaces": 4
+  },
   "alphabet": "?1234567890!          ABCDEFGHIJKabcdefghijkLMNOPQRSTUVlmnopqrstuvWXYZ       wxyz",
   "characters": [
     [

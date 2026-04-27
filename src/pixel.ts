@@ -1,4 +1,4 @@
-import type { Color } from "./color.ts";
+import type { Color } from "./color/utils.ts";
 import type {
   XYCoords,
   LayerMeta,
@@ -7,21 +7,18 @@ import type {
 } from "./_d.ts";
 
 export const getPixelXYCoords = (
-  /**
-   * index when looping over Layer.data
-   */
   index: number,
   { width }: LayerMeta,
 ): {
   pixelIndex: number;
-  pos: XYCoords;
+  coords: XYCoords;
 } => {
   const pixelIndex = Math.floor(index / 3);
 
   const x = pixelIndex % width;
   const y = Math.floor(pixelIndex / width);
 
-  return { pos: [x, y], pixelIndex };
+  return { coords: [x, y], pixelIndex };
 };
 
 export const getPixelColor = (

@@ -4,14 +4,13 @@ import {
   getPixelColor,
   getPixelFromSingleChannelLayer,
 } from "../pixel.ts";
-import { createLayer } from "./create.ts";
+import { makeRectangleLayer } from "./make-rectangle.ts";
+import { blendColor, type Color } from "../color/utils.ts";
 import {
-  blendColor,
   solidFillBrush,
   transparentBrush,
   type Brush,
-  type Color,
-} from "../color.ts";
+} from "../color/brush.ts";
 import { report, WarnError } from "../sys/report.ts";
 
 /**
@@ -21,14 +20,14 @@ export const scaleLayer = (
   source: Layer,
   [scaleX, scaleY]: XYCoords,
 ): Layer => {
-  return createLayer(
+  return makeRectangleLayer(
     [
       Math.floor(source.width * scaleX),
       Math.floor(source.height * scaleY),
     ],
     (index, meta) => {
       const {
-        pos: [x, y],
+        coords: [x, y],
       } = getPixelXYCoords(index, meta);
       const maybeTargetPixel = getPixelColor(
         [Math.floor(x / scaleX), Math.floor(y / scaleY)],
@@ -50,9 +49,9 @@ export const paintLayer = (
     index < layer.width * layer.height * 3;
     index = index + 3
   ) {
-    const { pos } = getPixelXYCoords(index, layer);
+    const { coords } = getPixelXYCoords(index, layer);
     const sourcePixelColor = getPixelColor(
-      pos,
+      coords,
       layer,
     ) as NonNullable<Color>;
 
@@ -66,6 +65,27 @@ export const paintLayer = (
 };
 
 /**
+ * Helper for quickly spazzing out layouts, easier than manually
+ * moving it
+ */
+export const padLayer = (
+  source: Layer,
+  [spacingX, spacingY]: XYCoords,
+  bgBrush: Brush = transparentBrush(),
+) => {
+  const target = makeRectangleLayer(
+    [
+      source.width + spacingX * 2,
+      source.height + spacingY * 2,
+    ],
+    bgBrush,
+  );
+  return overlayLayerOver(target, source, {
+    offset: [spacingX, spacingY],
+  });
+};
+
+/**
  * Turns a 1 bit layer into a 3 bit layer.
  *
  * Note!!! 1 bit layers are only really supported for fonts bc its a pain to reason about both at once
@@ -75,11 +95,11 @@ export const inflateLayer = (
   fgBrush: Brush = solidFillBrush([255, 255, 255]),
   bgBrush: Brush = transparentBrush(),
 ): Layer => {
-  return createLayer(
+  return makeRectangleLayer(
     [Math.floor(layer.width), Math.floor(layer.height)],
     (index, meta) => {
       const {
-        pos: [x, y],
+        coords: [x, y],
       } = getPixelXYCoords(index, meta);
       const maybeTargetPixel = getPixelFromSingleChannelLayer(
         [x, y],
@@ -109,13 +129,13 @@ export const overlayLayerOver = (
     index < source.width * source.height * 3;
     index = index + 3
   ) {
-    const { pos } = getPixelXYCoords(index, source);
+    const { coords } = getPixelXYCoords(index, source);
     const sourcePixelColor = getPixelColor(
-      pos,
+      coords,
       source,
     ) as NonNullable<Color>;
     const maybeTargetPixelColor = getPixelColor(
-      [pos[0] - offsetX, pos[1] - offsetY],
+      [coords[0] - offsetX, coords[1] - offsetY],
       target,
     );
 
@@ -131,6 +151,10 @@ export const overlayLayerOver = (
   return { ...source, data };
 };
 
+/**
+ * Join a bunch of layers.
+ * Note that this is reversed (front to back) so it matches how most layers work in software. its confusing if you think about it but makes sense if you do
+ */
 export const overlayLayersOver = (
   ...args: [Layer, LayerParams?][]
 ) => {
