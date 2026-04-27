@@ -1,4 +1,4 @@
-import type { XYCoords, Layer } from "../_d.ts";
+import type { XYCoords, Layer } from "../_.js";
 import { blendColor } from "../color/utils.ts";
 import { type Brush, solidFillBrush } from "../color/brush.ts";
 

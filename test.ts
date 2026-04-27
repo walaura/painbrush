@@ -1,17 +1,15 @@
-import fs from "fs";
-import { makeTextLayer } from "./src/layer/make-text.ts";
-import { makeRectangleLayer } from "./src/layer/make-rectangle.ts";
-import { type Color } from "./src/color/utils.ts";
-import {
-  solidFillBrush,
-  transparentBrush,
-} from "./src/color/brush.ts";
-import { scaleLayer } from "./src/layer/transform.ts";
-import { overlayLayersOver } from "./src/layer/transform.ts";
-import { getPixelXYCoords } from "./src/pixel.ts";
-import { toImage } from "./src/image.ts";
 import { readFile, writeFile } from "fs/promises";
-import { makeImageLayer } from "./src/layer/make-image.ts";
+import { solidFillBrush, transparentBrush } from "painbrush/color";
+import type { Color } from "painbrush/color";
+import { toImage } from "painbrush/image";
+import {
+  makeRectangleLayer,
+  scaleLayer,
+  makeTextLayer,
+  overlayLayersOver,
+  makeImageLayer,
+} from "painbrush/layer";
+import { getPixelXYCoords } from "painbrush/pixel";
 
 const bg = makeRectangleLayer([360, 360], (index, layer) => {
   const {

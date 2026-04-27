@@ -1,11 +1,7 @@
-import { readFile } from "fs/promises";
-import type { SingleChannelLayer } from "./_d.ts";
-import path from "path";
+import type { SingleChannelLayer } from "./_.js";
 
 import type { TypefaceNames } from "../fonts/d.ts";
 export type { TypefaceNames };
-
-const FONT_CACHE = new Map<TypefaceNames, Font>();
 
 export type FontMetrics = {
   height: number;
@@ -18,25 +14,15 @@ export type PxFontFile = {
   metrics: FontMetrics;
 };
 
-interface Font {
+export interface Font {
   getCharacter: (c: string) => SingleChannelLayer;
 }
 
-export const useFont = async (
-  typeface: TypefaceNames,
+export const loadFont = async (
+  pxFontFile: Promise<Buffer<ArrayBuffer>>,
 ): Promise<Font> => {
-  if (FONT_CACHE.has(typeface)) {
-    return FONT_CACHE.get(typeface) as Font;
-  }
   const chars = JSON.parse(
-    (
-      await readFile(
-        path.resolve(
-          import.meta.dirname,
-          "./../fonts/" + typeface + ".pxfont",
-        ),
-      )
-    ).toString(),
+    (await pxFontFile).toString(),
   ) as PxFontFile;
 
   const charmap = Object.fromEntries(
@@ -83,7 +69,6 @@ export const useFont = async (
       } as SingleChannelLayer;
     },
   };
-  FONT_CACHE.set(typeface, FONT);
 
   return FONT;
 };

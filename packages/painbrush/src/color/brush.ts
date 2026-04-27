@@ -1,4 +1,4 @@
-import type { LayerMeta } from "../_d.ts";
+import type { LayerMeta } from "../_.js";
 import { getPixelXYCoords } from "../pixel.ts";
 import {
   type Color,

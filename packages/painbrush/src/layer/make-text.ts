@@ -1,5 +1,4 @@
-import type { Layer } from "../_d.ts";
-import { useFont, type TypefaceNames } from "../typography.ts";
+import type { Layer } from "../_.js";
 import { inflateLayer } from "./transform.ts";
 import { overlayLayersOver } from "./transform.ts";
 
@@ -9,6 +8,7 @@ import {
   type Brush,
 } from "../color/brush.ts";
 import { makeRectangleLayer } from "./make-rectangle.ts";
+import type { Font } from "../typography.ts";
 
 type TextLayerProps = {
   /**
@@ -30,7 +30,7 @@ type TextLayerProps = {
  */
 export const makeTextLayer = async (
   text: string,
-  font: TypefaceNames,
+  font: Font,
   brush: Brush = solidFillBrush([255, 255, 255]),
   {
     letterPlateBrush = transparentBrush(),
@@ -38,7 +38,7 @@ export const makeTextLayer = async (
     maxLength = Infinity,
   }: TextLayerProps = {},
 ): Promise<Layer> => {
-  const { getCharacter } = await useFont(font);
+  const { getCharacter } = font;
 
   let offsetX = 0;
 

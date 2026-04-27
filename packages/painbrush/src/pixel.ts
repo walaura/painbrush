@@ -4,7 +4,7 @@ import type {
   LayerMeta,
   Layer,
   SingleChannelLayer,
-} from "./_d.ts";
+} from "./_.js";
 
 export const getPixelXYCoords = (
   index: number,

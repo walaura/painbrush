@@ -9,11 +9,15 @@ import { makeTextLayer } from "./src/layer/make-text.ts";
 import { toImage } from "./src/image.ts";
 import { solidFillBrush } from "./src/color/brush.ts";
 import { padLayer } from "./src/layer/transform.ts";
-import type { PxFontFile } from "./src/typography.ts";
 import chalk from "chalk";
-import { printCharacter } from "./src-packer/helpers.ts";
+import {
+  printCharacter,
+  reportNay,
+  reportYay,
+} from "./src-packer/helpers.ts";
 import type { FontMetaJSON } from "./src-packer/_.js";
 import path from "node:path";
+import { loadFont, type PxFontFile } from "./src/typography.ts";
 
 program.addHelpText(
   "beforeAll",
@@ -25,8 +29,13 @@ You can download them from the repo!!
 );
 program.showHelpAfterError();
 program.requiredOption(
-  "-n, --name <font-name>",
-  "name of the font in /raw-fonts/ - make sure theres a bmp and json",
+  "-f, --font <font-name>",
+  "path to the raw font files, make sure theres a bmp AND a json!!",
+);
+program.option(
+  "-o, --out <directory>",
+  "path to the output directory, your font will show up there",
+  "fonts",
 );
 program.option(
   "-p, --print",
@@ -35,21 +44,32 @@ program.option(
 program.parse();
 
 const options = program.opts();
-const FONT_NAME = options.name;
 
 /**
  * This needs to be an indexed 1 bit bmp
  * good luck lololololol
  * I used aseprite on indexed color
  */
-const img = await readFile("./raw-fonts/" + FONT_NAME + ".bmp");
 
-const fontMeta = JSON.parse(
-  (await readFile("./raw-fonts/" + FONT_NAME + ".json")).toString(),
-) as FontMetaJSON;
+const inPath = path.join(process.cwd(), options.font);
+const fontName = path.parse(options.font.split("/").pop()).name;
+
+const { img, fontMeta } = await (async () => {
+  const img = await readFile(inPath + ".bmp");
+
+  const fontMeta = JSON.parse(
+    (await readFile(inPath + ".json")).toString(),
+  ) as FontMetaJSON;
+
+  return { img, fontMeta };
+})().catch((e) => {
+  reportNay(`JSON/BMP for ${fontName} missing`);
+  throw e;
+});
+
+reportYay(`Found bmp, json is valid`);
 
 const { metrics } = fontMeta;
-
 const data = decode(img);
 const rawCharacters: (0 | 1)[][] = [[]];
 
@@ -87,7 +107,6 @@ const characters = rawCharacters.map((char, index) => {
   if (!maybeTrim) {
     return [metrics.width, char];
   }
-  return [metrics.width, char];
 
   let newChar = [];
   for (let i = 0; i < char.length; i++) {
@@ -108,13 +127,10 @@ if (options.print) {
   });
 }
 
-console.log(
-  chalk.green(`✓ `) +
-    `Found ${characters.length} characters in ${FONT_NAME}`,
-);
+reportYay(`${characters.length} characters in ${fontName}`);
 
 const fontFileAt = path.join(
-  import.meta.dirname + "/fonts/" + FONT_NAME + ".pxfont",
+  process.cwd() + "/fonts/" + fontName + ".pxfont",
 );
 await writeFile(
   fontFileAt,
@@ -127,16 +143,18 @@ await writeFile(
     null,
     2,
   ),
-);
+).catch((e) => {
+  reportNay(
+    `Font out directory does not exist at ${chalk.underline(path.parse(fontFileAt).dir)}`,
+  );
+  throw e;
+});
 
-console.log(
-  chalk.green(`✓ `) +
-    `Wrote pxfont file at ${chalk.green(fontFileAt)}`,
-);
+reportYay(`Wrote pxfont file at ${chalk.underline(fontFileAt)}`);
 
 const specimenImg = padLayer(
   await makeTextLayer(
-    FONT_NAME.toUpperCase() +
+    fontName.toUpperCase() +
       "\n" +
       "\n" +
       "? " +
@@ -146,7 +164,7 @@ const specimenImg = padLayer(
         .filter(Boolean)
         .sort()
         .join(""),
-    FONT_NAME,
+    await loadFont(readFile(fontFileAt)),
     solidFillBrush(fontMeta.specimen?.color ?? [0, 0, 0]),
     {
       maxLength: metrics.width * 12,
@@ -157,36 +175,17 @@ const specimenImg = padLayer(
 );
 
 const specimenFileAt = path.join(
-  import.meta.dirname + "/fonts/" + FONT_NAME + "-specimen.bmp",
+  process.cwd() + "/fonts/" + fontName + "-specimen.bmp",
 );
 await writeFile(
-  "./fonts/" + FONT_NAME + "-specimen.bmp",
+  "./fonts/" + fontName + "-specimen.bmp",
   toImage(specimenImg),
 );
 
-console.log(
-  chalk.green(`✓ `) +
-    `Wrote specimen file at ${chalk.cyan(specimenFileAt)} (check it out!)`,
+reportYay(
+  `Wrote specimen file at ${chalk.cyan.underline(specimenFileAt)} (check it out!)`,
 );
 
-const dtsFileAt = path.join(import.meta.dirname + "/fonts/d.ts");
-let dts = (await readdir("./fonts"))
-  .filter((f) => f.endsWith("pxfont"))
-  .map((f) => f.split(".").shift())
-  .filter(Boolean)
-  .map((f) => `"${f}"`)
-  .join("|");
-
-dts = `export type TypefaceNames = ${dts}`;
-dts = await format(dts, { parser: "babel-ts" });
-
-await writeFile(dtsFileAt, dts);
-console.log(
-  chalk.green(`✓ `) + `Updated types ${chalk.white(dtsFileAt)}`,
-);
-
-console.log(
-  "\n" +
-    chalk.green(`✓ All good!! `) +
-    `You can now use ${chalk.yellow(FONT_NAME)} as a font`,
-);
+console.log("");
+reportYay(`You can now use ${chalk.yellow(fontName)} as a font`);
+console.log("");

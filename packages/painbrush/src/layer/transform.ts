@@ -3,7 +3,7 @@ import type {
   Layer,
   SingleChannelLayer,
   FourChannelLayer,
-} from "../_d.ts";
+} from "../_.js";
 import {
   getPixelXYCoords,
   getPixelColor,

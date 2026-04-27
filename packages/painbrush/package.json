@@ -1,0 +1,38 @@
+{
+  "name": "painbrush",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/walaura/painbrush#readme",
+  "bugs": {
+    "url": "https://github.com/walaura/painbrush/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walaura/painbrush.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "main": "index.ts",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "fast-bmp": "^4.0.1",
+    "prettier": "^3.8.3",
+    "prettier-plugin-multiline-arrays": "^4.1.7",
+    "typescript": "^6.0.3"
+  },
+  "exports": {
+    "./image": "./src/image.ts",
+    "./pixel": "./src/pixel.ts",
+    "./color": "./src/color.ts",
+    "./layer": "./src/layer.ts",
+    "./typography": "./src/typography.ts"
+  },
+  "bin": {
+    "painbrush-font-packer": "./packer.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0"
+  }
+}
