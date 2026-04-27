@@ -73,6 +73,18 @@ const sun = makeRectangleLayer(
 const layers = overlayLayersOver(
   [makeImageLayer(await readFile("./junk/goomba-rgb.bmp"))],
   [
+    makeImageLayer(await readFile("./junk/goomba-24.bmp")),
+    {
+      offset: [16, 0],
+    },
+  ],
+  [
+    makeImageLayer(await readFile("./junk/goomba-8.bmp")),
+    {
+      offset: [32, 0],
+    },
+  ],
+  [
     text,
     { offset: [10, 10] },
   ],

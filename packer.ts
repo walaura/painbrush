@@ -1,21 +1,37 @@
 #!/usr/bin/env node
 
+import { format } from "prettier";
 import { program } from "commander";
 import { decode } from "fast-bmp";
-import { writeFile } from "node:fs/promises";
+import { readdir, writeFile } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 import { makeTextLayer } from "./src/layer/make-text.ts";
 import { toImage } from "./src/image.ts";
 import { solidFillBrush } from "./src/color/brush.ts";
-import { type Color } from "./src/color/utils.ts";
 import { padLayer } from "./src/layer/transform.ts";
-import type { FontMetrics, PxFontFile } from "./src/typography.ts";
+import type { PxFontFile } from "./src/typography.ts";
+import chalk from "chalk";
+import { printCharacter } from "./src-packer/helpers.ts";
+import type { FontMetaJSON } from "./src-packer/_.js";
+import path from "node:path";
 
+program.addHelpText(
+  "beforeAll",
+  `${chalk.cyanBright("> font packer")}
+If you aren't sure how to author a font check out the docs 
+or try repacking the bundled ones yourself.
+You can download them from the repo!!
+  `,
+);
+program.showHelpAfterError();
 program.requiredOption(
   "-n, --name <font-name>",
   "name of the font in /raw-fonts/ - make sure theres a bmp and json",
 );
-program.option("-p, --print", "Show the font characters");
+program.option(
+  "-p, --print",
+  "Stream the characters into the terminal during parsing",
+);
 program.parse();
 
 const options = program.opts();
@@ -27,27 +43,6 @@ const FONT_NAME = options.name;
  * I used aseprite on indexed color
  */
 const img = await readFile("./raw-fonts/" + FONT_NAME + ".bmp");
-type FontMetaJSON = {
-  metrics: FontMetrics;
-  cols: number;
-  /**
-   * row-separated array of strings representing the characters shown in the bmp
-   */
-  alphabet: string[];
-  /**
-   * Keyed object specifying how many trailing horizontal pixel columns to trim from the character, for narrow characters
-   */
-  trim: {
-    [key: string]: number;
-  };
-  /**
-   * Configure how the specimen image will show up
-   */
-  specimen: {
-    color: Color;
-    background: Color;
-  };
-};
 
 const fontMeta = JSON.parse(
   (await readFile("./raw-fonts/" + FONT_NAME + ".json")).toString(),
@@ -56,7 +51,6 @@ const fontMeta = JSON.parse(
 const { metrics } = fontMeta;
 
 const data = decode(img);
-console.log(data);
 const rawCharacters: (0 | 1)[][] = [[]];
 
 const colspan = fontMeta.cols * metrics.width;
@@ -83,29 +77,17 @@ const colspan = fontMeta.cols * metrics.width;
   rawCharacters[charPos][charPixelPos] = item as 0 | 1;
 });
 
-const print = (c: any[]) => {
-  c.forEach((element, index) => {
-    process.stdout.write(`${element ? "X" : " "}`);
-    if (index % metrics.width === 0) {
-      console.log("");
-    }
-  });
-};
-
 const alphabet = fontMeta.alphabet.join("");
 
 const characters = rawCharacters.map((char, index) => {
   const letter = alphabet[index];
-  if (options.print) {
-    print(char);
-    console.log("- " + letter);
-  }
 
   const maybeTrim =
     fontMeta.trim[letter] ?? fontMeta.trim["__DEFAULT__"];
   if (!maybeTrim) {
     return [metrics.width, char];
   }
+  return [metrics.width, char];
 
   let newChar = [];
   for (let i = 0; i < char.length; i++) {
@@ -117,8 +99,25 @@ const characters = rawCharacters.map((char, index) => {
   return [metrics.width - maybeTrim, newChar];
 });
 
+if (options.print) {
+  characters.forEach((char, index) => {
+    printCharacter(char[1], char[0]);
+
+    console.log("- " + alphabet[index]);
+    console.log("");
+  });
+}
+
+console.log(
+  chalk.green(`✓ `) +
+    `Found ${characters.length} characters in ${FONT_NAME}`,
+);
+
+const fontFileAt = path.join(
+  import.meta.dirname + "/fonts/" + FONT_NAME + ".pxfont",
+);
 await writeFile(
-  "./fonts/" + FONT_NAME + ".pxfont",
+  fontFileAt,
   JSON.stringify(
     {
       metrics,
@@ -128,6 +127,11 @@ await writeFile(
     null,
     2,
   ),
+);
+
+console.log(
+  chalk.green(`✓ `) +
+    `Wrote pxfont file at ${chalk.green(fontFileAt)}`,
 );
 
 const specimenImg = padLayer(
@@ -152,7 +156,37 @@ const specimenImg = padLayer(
   solidFillBrush(fontMeta.specimen?.background ?? [255, 255, 255]),
 );
 
+const specimenFileAt = path.join(
+  import.meta.dirname + "/fonts/" + FONT_NAME + "-specimen.bmp",
+);
 await writeFile(
   "./fonts/" + FONT_NAME + "-specimen.bmp",
   toImage(specimenImg),
+);
+
+console.log(
+  chalk.green(`✓ `) +
+    `Wrote specimen file at ${chalk.cyan(specimenFileAt)} (check it out!)`,
+);
+
+const dtsFileAt = path.join(import.meta.dirname + "/fonts/d.ts");
+let dts = (await readdir("./fonts"))
+  .filter((f) => f.endsWith("pxfont"))
+  .map((f) => f.split(".").shift())
+  .filter(Boolean)
+  .map((f) => `"${f}"`)
+  .join("|");
+
+dts = `export type TypefaceNames = ${dts}`;
+dts = await format(dts, { parser: "babel-ts" });
+
+await writeFile(dtsFileAt, dts);
+console.log(
+  chalk.green(`✓ `) + `Updated types ${chalk.white(dtsFileAt)}`,
+);
+
+console.log(
+  "\n" +
+    chalk.green(`✓ All good!! `) +
+    `You can now use ${chalk.yellow(FONT_NAME)} as a font`,
 );

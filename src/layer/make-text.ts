@@ -1,8 +1,8 @@
 import type { Layer } from "../_d.ts";
-import { useFont, type Typefaces } from "../typography.ts";
+import { useFont, type TypefaceNames } from "../typography.ts";
 import { inflateLayer } from "./transform.ts";
 import { overlayLayersOver } from "./transform.ts";
-import { FatalError } from "../sys/report.ts";
+
 import {
   solidFillBrush,
   transparentBrush,
@@ -30,7 +30,7 @@ type TextLayerProps = {
  */
 export const makeTextLayer = async (
   text: string,
-  font: Typefaces,
+  font: TypefaceNames,
   brush: Brush = solidFillBrush([255, 255, 255]),
   {
     letterPlateBrush = transparentBrush(),
@@ -96,7 +96,7 @@ export const makeTextLayer = async (
   );
 
   if (textLayer == null) {
-    throw new FatalError("No text layers");
+    throw new Error("No text layers");
   }
   return textLayer;
 };

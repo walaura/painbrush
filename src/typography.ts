@@ -2,9 +2,11 @@ import { readFile } from "fs/promises";
 import type { SingleChannelLayer } from "./_d.ts";
 import path from "path";
 
-const FONT_CACHE = new Map<Typefaces, Font>();
+import type { TypefaceNames } from "../fonts/d.ts";
+export type { TypefaceNames };
 
-export type Typefaces = "poxel" | "demo-sans";
+const FONT_CACHE = new Map<TypefaceNames, Font>();
+
 export type FontMetrics = {
   height: number;
   width: number;
@@ -20,7 +22,9 @@ interface Font {
   getCharacter: (c: string) => SingleChannelLayer;
 }
 
-export const useFont = async (typeface: Typefaces): Promise<Font> => {
+export const useFont = async (
+  typeface: TypefaceNames,
+): Promise<Font> => {
   if (FONT_CACHE.has(typeface)) {
     return FONT_CACHE.get(typeface) as Font;
   }

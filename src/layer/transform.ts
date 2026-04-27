@@ -20,7 +20,6 @@ import {
   transparentBrush,
   type Brush,
 } from "../color/brush.ts";
-import { report, WarnError } from "../sys/report.ts";
 
 /**
  * Applies what i think is a nearest-neighbor transform to the layer. only integrer transforms _really_ work for precise results but you can get some cool effects with floats
@@ -195,13 +194,11 @@ export const overlayLayersOver = (
   }
   let [canvas, canvasParams] = first;
   if (canvasParams != null) {
-    report(() => {
-      throw new WarnError(
-        "Your initial canvas had layer transform parameters." +
-          "\n" +
-          "If you want to do that, place that layer it on top of a blank non-transformed layer",
-      );
-    });
+    console.warn(
+      "Your initial canvas had layer transform parameters." +
+        "\n" +
+        "If you want to do that, place that layer it on top of a blank non-transformed layer",
+    );
   }
 
   for (let [layer, params] of args) {

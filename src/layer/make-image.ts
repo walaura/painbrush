@@ -1,6 +1,5 @@
 import { decode } from "fast-bmp";
 import { deflateLayer, inflateLayer } from "./transform.ts";
-import { FatalError, report, WarnError } from "../sys/report.ts";
 import type { Layer } from "../_d.ts";
 
 export const makeImageLayer = (
@@ -9,13 +8,9 @@ export const makeImageLayer = (
   const imageData = decode(buffer);
 
   if (imageData.bitsPerPixel === 1) {
-    report(() => {
-      throw new WarnError(
-        "Inflating 1bit image to 24" +
-          "\n" +
-          "will use default colors in inflateLayer",
-      );
-    });
+    console.warn(
+      "Inflating 1bit image to 24. Will use default colors in inflateLayer",
+    );
     return inflateLayer({
       //@ts-expect-error
       data: [...imageData.data],
@@ -33,13 +28,9 @@ export const makeImageLayer = (
   }
 
   if (imageData.bitsPerPixel === 32) {
-    report(() => {
-      throw new WarnError(
-        "Deflating 32 image to 24" +
-          "\n" +
-          "alpha will be discarded (did u know bmps have alpha??)",
-      );
-    });
+    console.warn(
+      "Deflating 32bit image to 24bit. Alpha will be guessed (did u know bmps have alpha??)",
+    );
     return deflateLayer({
       ...imageData,
       data: [...imageData.data],
@@ -48,7 +39,7 @@ export const makeImageLayer = (
     });
   }
 
-  throw new FatalError(
+  throw new Error(
     `Unsupported image type (${imageData.bitsPerPixel}bpp), try using fast-bmp alone to get a 1/24/32 bit buffer`,
   );
 };
