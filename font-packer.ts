@@ -2,14 +2,16 @@ import { decode } from "fast-bmp";
 import { writeFile } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 
+const FONT_NAME = "poxel";
+
 /**
  * This needs to be an indexed 1 bit bmp
  * good luck lololololol
  * I used aseprite on indexed color
  */
-const img = await readFile("./raw-fonts/chars.bmp");
+const img = await readFile("./raw-fonts/" + FONT_NAME + ".bmp");
 const fontMeta = JSON.parse(
-  (await readFile("./raw-fonts/chars.json")).toString(),
+  (await readFile("./raw-fonts/" + FONT_NAME + ".json")).toString(),
 ) as {
   height: number;
   width: number;
@@ -28,7 +30,7 @@ const fontMeta = JSON.parse(
 
 const data = decode(img);
 
-const characters: (0 | 1)[][] = [[]];
+const rawCharacters: (0 | 1)[][] = [[]];
 
 const colspan = fontMeta.cols * fontMeta.width;
 
@@ -44,14 +46,14 @@ const colspan = fontMeta.cols * fontMeta.width;
 
   const charPos = charX + charY * fontMeta.cols;
 
-  if (!characters[charPos]) {
-    characters[charPos] = [];
+  if (!rawCharacters[charPos]) {
+    rawCharacters[charPos] = [];
   }
 
   const charPixelPos =
     charXPixelOffset + charYPixelOffset * fontMeta.width;
 
-  characters[charPos][charPixelPos] = item as 0 | 1;
+  rawCharacters[charPos][charPixelPos] = item as 0 | 1;
 });
 
 const print = (c: any[]) => {
@@ -63,11 +65,11 @@ const print = (c: any[]) => {
   });
 };
 
-characters.forEach((c) => {
+rawCharacters.forEach((c) => {
   // print(c);
 });
 
-const charactersV2 = characters.map((char, index) => {
+const characters = rawCharacters.map((char, index) => {
   const letter = fontMeta.alphabet[index];
   const maybeTrim = fontMeta.trim[letter];
   if (!maybeTrim) {
@@ -81,7 +83,7 @@ const charactersV2 = characters.map((char, index) => {
       newChar.push(char[i]);
     }
   }
-  return [fontMeta.width, newChar];
+  return [fontMeta.width - maybeTrim, newChar];
 });
 
 type Character = [width: number, (0 | 1)[]];
@@ -91,10 +93,9 @@ const exportt = {
   CHAR_WIDTH: fontMeta.width,
   alphabet: "?1234567890ABCDEFGHIJKLMNOPQRSTUV",
   characters,
-  charactersV2,
 };
 
 await writeFile(
-  "./fonts/chars.json",
+  "./fonts/" + FONT_NAME + ".json",
   JSON.stringify(exportt, null, 2),
 );

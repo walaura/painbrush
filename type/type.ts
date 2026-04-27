@@ -50,11 +50,11 @@ export const useFont = (typeface: "chars"): Font => {
           height: 0,
         };
       }
-      const char = getCharacterFromFont(c);
+      const char = getCharacterFromFont(c) as [number, number[]];
       return {
         isSingleChannel: true,
-        data: char,
-        width: chars.CHAR_WIDTH,
+        data: char[1],
+        width: char[0],
         height: chars.CHAR_HEIGHT,
       };
     },
