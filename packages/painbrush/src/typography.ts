@@ -1,3 +1,4 @@
+import { readFile } from "fs/promises";
 import type { SingleChannelLayer } from "./_.js";
 
 export type FontMetrics = {
@@ -14,6 +15,9 @@ export type PxFontFile = {
 export interface Font {
   getCharacter: (c: string) => SingleChannelLayer;
 }
+
+export const loadBuiltInFont = async () =>
+  await loadFont(readFile("./fonts/poxel.pxfont"));
 
 export const loadFont = async (
   pxFontFile: Promise<Buffer<ArrayBuffer>>,

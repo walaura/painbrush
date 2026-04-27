@@ -1,6 +1,10 @@
 import type { XYCoords, Layer } from "../_.js";
 import { blendColor } from "../color/utils.ts";
-import { type Brush, solidFillBrush } from "../color/brush.ts";
+import {
+  type Brush,
+  solidFillBrush,
+  alphaBrush,
+} from "../color/brush.ts";
 
 /**
 This makes a rectangle with any fill. 
@@ -30,3 +34,9 @@ export const makeRectangleLayer = (
     data,
   };
 };
+
+/**
+ * Utility method to make a blank rectangle, makes a great bg
+ */
+export const makeBlankLayer = (coords: XYCoords) =>
+  makeRectangleLayer(coords, alphaBrush());

@@ -166,7 +166,8 @@ const specimenImg = padLayer(
     await loadFont(readFile(fontFileAt)),
     solidFillBrush(fontMeta.specimen?.color ?? [0, 0, 0]),
     {
-      maxLength: metrics.width * 12,
+      maxLengthPx: metrics.width * 12,
+      breakLinesOn: "", // break on anything
     },
   ),
   [metrics.width, metrics.height],

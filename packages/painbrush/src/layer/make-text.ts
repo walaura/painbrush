@@ -4,7 +4,7 @@ import { overlayLayersOver } from "./transform.ts";
 
 import {
   solidFillBrush,
-  transparentBrush,
+  alphaBrush,
   type Brush,
 } from "../color/brush.ts";
 import { makeRectangleLayer } from "./make-rectangle.ts";
@@ -14,7 +14,7 @@ type TextLayerProps = {
   /**
    * Total pixels before truncating the text
    */
-  maxLength?: number;
+  maxLengthPx?: number;
   /**
    * Background behind each individual character
    */
@@ -23,70 +23,92 @@ type TextLayerProps = {
    * Background for the whole bounding box of the text
    *  */
   bgPlateBrush?: Brush;
+  /**
+   * Character to use to identify possible linebreaks.
+   * Normally you just want a space ig??
+   *  */
+  breakLinesOn?: string;
 };
 
 /**
- * Writes the text, for now in the default and only font
+ * Writes the text
  */
 export const makeTextLayer = (
   text: string,
   font: Font,
   brush: Brush = solidFillBrush([255, 255, 255]),
   {
-    letterPlateBrush = transparentBrush(),
-    bgPlateBrush = transparentBrush(),
-    maxLength = Infinity,
+    letterPlateBrush = alphaBrush(),
+    bgPlateBrush = alphaBrush(),
+    maxLengthPx = Infinity,
+    breakLinesOn = " ",
   }: TextLayerProps = {},
 ): Layer => {
   const { getCharacter } = font;
 
-  let offsetX = 0;
-
   const lineHeight = getCharacter("X").height;
-
-  let maxWidth = 0;
-  let lines = 1;
 
   let charLayers: Parameters<typeof overlayLayersOver> = [];
 
-  for (let character of text) {
-    const char = inflateLayer(
-      getCharacter(character),
-      brush,
-      letterPlateBrush,
+  const words = text
+    .split(breakLinesOn)
+    .map((word, idx, arr) =>
+      arr.length === idx ? word : word + breakLinesOn,
     );
 
+  let lineOffset = 0;
+  let maxWidth = 0;
+  let lines = 1;
+  for (let word of words) {
     const newline = () => {
-      maxWidth = Math.max(offsetX, maxWidth);
-      offsetX = 0;
+      maxWidth = Math.max(lineOffset, maxWidth);
+      lineOffset = 0;
       lines++;
     };
+    let wordLayers = [];
+    let wordOffset = 0;
 
-    /* 
-    lazy newlines on char for now, 
-    commit the line sizes and move on 
-    */
-    const nextOffsetX = offsetX + char.width;
-    if (nextOffsetX > maxLength) {
+    for (let character of word) {
+      const char = inflateLayer(
+        getCharacter(character),
+        brush,
+        letterPlateBrush,
+      );
+
+      if (character === "\n") {
+        newline();
+        continue;
+      }
+
+      wordLayers.push([
+        char,
+        wordOffset,
+      ]);
+      wordOffset += char.width;
+    }
+
+    const prevLineOffset = lineOffset;
+    const verticalOffset = lineHeight * (lines - 1);
+    lineOffset = lineOffset + wordOffset;
+    if (lineOffset > maxLengthPx) {
       newline();
     }
-    if (character === "\n") {
-      newline();
-      continue;
-    }
-
-    charLayers.push([
-      char,
-      {
-        offset: [offsetX, lineHeight * (lines - 1)],
-      },
-    ]);
-    offsetX += char.width;
+    charLayers.push(
+      ...(wordLayers.map((layer) => [
+        layer[0],
+        {
+          offset: [
+            prevLineOffset + (layer[1] as number),
+            verticalOffset,
+          ],
+        },
+      ]) as Parameters<typeof overlayLayersOver>),
+    );
   }
 
   let bg = makeRectangleLayer(
     [
-      (maxWidth = Math.max(offsetX, maxWidth)),
+      (maxWidth = Math.max(lineOffset, maxWidth)),
       lineHeight * lines,
     ],
     bgPlateBrush,

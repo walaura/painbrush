@@ -9,7 +9,10 @@ import {
   getPixelColor,
   getPixelFromSingleChannelLayer,
 } from "../pixel.ts";
-import { makeRectangleLayer } from "./make-rectangle.ts";
+import {
+  makeBlankLayer,
+  makeRectangleLayer,
+} from "./make-rectangle.ts";
 import {
   blendColor,
   COLOR_ALPHA,
@@ -17,7 +20,7 @@ import {
 } from "../color/utils.ts";
 import {
   solidFillBrush,
-  transparentBrush,
+  alphaBrush,
   type Brush,
 } from "../color/brush.ts";
 
@@ -79,7 +82,7 @@ export const paintLayer = (
 export const padLayer = (
   source: Layer,
   [spacingX, spacingY]: XYCoords,
-  bgBrush: Brush = transparentBrush(),
+  bgBrush: Brush = alphaBrush(),
 ) => {
   const target = makeRectangleLayer(
     [
@@ -122,7 +125,7 @@ export const deflateLayer = (layer: FourChannelLayer): Layer => {
 export const inflateLayer = (
   layer: SingleChannelLayer,
   fgBrush: Brush = solidFillBrush([255, 255, 255]),
-  bgBrush: Brush = transparentBrush(),
+  bgBrush: Brush = alphaBrush(),
 ): Layer => {
   return makeRectangleLayer(
     [Math.floor(layer.width), Math.floor(layer.height)],
@@ -190,7 +193,8 @@ export const overlayLayersOver = (
   const flippedArgs = args.reverse();
   let first = flippedArgs.shift();
   if (first == null) {
-    return null;
+    console.warn("You tried to overlay 0 layers wtf");
+    return makeBlankLayer([0, 0]);
   }
   let [canvas, canvasParams] = first;
   if (canvasParams != null) {

@@ -1,12 +1,12 @@
 import type { LayerMeta } from "../_.js";
 import { getPixelXYCoords } from "../pixel.ts";
-import {
-  type Color,
-  type AlphaColor,
-  COLOR_ALPHA,
-  COLOR_BLACK,
-} from "./utils.ts";
+import { type Color, COLOR_ALPHA, COLOR_BLACK } from "./utils.ts";
 
+/**
+Anything that paints on a layer is a brush function. Brushes get the pixel position and layer metadata and decide what color to paint.
+
+Normally you just wanna use a solid color and theres solidFillBrush for that. check out other builtins in this file.
+*/
 export type Brush = (index: number, layer: LayerMeta) => Color;
 
 export const solidFillBrush =
@@ -33,4 +33,4 @@ export const borderBrush =
     return innerColor;
   };
 
-export const transparentBrush = (): Brush => () => COLOR_ALPHA;
+export const alphaBrush = (): Brush => () => COLOR_ALPHA;
