@@ -9,6 +9,8 @@ const init = async () => {
     (input) => parseFloat(input.value),
   );
 
+  let src: string = "";
+
   const renderImage = await makeRenderCall(poxelHandle, lucasHandle);
   const updateImgTag = async () => {
     let img = await renderImage({
@@ -18,8 +20,11 @@ const init = async () => {
       zoom: sliders[3],
     });
     requestAnimationFrame(async () => {
-      (document.querySelector("img") as HTMLImageElement).src =
-        `data:image/bmp;base64,${Buffer.from(img).toString("base64")}`;
+      // @ts-expect-error
+      const imgBlob = new Blob([img]);
+      URL.revokeObjectURL(src);
+      src = URL.createObjectURL(imgBlob);
+      (document.querySelector("img") as HTMLImageElement).src = src;
     });
   };
 
