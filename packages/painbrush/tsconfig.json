@@ -7,7 +7,6 @@
     "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
     "types": ["node"],
-    "skipLibCheck": true,
-  },
-  "include": ["**/*.ts"]
+    "skipLibCheck": true
+  }
 }

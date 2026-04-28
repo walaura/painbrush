@@ -1,4 +1,4 @@
-import path from "path";
+import path from "path/posix";
 import { decode } from "fast-bmp";
 import { solidFillBrush } from "../src/color.ts";
 import { toImage } from "../src/image.ts";
@@ -72,11 +72,9 @@ export const generateCharacters = async ({
 
 export const generatePxFontFile = (
   characters: PackerCharactersWithTrim,
-  { fontName, fontMeta }: PackerIntakeData,
+  { fontName, fontMeta, cwd, outDir }: PackerIntakeData,
 ): PackerFileOp<string> => {
-  const fontFileAt = path.join(
-    process.cwd() + "/fonts/" + fontName + ".pxfont",
-  );
+  const fontFileAt = path.join(cwd, outDir, fontName + ".pxfont");
   const alphabet = fontMeta.alphabet.join("");
   const metrics = fontMeta.metrics;
 
@@ -95,8 +93,8 @@ export const generatePxFontFile = (
 };
 
 export const generateSpecimenImage = async (
-  [filename, pxFontFile]: PackerFileOp<string>,
-  { fontName, fontMeta }: PackerIntakeData,
+  [_, pxFontFile]: PackerFileOp<string>,
+  { fontName, fontMeta, cwd, outDir }: PackerIntakeData,
 ): Promise<PackerFileOp<Uint8Array<ArrayBufferLike>>> => {
   const alphabet = fontMeta.alphabet.join("");
 
@@ -136,7 +134,9 @@ export const generateSpecimenImage = async (
   );
 
   const specimenFileAt = path.join(
-    process.cwd() + "/fonts/" + fontName + "-specimen.bmp",
+    cwd,
+    outDir,
+    fontName + "-specimen.bmp",
   );
 
   return [specimenFileAt, toImage(specimenImg)];

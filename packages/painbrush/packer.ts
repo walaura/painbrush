@@ -52,10 +52,12 @@ const options = program.opts();
  * I used aseprite on indexed color
  */
 
-const inPath = path.join(process.cwd(), options.font);
 const fontName = path.parse(options.font.split("/").pop()).name;
 
 const intakeData: PackerIntakeData = await (async () => {
+  const cwd = process.cwd();
+  const outDir = options.out ?? "fonts";
+  const inPath = path.join(cwd, options.font);
   const img = await readFile(inPath + ".bmp");
 
   const fontMeta = JSON.parse(
@@ -63,7 +65,13 @@ const intakeData: PackerIntakeData = await (async () => {
   ) as FontMetaJSON;
 
   reportYay(`Found bmp, json is valid`);
-  return { img, fontMeta, fontName };
+  return {
+    img,
+    fontMeta,
+    fontName,
+    outDir,
+    cwd,
+  };
 })().catch((e) => {
   reportNay(`JSON/BMP for ${fontName} missing`);
   throw e;

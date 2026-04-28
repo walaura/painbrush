@@ -24,6 +24,8 @@ export type PackerIntakeData = {
   img: NonSharedBuffer;
   fontMeta: FontMetaJSON;
   fontName: string;
+  cwd: string;
+  outDir: string;
 };
 
 export type PackerCharacter = (o | 1)[];
