@@ -7,7 +7,7 @@ import { readFile } from "node:fs/promises";
 import { makeTextLayer } from "./src/layer/make-text.ts";
 import { toImage } from "./src/image.ts";
 import { solidFillBrush } from "./src/color/brush.ts";
-import { padLayer } from "./src/layer/transform.ts";
+import { overlayLayerOver, padLayer } from "./src/layer/transform.ts";
 import chalk from "chalk";
 import {
   printCharacter,
@@ -17,6 +17,7 @@ import {
 import type { FontMetaJSON } from "./src-packer/_.js";
 import path from "node:path";
 import { useFont, type PxFontFile } from "./src/typography.ts";
+import { makeRectangleLayer } from "./src/layer.ts";
 
 program.addHelpText(
   "beforeAll",
@@ -151,18 +152,18 @@ await writeFile(
 
 reportYay(`Wrote pxfont file at ${chalk.underline(fontFileAt)}`);
 
-const specimenImg = padLayer(
+const specimenImgPd = padLayer(
   await makeTextLayer(
     fontName.toUpperCase() +
-      "\n" +
-      "\n" +
-      "? " +
-      alphabet
-        .split("")
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .sort()
-        .join(""),
+    "\n" +
+    "\n" +
+    "? " +
+    alphabet
+      .split("")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .sort()
+      .join(""),
     await useFont(readFile(fontFileAt)),
     solidFillBrush(fontMeta.specimen?.color ?? [0, 0, 0]),
     {
@@ -171,8 +172,15 @@ const specimenImg = padLayer(
     },
   ),
   { x: metrics.width, y: metrics.height },
-  solidFillBrush(fontMeta.specimen?.background ?? [255, 255, 255]),
 );
+
+const specimenImg = overlayLayerOver(
+  makeRectangleLayer({
+    x: specimenImgPd.width,
+    y: specimenImgPd.height
+  }, solidFillBrush(fontMeta.specimen?.background ?? [255, 255, 255]),),
+  specimenImgPd
+)
 
 const specimenFileAt = path.join(
   process.cwd() + "/fonts/" + fontName + "-specimen.bmp",
