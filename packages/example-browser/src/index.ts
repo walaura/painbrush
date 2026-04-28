@@ -21,7 +21,9 @@ const init = async () => {
     });
     requestAnimationFrame(async () => {
       // @ts-expect-error
-      const imgBlob = new Blob([img]);
+      const imgBlob = new Blob([img], {
+        type: "image/bmp",
+      });
       URL.revokeObjectURL(src);
       src = URL.createObjectURL(imgBlob);
       (document.querySelector("img") as HTMLImageElement).src = src;
