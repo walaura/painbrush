@@ -1,5 +1,5 @@
 import { decode } from "fast-bmp";
-import { deflateLayer, inflateLayer } from "./transform.ts";
+import { deflateImage, inflateImage } from "../image.ts";
 import type { Layer } from "../layer.ts";
 
 export const makeImageLayer = (
@@ -9,9 +9,9 @@ export const makeImageLayer = (
 
   if (imageData.bitsPerPixel === 1) {
     console.warn(
-      "Inflating 1bit image to 24. Will use default colors in inflateLayer",
+      "Inflating 1bit image to 24. Will use default colors in inflateImage",
     );
-    return inflateLayer({
+    return inflateImage({
       //@ts-expect-error
       data: [...imageData.data],
       ...imageData,
@@ -20,18 +20,19 @@ export const makeImageLayer = (
     });
   }
   if (imageData.bitsPerPixel === 24) {
-    return {
+    // @ts-expect-error
+    return deflateImage({
       ...imageData,
       data: [...imageData.data],
       id: Math.random(),
-    } as Layer;
+    });
   }
 
   if (imageData.bitsPerPixel === 32) {
     console.warn(
       "Deflating 32bit image to 24bit. Alpha will be guessed (did u know bmps have alpha??)",
     );
-    return deflateLayer({
+    return deflateImage({
       ...imageData,
       data: [...imageData.data],
       isFourChannel: true,

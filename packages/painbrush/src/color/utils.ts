@@ -1,26 +1,27 @@
 /**
  * This is cheeky, but this would be impossible in normal colorspace and makes the math so easy
  */
-export type AlphaColor = [-1, -1, -1];
-export type RGBColor = [r: number, g: number, b: number];
-export type Color = RGBColor | AlphaColor;
+export type Color = number;
+export type AlphaColor = -1;
 
-export const COLOR_ALPHA: AlphaColor = [-1, -1, -1];
-export const COLOR_WHITE: Color = [255, 255, 255];
-export const COLOR_BLACK: Color = [0, 0, 0];
+export const COLOR_ALPHA: Color = -1;
+export const COLOR_WHITE: Color = 0xffffff;
+export const COLOR_BLACK: Color = 0x000000;
 
 /**
  * Alphas are a cursed implementation detail that gets treated differently at blending, rn its just -1,-1,-1 but maybe in the future this can be loaded with alpha depth? or not. lol that sounds cursed.
  */
 export const isAlphaColor = (color: Color): color is AlphaColor => {
-  return color[0] === -1;
+  //return true;
+  return color === -1;
 };
-export const isColorMatch = (color1: Color, color2: Color) => {
-  return (
-    color1[0] === color2[0] &&
-    color1[1] === color2[1] &&
-    color1[2] === color2[2]
-  );
+
+export const colorFromRgb = (
+  r: number,
+  g: number,
+  b: number,
+): Color => {
+  return (1 << 24) | (r << 16) | (g << 8) | b;
 };
 
 /**
@@ -49,5 +50,7 @@ export const makeRandomColor = (r: number) => {
   const g = next(r);
   const b = next(g);
 
-  return [r, g, b].map((c) => c * 255) as Color;
+  return colorFromRgb(
+    ...([r, g, b].map((c) => c * 255) as [number, number, number]),
+  );
 };

@@ -1,8 +1,5 @@
-import {
-  punchLayerOver,
-  inflateLayer,
-  overlayLayerOver,
-} from "./transform.ts";
+import { punchLayerOver, overlayLayerOver } from "./transform.ts";
+import { inflateImage } from "../image.ts";
 import { overlayLayersOver } from "./transform.ts";
 
 import {
@@ -13,6 +10,7 @@ import {
 import { makeRectangleLayer } from "./make-rectangle.ts";
 import type { Font } from "../typography.ts";
 import type { Layer } from "../layer.ts";
+import { COLOR_WHITE } from "../color.ts";
 
 type TextLayerProps = {
   /**
@@ -40,7 +38,7 @@ type TextLayerProps = {
 export const makeTextLayer = (
   text: string,
   font: Font,
-  brush: Brush = solidFillBrush([255, 255, 255]),
+  brush: Brush = solidFillBrush(COLOR_WHITE),
   {
     letterPlateBrush = alphaBrush(),
     bgPlateBrush = alphaBrush(),
@@ -85,7 +83,7 @@ export const makeTextLayer = (
         newline();
         continue;
       }
-      const char = inflateLayer(
+      const char = inflateImage(
         getCharacter(character),
         brush,
         letterPlateBrush,

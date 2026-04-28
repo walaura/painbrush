@@ -1,3 +1,5 @@
+import type { Color } from "./color.ts";
+
 type LayerId = number;
 
 export interface LayerMeta {
@@ -12,17 +14,18 @@ export interface LayerMeta {
   isFourChannel?: true;
 }
 
-export interface SingleChannelLayer extends LayerMeta {
+export interface SingleChannelImage extends LayerMeta {
   data: number[];
   isSingleChannel: true;
 }
-export interface FourChannelLayer extends LayerMeta {
+export interface FourChannelImage extends LayerMeta {
   data: number[];
   isFourChannel: true;
+  channels: number;
 }
 
 export interface Layer extends LayerMeta {
-  data: number[];
+  pixels: Color[];
 }
 
 export * from "./layer/make-image.ts";

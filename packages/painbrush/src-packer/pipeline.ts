@@ -1,6 +1,11 @@
 import path from "path/posix";
 import { decode } from "fast-bmp";
-import { solidFillBrush } from "../src/color.ts";
+import {
+  COLOR_BLACK,
+  COLOR_WHITE,
+  colorFromRgb,
+  solidFillBrush,
+} from "../src/color.ts";
 import { toImage } from "../src/image.ts";
 import {
   padLayer,
@@ -111,7 +116,11 @@ export const generateSpecimenImage = async (
           .sort()
           .join(""),
       await useFont(Promise.resolve(pxFontFile)),
-      solidFillBrush(fontMeta.specimen?.color ?? [0, 0, 0]),
+      solidFillBrush(
+        fontMeta.specimen?.color
+          ? colorFromRgb(...fontMeta.specimen?.color)
+          : COLOR_BLACK,
+      ),
       {
         maxLengthPx: fontMeta.metrics.width * 12,
         breakLinesOn: "", // break on anything
@@ -127,7 +136,9 @@ export const generateSpecimenImage = async (
         y: specimenImgPd.height,
       },
       solidFillBrush(
-        fontMeta.specimen?.background ?? [255, 255, 255],
+        fontMeta.specimen?.background
+          ? colorFromRgb(...fontMeta.specimen?.background)
+          : COLOR_WHITE,
       ),
     ),
     specimenImgPd,

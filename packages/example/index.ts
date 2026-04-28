@@ -1,6 +1,9 @@
 import { readFile, writeFile } from "fs/promises";
 import {
   borderBrush,
+  COLOR_BLACK,
+  COLOR_WHITE,
+  colorFromRgb,
   isAlphaColor,
   solidFillBrush,
 } from "painbrush/color";
@@ -53,7 +56,7 @@ Everything is layers. In fairness your actual image is also a
 */
 const sun = makeRectangleLayer(
   { x: 30, y: 30 },
-  borderBrush(3, [255, 255, 0]),
+  borderBrush(3, 0xffff00),
 );
 
 /*
@@ -71,7 +74,7 @@ of the text. lots of fun to be had!
 const text = makeTextLayer(
   "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
   POXEL,
-  solidFillBrush([255, 255, 255]),
+  solidFillBrush(COLOR_BLACK),
   {
     maxLengthPx: 200,
   },
@@ -91,11 +94,11 @@ makes a gradient:
 */
 const bg = makeRectangleLayer({ x: 280, y: 360 }, (index, layer) => {
   const { x, y } = getPixelXYCoords(index, layer);
-  return [
+  return colorFromRgb(
     (x / layer.width) * 255,
     (y / layer.height) * 255,
     255,
-  ] as Color;
+  );
 });
 
 /*
@@ -107,7 +110,7 @@ const clock = scaleLayer(
   makeTextLayer(
     Date.now().toString(),
     LUCAS,
-    solidFillBrush([255, 255, 255]),
+    solidFillBrush(COLOR_WHITE),
     {
       breakLinesOn: "", // break on anything
       maxLengthPx: 50,
@@ -118,7 +121,7 @@ const clock = scaleLayer(
 const clockShadow = paintLayer(clock, (existingColor) =>
   isAlphaColor(existingColor)
     ? () => existingColor
-    : solidFillBrush([0, 0, 0]),
+    : solidFillBrush(COLOR_BLACK),
 );
 const clockWithShadow = overlayLayersOver(
   [clock],
@@ -164,7 +167,7 @@ const withTitle = (layer: Layer, title: string) => {
   const titleLayer = makeTextLayer(
     title.toUpperCase(),
     POXEL,
-    solidFillBrush([0, 0, 0]),
+    solidFillBrush(COLOR_BLACK),
   );
   const gap = 4;
   return overlayLayersOver(

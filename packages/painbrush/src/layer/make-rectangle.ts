@@ -15,23 +15,20 @@ export const makeRectangleLayer = (
   { x: width, y: height }: XYCoords,
   brush: Brush = solidFillBrush(COLOR_BLACK),
 ): Layer => {
-  let data = [];
+  let pixels = [];
   const meta = {
     width,
     id: Math.random(),
     height,
   };
 
-  for (let index = 0; index < width * height * 3; index = index + 3) {
-    const color = brush(index, meta);
-    data.push(color[0]);
-    data.push(color[1]);
-    data.push(color[2]);
+  for (let index = 0; index < width * height; index = index + 1) {
+    pixels.push(brush(index, meta));
   }
 
   return {
     ...meta,
-    data,
+    pixels,
   };
 };
 

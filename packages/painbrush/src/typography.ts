@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import type { SingleChannelLayer } from "./layer.ts";
+import type { SingleChannelImage } from "./layer.ts";
 import type { PackerCharactersWithTrim } from "../src-packer/_.js";
 import path from "path";
 
@@ -22,7 +22,7 @@ export type PxFontFile = {
 };
 
 export interface Font {
-  getCharacter: (c: string) => SingleChannelLayer;
+  getCharacter: (c: string) => SingleChannelImage;
 }
 
 export const loadBuiltInFont = async () => {
@@ -85,11 +85,11 @@ export const useFont = async (
   };
 
   const FONT = {
-    getCharacter: (c: string): SingleChannelLayer => {
+    getCharacter: (c: string): SingleChannelImage => {
       return {
         ...getCharacterFromFont(c),
         id: Math.random(),
-      } as SingleChannelLayer;
+      } as SingleChannelImage;
     },
   };
 

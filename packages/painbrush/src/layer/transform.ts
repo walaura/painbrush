@@ -1,7 +1,6 @@
 import {
   getPixelXYCoords,
   getPixelColor,
-  getPixelFromSingleChannelLayer,
   type XYCoords,
   COORDS_ZERO,
   getPixelIndexFromCoords,
@@ -13,19 +12,11 @@ import {
 import {
   blendColor,
   COLOR_ALPHA,
-  COLOR_BLACK,
   type Color,
 } from "../color/utils.ts";
-import {
-  solidFillBrush,
-  alphaBrush,
-  type Brush,
-} from "../color/brush.ts";
-import type {
-  Layer,
-  FourChannelLayer,
-  SingleChannelLayer,
-} from "../layer.ts";
+import { type Brush } from "../color/brush.ts";
+import type { Layer } from "../layer.ts";
+import type { LayerParams } from "../image.ts";
 
 /**
  * Applies what i think is a nearest-neighbor transform to the layer. only integer transforms _really_ work for precise results but you can get some cool effects with floats
@@ -52,13 +43,13 @@ export const scaleLayer = (
 
 export const paintLayer = (
   layer: Layer,
-  painter: (existingColor: Color) => Brush,
+  painterFn: (existingColor: Color) => Brush,
 ): Layer => {
-  const data = [];
+  const pixels = [];
   for (
     let index = 0;
-    index < layer.width * layer.height * 3;
-    index = index + 3
+    index < layer.width * layer.height;
+    index = index + 1
   ) {
     const coords = getPixelXYCoords(index, layer);
     const sourcePixelColor = getPixelColor(
@@ -66,13 +57,11 @@ export const paintLayer = (
       layer,
     ) as NonNullable<Color>;
 
-    const newColor = painter(sourcePixelColor)(index, layer);
-    data.push(newColor[0]);
-    data.push(newColor[1]);
-    data.push(newColor[2]);
+    const newColor = painterFn(sourcePixelColor)(index, layer);
+    pixels.push(newColor);
   }
 
-  return { ...layer, data };
+  return { ...layer, pixels };
 };
 
 /**
@@ -90,84 +79,32 @@ export const padLayer = (source: Layer, offset: XYCoords) => {
   return target;
 };
 
-/**
- * Turns a 4 bit layer into a 3 bit layer.
- * */
-export const deflateLayer = (layer: FourChannelLayer): Layer => {
-  let data = [];
-  for (let i = 0; i < [...layer.data].length; i += 4) {
-    if (layer.data[i + 3] === 0) {
-      data.push(...COLOR_ALPHA);
-      continue;
-    }
-    data.push(layer.data[i]);
-    data.push(layer.data[i + 1]);
-    data.push(layer.data[i + 2]);
-  }
-  const { isFourChannel, ...otherLayerStuff } = layer;
-  return {
-    ...otherLayerStuff,
-    data,
-  };
-};
-
-/**
- * Turns a 1 bit layer into a 3 bit layer.
- *
- * Note!!! 1 bit layers are only really supported for fonts bc its a pain to reason about both at once
- * */
-export const inflateLayer = (
-  layer: SingleChannelLayer,
-  fgBrush: Brush = solidFillBrush(COLOR_BLACK),
-  bgBrush: Brush = alphaBrush(),
-): Layer => {
-  return makeRectangleLayer(
-    { x: Math.floor(layer.width), y: Math.floor(layer.height) },
-    (index, meta) => {
-      const coords = getPixelXYCoords(index, meta);
-      const maybeTargetPixel = getPixelFromSingleChannelLayer(
-        coords,
-        layer,
-      );
-
-      return maybeTargetPixel
-        ? fgBrush(index, meta)
-        : bgBrush(index, meta);
-    },
-  );
-};
-type LayerParams = {
-  offset?: XYCoords;
-};
-
 /*
 Faster but destructive. No blend modes, no checks, super useful if painting over canvases tho. overrides source.
 */
 export const punchLayerOver = (
-  source: Layer,
-  target: Layer,
+  back: Layer,
+  front: Layer,
   { offset = COORDS_ZERO }: LayerParams = {},
 ): void => {
-  const data = source.data;
+  const pixels = back.pixels;
   for (
     let index = 0;
-    index < target.width * target.height * 3;
-    index = index + 3
+    index < front.width * front.height;
+    index = index + 1
   ) {
-    const coords = getPixelXYCoords(index, target);
-    const targetPixelColor = getPixelColor(coords, target) as Color;
+    const coords = getPixelXYCoords(index, front);
+    const frontPixelColor = getPixelColor(coords, front) as Color;
 
-    const sourcePixelIndex = getPixelIndexFromCoords(
+    const backPixelIndex = getPixelIndexFromCoords(
       {
         x: coords.x + offset.x,
         y: coords.y + offset.y,
       },
-      source,
+      back,
     );
 
-    data[sourcePixelIndex] = targetPixelColor[0];
-    data[sourcePixelIndex + 1] = targetPixelColor[1];
-    data[sourcePixelIndex + 2] = targetPixelColor[2];
+    pixels[backPixelIndex] = frontPixelColor;
   }
 };
 
@@ -175,41 +112,37 @@ export const punchLayerOver = (
 Overlay a layer over another, apply an offset and maybe eventually a blend mode??
 */
 export const overlayLayerOver = (
-  source: Layer,
-  target: Layer,
+  back: Layer,
+  front: Layer,
   { offset = COORDS_ZERO }: LayerParams = {},
 ) => {
-  const data = [...source.data];
+  const pixels = [...back.pixels];
   for (
     let index = 0;
-    index < target.width * target.height * 3;
-    index = index + 3
+    index < front.width * front.height;
+    index = index + 1
   ) {
-    const coords = getPixelXYCoords(index, target);
-    const coordsAtSource = {
+    const coords = getPixelXYCoords(index, front);
+    const coordsAtBack = {
       x: coords.x + offset.x,
       y: coords.y + offset.y,
     };
 
-    const targetPixelColor = getPixelColor(coords, target) as Color;
-    const sourcePixelColor = getPixelColor(coordsAtSource, source);
-
-    if (sourcePixelColor === null) {
+    const frontPixelColor = getPixelColor(coords, front) as Color;
+    const backPixelColor = getPixelColor(coordsAtBack, back);
+    if (backPixelColor === null) {
       continue;
     }
 
-    const sourcePixelIndex = getPixelIndexFromCoords(
-      coordsAtSource,
-      source,
+    const backPixelIndex = getPixelIndexFromCoords(
+      coordsAtBack,
+      back,
     );
-    const newColor = blendColor(targetPixelColor, sourcePixelColor);
-
-    data[sourcePixelIndex] = newColor[0];
-    data[sourcePixelIndex + 1] = newColor[1];
-    data[sourcePixelIndex + 2] = newColor[2];
+    const newColor = blendColor(frontPixelColor, backPixelColor);
+    pixels[backPixelIndex] = newColor;
   }
 
-  return { ...source, data };
+  return { ...back, pixels };
 };
 
 /**

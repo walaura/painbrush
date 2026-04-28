@@ -1,6 +1,9 @@
 import { readFile, writeFile } from "fs/promises";
 import {
   borderBrush,
+  COLOR_BLACK,
+  COLOR_WHITE,
+  colorFromRgb,
   isAlphaColor,
   solidFillBrush,
 } from "painbrush/color";
@@ -38,13 +41,13 @@ export const makeRenderCall = async (
   }) => {
     const sun = makeRectangleLayer(
       { x: 30, y: 30 },
-      borderBrush(3, [255, 255, 0]),
+      borderBrush(3, 0xffff00),
     );
 
     const text = makeTextLayer(
       "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
       POXEL,
-      solidFillBrush([255, 255, 255]),
+      solidFillBrush(0xffffff),
       {
         maxLengthPx: 200,
       },
@@ -54,11 +57,11 @@ export const makeRenderCall = async (
       { x: 280, y: 360 },
       (index, layer) => {
         const { x, y } = getPixelXYCoords(index, layer);
-        return [
+        return colorFromRgb(
           (x / layer.width) * 255,
           (y / layer.height) * 255,
           bgColor,
-        ] as Color;
+        );
       },
     );
 
@@ -66,7 +69,7 @@ export const makeRenderCall = async (
       makeTextLayer(
         Date.now().toString(),
         LUCAS,
-        solidFillBrush([255, 255, 255]),
+        solidFillBrush(COLOR_WHITE),
         {
           breakLinesOn: "", // break on anything
           maxLengthPx: 50,
@@ -77,7 +80,7 @@ export const makeRenderCall = async (
     const clockShadow = paintLayer(clock, (existingColor) =>
       isAlphaColor(existingColor)
         ? () => existingColor
-        : solidFillBrush([0, 0, 0]),
+        : solidFillBrush(0x000000),
     );
     const clockWithShadow = overlayLayersOver(
       [clock],
@@ -108,7 +111,7 @@ const images = overlayLayersOver(
       const titleLayer = makeTextLayer(
         title.toUpperCase(),
         POXEL,
-        solidFillBrush([0, 0, 0]),
+        solidFillBrush(COLOR_BLACK),
       );
       const gap = 4;
       return overlayLayersOver(

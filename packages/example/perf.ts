@@ -1,4 +1,4 @@
-import { solidFillBrush } from "painbrush/color";
+import { COLOR_WHITE, solidFillBrush } from "painbrush/color";
 import { makeTextLayer, scaleLayer } from "painbrush/layer";
 import { loadBuiltInFont } from "painbrush/typography";
 
@@ -31,7 +31,7 @@ const longSentence = wrap("Long sentence", () => {
 const st = makeTextLayer(
   "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
   POXEL,
-  solidFillBrush([255, 255, 255]),
+  solidFillBrush(COLOR_WHITE),
   {
     maxLengthPx: 200,
   },

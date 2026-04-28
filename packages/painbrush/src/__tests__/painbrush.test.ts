@@ -4,7 +4,9 @@ import {
   borderBrush,
   solidFillBrush,
   isAlphaColor,
-  type Color,
+  colorFromRgb,
+  COLOR_WHITE,
+  COLOR_BLACK,
 } from "../color.ts";
 import {
   makeRectangleLayer,
@@ -35,13 +37,13 @@ describe("Painbrush", async () => {
 
     const sun = makeRectangleLayer(
       { x: 30, y: 30 },
-      borderBrush(3, [255, 255, 0]),
+      borderBrush(3, 0xffff00),
     );
 
     const text = makeTextLayer(
       "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
       POXEL,
-      solidFillBrush([255, 255, 255]),
+      solidFillBrush(0xffffff),
       {
         maxLengthPx: 200,
       },
@@ -51,11 +53,11 @@ describe("Painbrush", async () => {
       { x: 280, y: 360 },
       (index, layer) => {
         const { x, y } = getPixelXYCoords(index, layer);
-        return [
+        return colorFromRgb(
           (x / layer.width) * 255,
           (y / layer.height) * 255,
           255,
-        ] as Color;
+        );
       },
     );
 
@@ -63,7 +65,7 @@ describe("Painbrush", async () => {
       makeTextLayer(
         "1234567890",
         POXEL,
-        solidFillBrush([255, 255, 255]),
+        solidFillBrush(COLOR_WHITE),
         {
           breakLinesOn: "", // break on anything
           maxLengthPx: 50,
@@ -74,7 +76,7 @@ describe("Painbrush", async () => {
     const clockShadow = paintLayer(clock, (existingColor) =>
       isAlphaColor(existingColor)
         ? () => existingColor
-        : solidFillBrush([0, 0, 0]),
+        : solidFillBrush(COLOR_BLACK),
     );
     const clockWithShadow = overlayLayersOver(
       [clock],
@@ -90,7 +92,7 @@ describe("Painbrush", async () => {
       const titleLayer = makeTextLayer(
         title.toUpperCase(),
         POXEL,
-        solidFillBrush([0, 0, 0]),
+        solidFillBrush(COLOR_BLACK),
       );
       const gap = 4;
       return overlayLayersOver(
@@ -151,7 +153,12 @@ describe("Painbrush", async () => {
       [bg],
     );
 
-    expect(layers).toMatchSnapshot();
+    expect(
+      require("crypto")
+        .createHash("sha1")
+        .update(JSON.stringify(layers))
+        .digest("base64"),
+    ).toMatchSnapshot();
 
     const bmp = toImage(layers);
     await writeFile(

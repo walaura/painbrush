@@ -15,8 +15,8 @@ export type FontMetaJSON = {
    * Configure how the specimen image will show up
    */
   specimen: {
-    color: Color;
-    background: Color;
+    color: [number, number, number];
+    background: [number, number, number];
   };
 };
 
