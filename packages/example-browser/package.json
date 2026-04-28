@@ -4,7 +4,8 @@
     "packageExports": true
   },
   "scripts": {
-    "start": "rm -rf dist .parcel-cache && parcel serve ./src/index.html"
+    "start": "rm -rf dist .parcel-cache && parcel serve ./src/index.html",
+    "build": "rm -rf dist .parcel-cache && parcel build ./src/index.html"
   },
   "dependencies": {
     "@types/node": "^25.6.0",
