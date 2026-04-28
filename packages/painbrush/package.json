@@ -1,7 +1,7 @@
 {
   "name": "painbrush",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "",
   "homepage": "https://github.com/walaura/painbrush#readme",
   "bugs": {
@@ -33,7 +33,7 @@
     "./color": "./src/color.ts",
     "./layer": "./src/layer.ts",
     "./typography": "./src/typography.ts",
-    "./_DEFAULT_FONT_.pxfont": "./src/typography/poxel.pxfont"
+    "./_DEFAULT_FONT_.pxfont": "./static/poxel.pxfont"
   },
   "bin": {
     "painbrush-font-packer": "./packer.ts"
@@ -42,7 +42,8 @@
     "@types/node": "^25.6.0"
   },
   "scripts": {
-    "test": "vitest",
-    "build": "tsc --outDir dist --project tsconfig-build.json && cp package.json dist/package.json"
+    "test": "vitest --exclude dist",
+    "build": "tsc --outDir dist --project tsconfig-build.json && node prepare.ts",
+    "publish-js": "npm run build && cd ./dist && npm publish"
   }
 }

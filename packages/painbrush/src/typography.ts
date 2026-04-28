@@ -28,7 +28,7 @@ export interface Font {
 export const loadBuiltInFont = async () => {
   return await useFont(
     readFile(
-      path.resolve(import.meta.dirname, "./typography/poxel.pxfont"),
+      path.resolve(import.meta.dirname, "../static/poxel.pxfont"),
     ),
   );
 };
