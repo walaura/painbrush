@@ -5,22 +5,17 @@ import lucasHandle from "./lucas.pxfont";
 import { makeRenderCall } from "./draw.ts";
 
 const init = async () => {
-  let a = (
-    document.querySelector("input:nth-child(1)") as HTMLInputElement
-  ).value;
-  let b = (
-    document.querySelector("input:nth-child(2)") as HTMLInputElement
-  ).value;
-  let c = (
-    document.querySelector("input:nth-child(3)") as HTMLInputElement
-  ).value;
+  const sliders = [...document.querySelectorAll("input")].map(
+    (input) => parseFloat(input.value),
+  );
 
   const renderImage = await makeRenderCall(poxelHandle, lucasHandle);
   const updateImgTag = async () => {
     let img = await renderImage({
-      bgColor: parseFloat(a),
-      pos: parseFloat(b),
-      zoom: parseFloat(c),
+      bgColor: sliders[0],
+      pos: sliders[1],
+      posY: sliders[2],
+      zoom: sliders[3],
     });
     requestAnimationFrame(async () => {
       (document.querySelector("img") as HTMLImageElement).src =
@@ -28,24 +23,14 @@ const init = async () => {
     });
   };
 
-  (
-    document.querySelector("input:nth-child(1)") as HTMLInputElement
-  ).oninput = ({ target }) => {
-    a = (target as HTMLInputElement).value ?? 0;
-    updateImgTag();
-  };
-  (
-    document.querySelector("input:nth-child(2)") as HTMLInputElement
-  ).oninput = ({ target }) => {
-    b = (target as HTMLInputElement).value ?? 0;
-    updateImgTag();
-  };
-  (
-    document.querySelector("input:nth-child(3)") as HTMLInputElement
-  ).oninput = ({ target }) => {
-    c = (target as HTMLInputElement).value ?? 0;
-    updateImgTag();
-  };
+  [...document.querySelectorAll("input")].map((input, index) =>
+    input.addEventListener("input", (ev) => {
+      sliders[index] = parseFloat(
+        (ev.target as HTMLInputElement).value,
+      );
+      updateImgTag();
+    }),
+  );
   updateImgTag();
 };
 init();

@@ -28,10 +28,12 @@ export const makeRenderCall = async (
   return async ({
     bgColor,
     pos,
+    posY,
     zoom,
   }: {
     bgColor: number;
     pos: number;
+    posY: number;
     zoom: number;
   }) => {
     const sun = makeRectangleLayer(
@@ -132,7 +134,7 @@ const images = overlayLayersOver(
       [
         sun,
         {
-          offset: { x: 200 - pos, y: 100 },
+          offset: { x: pos, y: posY },
         },
       ],
       [
