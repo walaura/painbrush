@@ -170,7 +170,7 @@ const specimenImg = padLayer(
       breakLinesOn: "", // break on anything
     },
   ),
-  [metrics.width, metrics.height],
+  { x: metrics.width, y: metrics.height },
   solidFillBrush(fontMeta.specimen?.background ?? [255, 255, 255]),
 );
 

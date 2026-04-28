@@ -33,7 +33,7 @@ export const makeRenderCall = async (
     pos: number;
   }) => {
     const sun = makeRectangleLayer(
-      [30, 30],
+      { x: 30, y: 30 },
       borderBrush(3, [255, 255, 0]),
     );
 
@@ -46,16 +46,17 @@ export const makeRenderCall = async (
       },
     );
 
-    const bg = makeRectangleLayer([280, 360], (index, layer) => {
-      const {
-        coords: [x, y],
-      } = getPixelXYCoords(index, layer);
-      return [
-        (x / layer.width) * 255,
-        (y / layer.height) * 255,
-        bgColor,
-      ] as Color;
-    });
+    const bg = makeRectangleLayer(
+      { x: 280, y: 360 },
+      (index, layer) => {
+        const { x, y } = getPixelXYCoords(index, layer);
+        return [
+          (x / layer.width) * 255,
+          (y / layer.height) * 255,
+          bgColor,
+        ] as Color;
+      },
+    );
 
     const clock = scaleLayer(
       makeTextLayer(
@@ -67,7 +68,7 @@ export const makeRenderCall = async (
           maxLengthPx: 50,
         },
       ),
-      [2, 2],
+      { x: 2, y: 2 },
     );
     const clockShadow = paintLayer(clock, (existingColor) =>
       isAlphaColor(existingColor)
@@ -76,8 +77,8 @@ export const makeRenderCall = async (
     );
     const clockWithShadow = overlayLayersOver(
       [clock],
-      [clockShadow, { offset: [2, 2] }],
-      [makeBlankLayer([clock.width + 2, clock.height + 2])],
+      [clockShadow, { offset: { x: 2, y: 2 } }],
+      [makeBlankLayer({ x: clock.width + 2, y: clock.height + 2 })],
     );
 
     /*
@@ -108,12 +109,12 @@ const images = overlayLayersOver(
       const gap = 4;
       return overlayLayersOver(
         [titleLayer],
-        [layer, { offset: [0, titleLayer.height + gap] }],
+        [layer, { offset: { x: 0, y: titleLayer.height + gap } }],
         [
-          makeBlankLayer([
-            Math.max(titleLayer.width, layer.width),
-            titleLayer.height + gap + layer.height,
-          ]),
+          makeBlankLayer({
+            x: Math.max(titleLayer.width, layer.width),
+            y: titleLayer.height + gap + layer.height,
+          }),
         ],
       );
     };
@@ -129,25 +130,25 @@ const images = overlayLayersOver(
       [
         sun,
         {
-          offset: [200 - pos, 100],
+          offset: { x: 200 - pos, y: 100 },
         },
       ],
       [
         textWithTitle,
         {
-          offset: [
-            10,
-            10,
-          ],
+          offset: {
+            x: 10,
+            y: 10,
+          },
         },
       ],
       [
         clockWithTitle,
         {
-          offset: [
-            10,
-            10 + textWithTitle.height + 10,
-          ],
+          offset: {
+            x: 10,
+            y: 10 + textWithTitle.height + 10,
+          },
         },
       ],
       // [

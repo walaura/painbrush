@@ -3,6 +3,7 @@ import {
   getPixelColor,
   getPixelFromSingleChannelLayer,
   type XYCoords,
+  COORDS_ZERO,
 } from "../pixel.ts";
 import {
   makeBlankLayer,
@@ -29,19 +30,17 @@ import type {
  * */
 export const scaleLayer = (
   source: Layer,
-  [scaleX, scaleY]: XYCoords,
+  { x: scaleX, y: scaleY }: XYCoords,
 ): Layer => {
   return makeRectangleLayer(
-    [
-      Math.floor(source.width * scaleX),
-      Math.floor(source.height * scaleY),
-    ],
+    {
+      x: ~~(source.width * scaleX),
+      y: ~~(source.height * scaleY),
+    },
     (index, meta) => {
-      const {
-        coords: [x, y],
-      } = getPixelXYCoords(index, meta);
+      const { x, y } = getPixelXYCoords(index, meta);
       const maybeTargetPixel = getPixelColor(
-        [Math.floor(x / scaleX), Math.floor(y / scaleY)],
+        { x: Math.floor(x / scaleX), y: Math.floor(y / scaleY) },
         source,
       );
 
@@ -60,7 +59,7 @@ export const paintLayer = (
     index < layer.width * layer.height * 3;
     index = index + 3
   ) {
-    const { coords } = getPixelXYCoords(index, layer);
+    const coords = getPixelXYCoords(index, layer);
     const sourcePixelColor = getPixelColor(
       coords,
       layer,
@@ -81,18 +80,18 @@ export const paintLayer = (
  */
 export const padLayer = (
   source: Layer,
-  [spacingX, spacingY]: XYCoords,
+  offset: XYCoords,
   bgBrush: Brush = alphaBrush(),
 ) => {
   const target = makeRectangleLayer(
-    [
-      source.width + spacingX * 2,
-      source.height + spacingY * 2,
-    ],
+    {
+      x: source.width + offset.x * 2,
+      y: source.height + offset.y * 2,
+    },
     bgBrush,
   );
   return overlayLayerOver(target, source, {
-    offset: [spacingX, spacingY],
+    offset,
   });
 };
 
@@ -128,13 +127,11 @@ export const inflateLayer = (
   bgBrush: Brush = alphaBrush(),
 ): Layer => {
   return makeRectangleLayer(
-    [Math.floor(layer.width), Math.floor(layer.height)],
+    { x: Math.floor(layer.width), y: Math.floor(layer.height) },
     (index, meta) => {
-      const {
-        coords: [x, y],
-      } = getPixelXYCoords(index, meta);
+      const coords = getPixelXYCoords(index, meta);
       const maybeTargetPixel = getPixelFromSingleChannelLayer(
-        [x, y],
+        coords,
         layer,
       );
 
@@ -152,22 +149,21 @@ Put a layer over another, apply an offset and maybe eventually a blend mode??
 export const overlayLayerOver = (
   source: Layer,
   target: Layer,
-  { offset = [0, 0] }: LayerParams = {},
+  { offset = COORDS_ZERO }: LayerParams = {},
 ) => {
   const data = [];
-  const [offsetX, offsetY] = offset;
   for (
     let index = 0;
     index < source.width * source.height * 3;
     index = index + 3
   ) {
-    const { coords } = getPixelXYCoords(index, source);
+    const coords = getPixelXYCoords(index, source);
     const sourcePixelColor = getPixelColor(
       coords,
       source,
     ) as NonNullable<Color>;
     const maybeTargetPixelColor = getPixelColor(
-      [coords[0] - offsetX, coords[1] - offsetY],
+      { x: coords.x - offset.x, y: coords.y - offset.y },
       target,
     );
 
@@ -194,7 +190,7 @@ export const overlayLayersOver = (
   let first = flippedArgs.shift();
   if (first == null) {
     console.warn("You tried to overlay 0 layers wtf");
-    return makeBlankLayer([0, 0]);
+    return makeBlankLayer(COORDS_ZERO);
   }
   let [canvas, canvasParams] = first;
   if (canvasParams != null) {

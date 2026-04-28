@@ -52,7 +52,7 @@ Everything is layers. In fairness your actual image is also a
 'layer', just with extra data
 */
 const sun = makeRectangleLayer(
-  [30, 30],
+  { x: 30, y: 30 },
   borderBrush(3, [255, 255, 0]),
 );
 
@@ -67,6 +67,7 @@ You can customize a bunch of brushes (well get to that) to paint
 the characters, the back plate of a character, or the bounding box 
 of the text. lots of fun to be had!
 */
+
 const text = makeTextLayer(
   "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
   POXEL,
@@ -88,10 +89,8 @@ Normally you just wanna use a solid color and theres
 solidFillBrush for that. This is a fancier one that 
 makes a gradient:
 */
-const bg = makeRectangleLayer([280, 360], (index, layer) => {
-  const {
-    coords: [x, y],
-  } = getPixelXYCoords(index, layer);
+const bg = makeRectangleLayer({ x: 280, y: 360 }, (index, layer) => {
+  const { x, y } = getPixelXYCoords(index, layer);
   return [
     (x / layer.width) * 255,
     (y / layer.height) * 255,
@@ -114,7 +113,7 @@ const clock = scaleLayer(
       maxLengthPx: 50,
     },
   ),
-  [2, 2],
+  { x: 2, y: 2 },
 );
 const clockShadow = paintLayer(clock, (existingColor) =>
   isAlphaColor(existingColor)
@@ -123,8 +122,8 @@ const clockShadow = paintLayer(clock, (existingColor) =>
 );
 const clockWithShadow = overlayLayersOver(
   [clock],
-  [clockShadow, { offset: [2, 2] }],
-  [makeBlankLayer([clock.width + 2, clock.height + 2])],
+  [clockShadow, { offset: { x: 2, y: 2 } }],
+  [makeBlankLayer({ x: clock.width + 2, y: clock.height + 2 })],
 );
 
 /*
@@ -142,16 +141,16 @@ const images = overlayLayersOver(
   [
     makeImageLayer(await readFile("./test-junk/goomba-24.bmp")),
     {
-      offset: [16, 0],
+      offset: { x: 16, y: 0 },
     },
   ],
   [
     makeImageLayer(await readFile("./test-junk/goomba-8.bmp")),
     {
-      offset: [32, 0],
+      offset: { x: 32, y: 0 },
     },
   ],
-  [makeBlankLayer([16 * 3, 16])],
+  [makeBlankLayer({ x: 16 * 3, y: 16 })],
 ) as Layer;
 
 /*
@@ -170,12 +169,12 @@ const withTitle = (layer: Layer, title: string) => {
   const gap = 4;
   return overlayLayersOver(
     [titleLayer],
-    [layer, { offset: [0, titleLayer.height + gap] }],
+    [layer, { offset: { x: 0, y: titleLayer.height + gap } }],
     [
-      makeBlankLayer([
-        Math.max(titleLayer.width, layer.width),
-        titleLayer.height + gap + layer.height,
-      ]),
+      makeBlankLayer({
+        x: Math.max(titleLayer.width, layer.width),
+        y: titleLayer.height + gap + layer.height,
+      }),
     ],
   );
 };
@@ -183,7 +182,7 @@ const withTitle = (layer: Layer, title: string) => {
 const textWithTitle = withTitle(text, "little text");
 const clockWithTitle = withTitle(clockWithShadow, "Clock");
 const imagesWithTitle = withTitle(
-  scaleLayer(images, [6, 12]),
+  scaleLayer(images, { x: 6, y: 12 }),
   "Goombas",
 );
 
@@ -191,34 +190,32 @@ const layers = overlayLayersOver(
   [
     sun,
     {
-      offset: [200, 100],
+      offset: { x: 200, y: 100 },
     },
   ],
   [
     textWithTitle,
     {
-      offset: [
-        10,
-        10,
-      ],
+      offset: { x: 10, y: 10 },
     },
   ],
   [
     clockWithTitle,
     {
-      offset: [
-        10,
-        10 + textWithTitle.height + 10,
-      ],
+      offset: {
+        x: 10,
+        y: 10 + textWithTitle.height + 10,
+      },
     },
   ],
   [
     imagesWithTitle,
     {
-      offset: [
-        10,
-        10 + textWithTitle.height + 10 + clockWithTitle.height + 10,
-      ],
+      offset: {
+        x: 10,
+        y:
+          10 + textWithTitle.height + 10 + clockWithTitle.height + 10,
+      },
     },
   ],
   [bg],

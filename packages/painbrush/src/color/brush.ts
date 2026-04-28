@@ -21,9 +21,7 @@ export const borderBrush =
     innerColor: Color = COLOR_ALPHA,
   ): Brush =>
   (index, layer) => {
-    const {
-      coords: [x, y],
-    } = getPixelXYCoords(index, layer);
+    const { x, y } = getPixelXYCoords(index, layer);
     if (y < size || layer.height - size <= y) {
       return borderColor;
     }

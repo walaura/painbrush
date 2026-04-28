@@ -104,20 +104,20 @@ export const makeTextLayer = (
       ...(wordLayers.map((layer) => [
         layer[0],
         {
-          offset: [
-            prevLineOffset + (layer[1] as number),
-            verticalOffset,
-          ],
+          offset: {
+            x: prevLineOffset + (layer[1] as number),
+            y: verticalOffset,
+          },
         },
       ]) as Parameters<typeof overlayLayersOver>),
     );
   }
 
   let bg = makeRectangleLayer(
-    [
-      (maxWidth = Math.max(lineOffset, maxWidth)),
-      lineHeight * lines,
-    ],
+    {
+      x: (maxWidth = Math.max(lineOffset, maxWidth)),
+      y: lineHeight * lines,
+    },
     bgPlateBrush,
   );
   const textLayer = overlayLayersOver(

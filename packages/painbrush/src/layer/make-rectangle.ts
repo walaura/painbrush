@@ -12,7 +12,7 @@ This makes a rectangle with any fill.
 Useful for the initial canvas
 */
 export const makeRectangleLayer = (
-  [width, height]: XYCoords,
+  { x: width, y: height }: XYCoords,
   brush: Brush = solidFillBrush([255, 255, 255]),
 ): Layer => {
   let data = [];

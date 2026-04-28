@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 //@ts-expect-error
 import poxelHandle from "painbrush/_DEFAULT_FONT_.pxfont";
 //@ts-expect-error`
