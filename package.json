@@ -5,6 +5,7 @@
   "author": "walaura",
   "dependencies": {
     "wah": "file:./packages/painbrush",
-    "woo": "file:./packages/example"
+    "woo": "file:./packages/example",
+    "weh": "file:./packages/example-browser"
   }
 }

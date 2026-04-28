@@ -7,6 +7,7 @@
     "start": "rm -rf dist .parcel-cache && parcel serve ./src/index.html",
     "build": "rm -rf dist .parcel-cache && parcel build ./src/index.html"
   },
+  "version": "1.0.0",
   "dependencies": {
     "@types/node": "^25.6.0",
     "painbrush": "file:./../painbrush",
