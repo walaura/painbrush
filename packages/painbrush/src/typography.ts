@@ -1,6 +1,7 @@
 import { readFile } from "fs/promises";
 import type { SingleChannelLayer } from "./layer.ts";
 import type { PackerCharactersWithTrim } from "../src-packer/_.js";
+import path from "path";
 
 export type FontHandle =
   | Buffer<ArrayBuffer>
@@ -25,7 +26,11 @@ export interface Font {
 }
 
 export const loadBuiltInFont = async () => {
-  return await useFont(readFile("./fonts/poxel.pxfont"));
+  return await useFont(
+    readFile(
+      path.resolve(import.meta.dirname, "./typography/poxel.pxfont"),
+    ),
+  );
 };
 
 const unpackFontHandle = async (
