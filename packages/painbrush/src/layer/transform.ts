@@ -76,23 +76,17 @@ export const paintLayer = (
 
 /**
  * Helper for quickly spazzing out layouts, easier than manually
- * moving it
+ * moving stuff
  */
-export const padLayer = (
-  source: Layer,
-  offset: XYCoords,
-  bgBrush: Brush = alphaBrush(),
-) => {
-  const target = makeRectangleLayer(
-    {
-      x: source.width + offset.x * 2,
-      y: source.height + offset.y * 2,
-    },
-    bgBrush,
-  );
-  return overlayLayerOver(target, source, {
+export const padLayer = (source: Layer, offset: XYCoords) => {
+  const target = makeBlankLayer({
+    x: source.width + offset.x * 2,
+    y: source.height + offset.y * 2,
+  });
+  destructivelyAddLayerOver(target, source, {
     offset,
   });
+  return target;
 };
 
 /**
@@ -141,7 +135,36 @@ export const inflateLayer = (
     },
   );
 };
-type LayerParams = { offset?: XYCoords };
+type LayerParams = {
+  offset?: XYCoords;
+};
+
+/*
+Faster but destructive. No blend modes, no checks, super useful if painting over canvases tho. overrides source.
+*/
+export const destructivelyAddLayerOver = (
+  source: Layer,
+  target: Layer,
+  { offset = COORDS_ZERO }: LayerParams = {},
+): void => {
+  const data = source.data;
+  for (
+    let index = 0;
+    index < source.width * source.height * 3;
+    index = index + 3
+  ) {
+    const coords = getPixelXYCoords(index, source);
+    const maybeTargetPixelColor = getPixelColor(
+      { x: coords.x - offset.x, y: coords.y - offset.y },
+      target,
+    );
+    if (maybeTargetPixelColor) {
+      data[index] = maybeTargetPixelColor[0];
+      data[index + 1] = maybeTargetPixelColor[1];
+      data[index + 2] = maybeTargetPixelColor[2];
+    }
+  }
+};
 
 /*
 Put a layer over another, apply an offset and maybe eventually a blend mode??
@@ -158,22 +181,22 @@ export const overlayLayerOver = (
     index = index + 3
   ) {
     const coords = getPixelXYCoords(index, source);
-    const sourcePixelColor = getPixelColor(
-      coords,
-      source,
-    ) as NonNullable<Color>;
     const maybeTargetPixelColor = getPixelColor(
       { x: coords.x - offset.x, y: coords.y - offset.y },
       target,
     );
 
+    const sourcePixelColor = getPixelColor(
+      coords,
+      source,
+    ) as NonNullable<Color>;
     const newColor = blendColor(
       maybeTargetPixelColor,
       sourcePixelColor,
     );
-    data.push(newColor[0]);
-    data.push(newColor[1]);
-    data.push(newColor[2]);
+    data[index] = newColor[0];
+    data[index + 1] = newColor[1];
+    data[index + 2] = newColor[2];
   }
 
   return { ...source, data };
@@ -201,8 +224,8 @@ export const overlayLayersOver = (
     );
   }
 
-  for (let [layer, params] of args) {
-    canvas = overlayLayerOver(canvas, layer, params);
+  for (let arg of args) {
+    canvas = overlayLayerOver(canvas, arg[0], arg[1]);
   }
   return canvas;
 };

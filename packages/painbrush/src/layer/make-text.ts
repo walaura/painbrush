@@ -1,4 +1,7 @@
-import { inflateLayer } from "./transform.ts";
+import {
+  destructivelyAddLayerOver,
+  inflateLayer,
+} from "./transform.ts";
 import { overlayLayersOver } from "./transform.ts";
 
 import {
@@ -104,6 +107,7 @@ export const makeTextLayer = (
       ...(wordLayers.map((layer) => [
         layer[0],
         {
+          skipBlending: true,
           offset: {
             x: prevLineOffset + (layer[1] as number),
             y: verticalOffset,
@@ -113,19 +117,17 @@ export const makeTextLayer = (
     );
   }
 
-  let bg = makeRectangleLayer(
+  let textLayer = makeRectangleLayer(
     {
       x: (maxWidth = Math.max(lineOffset, maxWidth)),
       y: lineHeight * lines,
     },
     bgPlateBrush,
   );
-  const textLayer = overlayLayersOver(
-    ...[...charLayers, [bg] as [Layer]],
-  );
 
-  if (textLayer == null) {
-    throw new Error("No text layers");
+  for (let layer of charLayers) {
+    destructivelyAddLayerOver(textLayer, layer[0], layer[1]);
   }
+
   return textLayer;
 };
