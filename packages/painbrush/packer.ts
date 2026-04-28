@@ -16,7 +16,7 @@ import {
 } from "./src-packer/helpers.ts";
 import type { FontMetaJSON } from "./src-packer/_.js";
 import path from "node:path";
-import { loadFont, type PxFontFile } from "./src/typography.ts";
+import { useFont, type PxFontFile } from "./src/typography.ts";
 
 program.addHelpText(
   "beforeAll",
@@ -163,7 +163,7 @@ const specimenImg = padLayer(
         .filter(Boolean)
         .sort()
         .join(""),
-    await loadFont(readFile(fontFileAt)),
+    await useFont(readFile(fontFileAt)),
     solidFillBrush(fontMeta.specimen?.color ?? [0, 0, 0]),
     {
       maxLengthPx: metrics.width * 12,

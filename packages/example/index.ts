@@ -17,7 +17,7 @@ import {
   type Layer,
 } from "painbrush/layer";
 import { getPixelXYCoords } from "painbrush/pixel";
-import { loadBuiltInFont, loadFont } from "painbrush/typography";
+import { loadBuiltInFont, useFont } from "painbrush/typography";
 
 /*
 
@@ -35,7 +35,7 @@ starting point, check out nom run pack-font on this project.
 */
 
 const [LUCAS, POXEL] = await Promise.all([
-  loadFont(readFile("./fonts/lucas.pxfont")),
+  useFont(readFile("./fonts/lucas.pxfont")),
   loadBuiltInFont(),
 ]);
 

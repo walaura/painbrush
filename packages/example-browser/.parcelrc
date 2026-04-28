@@ -1,0 +1,8 @@
+{
+  "extends": "@parcel/config-default",
+  "transformers": {
+    "*.pxfont": [
+      "@parcel/transformer-json"
+    ]
+  }
+}

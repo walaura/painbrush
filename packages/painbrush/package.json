@@ -31,7 +31,8 @@
     "./pixel": "./src/pixel.ts",
     "./color": "./src/color.ts",
     "./layer": "./src/layer.ts",
-    "./typography": "./src/typography.ts"
+    "./typography": "./src/typography.ts",
+    "./_DEFAULT_FONT_.pxfont": "./src/typography/poxel.pxfont"
   },
   "bin": {
     "painbrush-font-packer": "./packer.ts"

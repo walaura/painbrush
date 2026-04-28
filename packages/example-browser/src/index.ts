@@ -1,44 +1,35 @@
-import { solidFillBrush } from "painbrush/color";
-import type { Color } from "painbrush/color";
-import { toImage } from "painbrush/image";
-import {
-  makeRectangleLayer,
-  overlayLayerOver,
-} from "painbrush/layer";
-import { getPixelXYCoords } from "painbrush/pixel";
+//@ts-expect-error
+import poxelHandle from "painbrush/_DEFAULT_FONT_.pxfont";
+//@ts-expect-error`
+import lucasHandle from "./lucas.pxfont";
+import { useFont } from "painbrush/typography";
+import { makeRenderCall } from "./draw.ts";
 
-let b = window.lolw.value;
-window.lolw.oninput = (a) => {
-  b = a.target.value;
-  requestAnimationFrame(() => {
-    draw();
-  });
-};
-let c = window.lolw2.value;
-window.lolw2.oninput = (a) => {
-  c = a.target.value;
-  requestAnimationFrame(() => {
-    draw();
-  });
-};
-const draw = async () => {
-  const rect = makeRectangleLayer([280, 360], (index, layer) => {
-    const {
-      coords: [x, y],
-    } = getPixelXYCoords(index, layer);
-    return [
-      (x / layer.width) * 255,
-      (y / layer.height) * 255,
-      b,
-    ] as Color;
-  });
+const init = async () => {
+  const POXEL = await useFont(poxelHandle);
+  const LUCAS = await useFont(poxelHandle);
 
-  const boxy = makeRectangleLayer(
-    [10, c],
-    solidFillBrush([0, 255, 0]),
-  );
-  const buf = toImage(overlayLayerOver(rect, boxy));
+  let c = window.lolw2.value;
+  let b = window.lolw.value;
 
-  window.lol.src = `data:image/bmp;base64,${Buffer.from(buf).toString("base64")}`;
+  const renderImage = await makeRenderCall(poxelHandle, lucasHandle);
+  const updateImgTag = async () => {
+    let img = await renderImage({
+      bgColor: b,
+      pos: c,
+    });
+    requestAnimationFrame(async () => {
+      window.lol.src = `data:image/bmp;base64,${Buffer.from(img).toString("base64")}`;
+    });
+  };
+  window.lolw.oninput = (a) => {
+    b = a.target.value;
+    updateImgTag();
+  };
+  window.lolw2.oninput = (a) => {
+    c = a.target.value;
+    updateImgTag();
+  };
+  updateImgTag();
 };
-draw();
+init();

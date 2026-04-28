@@ -1,10 +1,11 @@
 import { readFile } from "fs/promises";
 import type { SingleChannelLayer } from "./layer.ts";
 
-type FontHandle =
+export type FontHandle =
   | Buffer<ArrayBuffer>
   | string
-  | { toString: () => string };
+  | { toString: () => string }
+  | PxFontFile;
 
 export type FontMetrics = {
   height: number;
@@ -23,15 +24,23 @@ export interface Font {
 }
 
 export const loadBuiltInFont = async () => {
-  return await loadFont(readFile("./fonts/poxel.pxfont"));
+  return await useFont(readFile("./fonts/poxel.pxfont"));
 };
 
-export const loadFont = async (
-  pxFontFile: Promise<FontHandle>,
+const unpackFontHandle = async (
+  handle: Promise<FontHandle>,
+): Promise<PxFontFile> => {
+  const file = await handle;
+  if (file instanceof Object && "alphabet" in file) {
+    return file;
+  }
+  return JSON.parse((await handle).toString()) as PxFontFile;
+};
+
+export const useFont = async (
+  handle: Promise<FontHandle>,
 ): Promise<Font> => {
-  const chars = JSON.parse(
-    (await pxFontFile).toString(),
-  ) as PxFontFile;
+  const chars = await unpackFontHandle(handle);
 
   const charmap = Object.fromEntries(
     chars.alphabet.split("").map((l, index) => {
