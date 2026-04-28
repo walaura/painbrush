@@ -2,7 +2,7 @@
 
 <div align="center">
   
-![""](https://github.com/walaura/painbrush/raw/main/packages/example/image.bmp)
+![""](https://github.com/walaura/painbrush/raw/main/packages/painbrush/doc/logo.png)
 
 _to my knowledge, the only node-based bitmap raster drawing program - i do not wish to be challenged on this._
 
@@ -10,7 +10,7 @@ _to my knowledge, the only node-based bitmap raster drawing program - i do not w
 
 # HEY!! this is still undergoing lots of active dev so updates may break. im sticking to semver as much as a i can but yk take care
 
-You can use this lib to generate images and text in the much loved bmp format. It's handy for og images for example, if you want that retro look ig
+You can use this lib to generate images and text in the much loved bmp format. It's handy for og images for example, if you want that retro look ig.
 
 ## Getting started
 
@@ -28,7 +28,7 @@ const clock = makeTextLayer(
 await writeFile("image.bmp", toImage(clock));
 ```
 
-Your code wont look that clean tho, see [this example file](https://github.com/walaura/painbrush/blob/main/packages/example/index.ts) for detailed comments.
+Your code wont look that clean tho, see [this example file](https://github.com/walaura/painbrush/blob/main/packages/example/index.ts) for detailed comments. Whole directory is really good stuff. I'm not a good doc writer
 
 There's more good stuff in there and the code is typescripted and somewhat commented so just have a play around
 
