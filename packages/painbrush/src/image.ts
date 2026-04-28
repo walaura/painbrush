@@ -1,5 +1,5 @@
 import { encode } from "fast-bmp";
-import type { Layer } from "./_.js";
+import type { Layer } from "./layer.ts";
 
 export const toImage = (
   layer: Layer,

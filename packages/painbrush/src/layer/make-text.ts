@@ -1,4 +1,3 @@
-import type { Layer } from "../_.js";
 import { inflateLayer } from "./transform.ts";
 import { overlayLayersOver } from "./transform.ts";
 
@@ -9,6 +8,7 @@ import {
 } from "../color/brush.ts";
 import { makeRectangleLayer } from "./make-rectangle.ts";
 import type { Font } from "../typography.ts";
+import type { Layer } from "../layer.ts";
 
 type TextLayerProps = {
   /**
@@ -81,7 +81,6 @@ export const makeTextLayer = (
         newline();
         continue;
       }
-      console.log(character);
       const char = inflateLayer(
         getCharacter(character),
         brush,

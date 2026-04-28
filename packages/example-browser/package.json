@@ -1,0 +1,15 @@
+{
+  "type": "module",
+  "@parcel/resolver-default": {
+    "packageExports": true
+  },
+  "browserslist": "> 0.5%, last 3 versions, not dead",
+  "dependencies": {
+    "@types/node": "^25.6.0",
+    "painbrush": "file:./../painbrush",
+    "parcel": "^2.16.4"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3"
+  }
+}

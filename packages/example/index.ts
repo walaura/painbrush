@@ -14,10 +14,10 @@ import {
   makeImageLayer,
   paintLayer,
   makeBlankLayer,
+  type Layer,
 } from "painbrush/layer";
 import { getPixelXYCoords } from "painbrush/pixel";
 import { loadBuiltInFont, loadFont } from "painbrush/typography";
-import type { Layer } from "../painbrush/src/_.js";
 
 /*
 

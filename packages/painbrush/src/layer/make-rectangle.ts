@@ -1,10 +1,11 @@
-import type { XYCoords, Layer } from "../_.js";
 import { blendColor } from "../color/utils.ts";
 import {
   type Brush,
   solidFillBrush,
   alphaBrush,
 } from "../color/brush.ts";
+import type { Layer } from "../layer.ts";
+import type { XYCoords } from "../pixel.ts";
 
 /**
 This makes a rectangle with any fill. 

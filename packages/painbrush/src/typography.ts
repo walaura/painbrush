@@ -1,11 +1,17 @@
 import { readFile } from "fs/promises";
-import type { SingleChannelLayer } from "./_.js";
+import type { SingleChannelLayer } from "./layer.ts";
+
+type FontHandle =
+  | Buffer<ArrayBuffer>
+  | string
+  | { toString: () => string };
 
 export type FontMetrics = {
   height: number;
   width: number;
   spaces: number;
 };
+
 export type PxFontFile = {
   alphabet: string;
   characters: [number, number[]][];
@@ -16,11 +22,12 @@ export interface Font {
   getCharacter: (c: string) => SingleChannelLayer;
 }
 
-export const loadBuiltInFont = async () =>
-  await loadFont(readFile("./fonts/poxel.pxfont"));
+export const loadBuiltInFont = async () => {
+  return await loadFont(readFile("./fonts/poxel.pxfont"));
+};
 
 export const loadFont = async (
-  pxFontFile: Promise<Buffer<ArrayBuffer>>,
+  pxFontFile: Promise<FontHandle>,
 ): Promise<Font> => {
   const chars = JSON.parse(
     (await pxFontFile).toString(),

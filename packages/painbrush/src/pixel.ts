@@ -1,10 +1,11 @@
 import type { Color } from "./color/utils.ts";
 import type {
-  XYCoords,
   LayerMeta,
   Layer,
   SingleChannelLayer,
-} from "./_.js";
+} from "./layer.ts";
+
+export type XYCoords = [x: number, y: number];
 
 export const getPixelXYCoords = (
   index: number,

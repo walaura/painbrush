@@ -1,13 +1,8 @@
-import type {
-  XYCoords,
-  Layer,
-  SingleChannelLayer,
-  FourChannelLayer,
-} from "../_.js";
 import {
   getPixelXYCoords,
   getPixelColor,
   getPixelFromSingleChannelLayer,
+  type XYCoords,
 } from "../pixel.ts";
 import {
   makeBlankLayer,
@@ -23,9 +18,14 @@ import {
   alphaBrush,
   type Brush,
 } from "../color/brush.ts";
+import type {
+  Layer,
+  FourChannelLayer,
+  SingleChannelLayer,
+} from "../layer.ts";
 
 /**
- * Applies what i think is a nearest-neighbor transform to the layer. only integrer transforms _really_ work for precise results but you can get some cool effects with floats
+ * Applies what i think is a nearest-neighbor transform to the layer. only integer transforms _really_ work for precise results but you can get some cool effects with floats
  * */
 export const scaleLayer = (
   source: Layer,

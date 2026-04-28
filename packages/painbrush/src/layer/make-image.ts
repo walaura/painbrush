@@ -1,6 +1,6 @@
 import { decode } from "fast-bmp";
 import { deflateLayer, inflateLayer } from "./transform.ts";
-import type { Layer } from "../_.js";
+import type { Layer } from "../layer.ts";
 
 export const makeImageLayer = (
   buffer: Buffer<ArrayBuffer>,

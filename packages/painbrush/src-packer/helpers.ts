@@ -8,7 +8,6 @@ export const printCharacter = (char: (0 | 1)[], width: number) => {
     }
     process.stdout.write(element ? chalk.bgYellowBright("◼") : "◻");
   }
-  console.log("");
 };
 
 const report = (type: 0 | 1 | 2) => (msg: string) => {
