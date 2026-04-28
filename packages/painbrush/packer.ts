@@ -129,21 +129,67 @@ if (options.print) {
 
 reportYay(`${characters.length} characters in ${fontName}`);
 
-const fontFileAt = path.join(
-  process.cwd() + "/fonts/" + fontName + ".pxfont",
-);
-await writeFile(
-  fontFileAt,
-  JSON.stringify(
-    {
-      metrics,
-      alphabet,
-      characters,
-    } as PxFontFile,
-    null,
-    2,
-  ),
-).catch((e) => {
+// Function to generate the pxfont file content
+const generatePxFontFile = (): [string, string] => {
+  const fontFileAt = path.join(
+    process.cwd() + "/fonts/" + fontName + ".pxfont",
+  );
+  return [
+    fontFileAt,
+    JSON.stringify(
+      {
+        metrics,
+        alphabet,
+        characters,
+      } as PxFontFile,
+      null,
+      2,
+    ),
+  ];
+};
+
+// Function to generate the specimen image
+const generateSpecimenImage = async (): Promise<[string, Uint8Array]> => {
+  const specimenImgPd = padLayer(
+    await makeTextLayer(
+      fontName.toUpperCase() +
+      "\n" +
+      "\n" +
+      "? " +
+      alphabet
+        .split("")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .sort()
+        .join(""),
+      await useFont(readFile(generatePxFontFile()[0])),
+      solidFillBrush(fontMeta.specimen?.color ?? [0, 0, 0]),
+      {
+        maxLengthPx: metrics.width * 12,
+        breakLinesOn: "", // break on anything
+      },
+    ),
+    { x: metrics.width, y: metrics.height },
+  );
+
+  const specimenImg = overlayLayerOver(
+    makeRectangleLayer({
+      x: specimenImgPd.width,
+      y: specimenImgPd.height
+    }, solidFillBrush(fontMeta.specimen?.background ?? [255, 255, 255]),),
+    specimenImgPd
+  );
+
+  const specimenFileAt = path.join(
+    process.cwd() + "/fonts/" + fontName + "-specimen.bmp",
+  );
+
+  return [specimenFileAt, toImage(specimenImg)];
+};
+
+// Write files
+const [fontFileAt, fontContent] = generatePxFontFile();
+await writeFile(fontFileAt, fontContent).catch((e) => {
   reportNay(
     `Font out directory does not exist at ${chalk.underline(path.parse(fontFileAt).dir)}`,
   );
@@ -152,43 +198,8 @@ await writeFile(
 
 reportYay(`Wrote pxfont file at ${chalk.underline(fontFileAt)}`);
 
-const specimenImgPd = padLayer(
-  await makeTextLayer(
-    fontName.toUpperCase() +
-    "\n" +
-    "\n" +
-    "? " +
-    alphabet
-      .split("")
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .sort()
-      .join(""),
-    await useFont(readFile(fontFileAt)),
-    solidFillBrush(fontMeta.specimen?.color ?? [0, 0, 0]),
-    {
-      maxLengthPx: metrics.width * 12,
-      breakLinesOn: "", // break on anything
-    },
-  ),
-  { x: metrics.width, y: metrics.height },
-);
-
-const specimenImg = overlayLayerOver(
-  makeRectangleLayer({
-    x: specimenImgPd.width,
-    y: specimenImgPd.height
-  }, solidFillBrush(fontMeta.specimen?.background ?? [255, 255, 255]),),
-  specimenImgPd
-)
-
-const specimenFileAt = path.join(
-  process.cwd() + "/fonts/" + fontName + "-specimen.bmp",
-);
-await writeFile(
-  "./fonts/" + fontName + "-specimen.bmp",
-  toImage(specimenImg),
-);
+const [specimenFileAt, specimenImageData] = await generateSpecimenImage();
+await writeFile(specimenFileAt, specimenImageData);
 
 reportYay(
   `Wrote specimen file at ${chalk.cyan.underline(specimenFileAt)} (check it out!)`,
