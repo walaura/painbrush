@@ -42,6 +42,7 @@
     "@types/node": "^25.6.0"
   },
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "build": "tsc --outDir dist --project tsconfig-build.json && cp package.json dist/package.json"
   }
 }
