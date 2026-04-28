@@ -9,6 +9,14 @@ export const COORDS_ZERO = { x: 0, y: 0 };
 
 export type XYCoords = { x: number; y: number };
 
+export const getPixelIndexFromCoords = (
+  coords: XYCoords,
+  { width }: LayerMeta,
+) => {
+  const xPosition = (coords.y * width + coords.x) * 3;
+  return xPosition;
+};
+
 export const getPixelXYCoords = (
   index: number,
   { width }: LayerMeta,

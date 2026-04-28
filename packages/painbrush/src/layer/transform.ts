@@ -4,6 +4,7 @@ import {
   getPixelFromSingleChannelLayer,
   type XYCoords,
   COORDS_ZERO,
+  getPixelIndexFromCoords,
 } from "../pixel.ts";
 import {
   makeBlankLayer,
@@ -150,19 +151,23 @@ export const punchLayerOver = (
   const data = source.data;
   for (
     let index = 0;
-    index < source.width * source.height * 3;
+    index < target.width * target.height * 3;
     index = index + 3
   ) {
-    const coords = getPixelXYCoords(index, source);
-    const maybeTargetPixelColor = getPixelColor(
-      { x: coords.x - offset.x, y: coords.y - offset.y },
-      target,
+    const coords = getPixelXYCoords(index, target);
+    const targetPixelColor = getPixelColor(coords, target) as Color;
+
+    const sourcePixelIndex = getPixelIndexFromCoords(
+      {
+        x: coords.x + offset.x,
+        y: coords.y + offset.y,
+      },
+      source,
     );
-    if (maybeTargetPixelColor) {
-      data[index] = maybeTargetPixelColor[0];
-      data[index + 1] = maybeTargetPixelColor[1];
-      data[index + 2] = maybeTargetPixelColor[2];
-    }
+
+    data[sourcePixelIndex] = targetPixelColor[0];
+    data[sourcePixelIndex + 1] = targetPixelColor[1];
+    data[sourcePixelIndex + 2] = targetPixelColor[2];
   }
 };
 
@@ -174,29 +179,34 @@ export const overlayLayerOver = (
   target: Layer,
   { offset = COORDS_ZERO }: LayerParams = {},
 ) => {
-  const data = [];
+  const data = [...source.data];
   for (
     let index = 0;
-    index < source.width * source.height * 3;
+    index < target.width * target.height * 3;
     index = index + 3
   ) {
-    const coords = getPixelXYCoords(index, source);
-    const maybeTargetPixelColor = getPixelColor(
-      { x: coords.x - offset.x, y: coords.y - offset.y },
-      target,
-    );
+    const coords = getPixelXYCoords(index, target);
+    const coordsAtSource = {
+      x: coords.x + offset.x,
+      y: coords.y + offset.y,
+    };
 
-    const sourcePixelColor = getPixelColor(
-      coords,
+    const targetPixelColor = getPixelColor(coords, target) as Color;
+    const sourcePixelColor = getPixelColor(coordsAtSource, source);
+
+    if (sourcePixelColor === null) {
+      continue;
+    }
+
+    const sourcePixelIndex = getPixelIndexFromCoords(
+      coordsAtSource,
       source,
-    ) as NonNullable<Color>;
-    const newColor = blendColor(
-      maybeTargetPixelColor,
-      sourcePixelColor,
     );
-    data[index] = newColor[0];
-    data[index + 1] = newColor[1];
-    data[index + 2] = newColor[2];
+    const newColor = blendColor(targetPixelColor, sourcePixelColor);
+
+    data[sourcePixelIndex] = newColor[0];
+    data[sourcePixelIndex + 1] = newColor[1];
+    data[sourcePixelIndex + 2] = newColor[2];
   }
 
   return { ...source, data };

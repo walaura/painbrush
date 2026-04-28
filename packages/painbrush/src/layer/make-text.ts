@@ -1,4 +1,8 @@
-import { punchLayerOver, inflateLayer } from "./transform.ts";
+import {
+  punchLayerOver,
+  inflateLayer,
+  overlayLayerOver,
+} from "./transform.ts";
 import { overlayLayersOver } from "./transform.ts";
 
 import {
