@@ -1,7 +1,4 @@
-import {
-  destructivelyAddLayerOver,
-  inflateLayer,
-} from "./transform.ts";
+import { punchLayerOver, inflateLayer } from "./transform.ts";
 import { overlayLayersOver } from "./transform.ts";
 
 import {
@@ -126,8 +123,7 @@ export const makeTextLayer = (
   );
 
   for (let layer of charLayers) {
-    destructivelyAddLayerOver(textLayer, layer[0], layer[1]);
+    punchLayerOver(textLayer, layer[0], layer[1]);
   }
-
   return textLayer;
 };

@@ -83,7 +83,7 @@ export const padLayer = (source: Layer, offset: XYCoords) => {
     x: source.width + offset.x * 2,
     y: source.height + offset.y * 2,
   });
-  destructivelyAddLayerOver(target, source, {
+  punchLayerOver(target, source, {
     offset,
   });
   return target;
@@ -142,7 +142,7 @@ type LayerParams = {
 /*
 Faster but destructive. No blend modes, no checks, super useful if painting over canvases tho. overrides source.
 */
-export const destructivelyAddLayerOver = (
+export const punchLayerOver = (
   source: Layer,
   target: Layer,
   { offset = COORDS_ZERO }: LayerParams = {},
@@ -167,7 +167,7 @@ export const destructivelyAddLayerOver = (
 };
 
 /*
-Put a layer over another, apply an offset and maybe eventually a blend mode??
+Overlay a layer over another, apply an offset and maybe eventually a blend mode??
 */
 export const overlayLayerOver = (
   source: Layer,
