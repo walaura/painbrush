@@ -43,7 +43,7 @@ export const blendColor = (
 export const makeRandomColor = (r: number) => {
   const next = (seed: number) => {
     seed = Math.sin(seed) * 10000;
-    return seed - Math.floor(seed);
+    return seed - ~~seed;
   };
 
   const g = next(r);

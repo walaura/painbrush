@@ -147,7 +147,7 @@ export const inflateLayer = (
 type LayerParams = { offset?: XYCoords };
 
 /*
-Put a layer over another, apply an offset and a blend mode if desired
+Put a layer over another, apply an offset and maybe eventually a blend mode??
 */
 export const overlayLayerOver = (
   source: Layer,

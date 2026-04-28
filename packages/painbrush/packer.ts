@@ -76,10 +76,10 @@ const colspan = fontMeta.cols * metrics.width;
 
 (data.data as Uint8Array).forEach((item, index) => {
   const pixelX = index % colspan;
-  const pixelY = Math.floor(index / colspan);
+  const pixelY = ~~(index / colspan);
 
-  const charX = Math.floor(pixelX / metrics.width);
-  const charY = Math.floor(pixelY / metrics.height);
+  const charX = ~~(pixelX / metrics.width);
+  const charY = ~~(pixelY / metrics.height);
 
   const charXPixelOffset = pixelX - charX * metrics.width;
   const charYPixelOffset = pixelY - charY * metrics.height;

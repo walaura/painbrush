@@ -14,10 +14,10 @@ export const getPixelXYCoords = (
   pixelIndex: number;
   coords: XYCoords;
 } => {
-  const pixelIndex = Math.floor(index / 3);
+  const pixelIndex = ~~(index / 3);
 
   const x = pixelIndex % width;
-  const y = Math.floor(pixelIndex / width);
+  const y = ~~(pixelIndex / width);
 
   return { coords: [x, y], pixelIndex };
 };
@@ -50,8 +50,8 @@ const normalize = (
   coords: XYCoords,
   layer: Layer,
 ): XYCoords | null => {
-  const x = Math.floor(coords[0]);
-  const y = Math.floor(coords[1]);
+  const x = ~~coords[0];
+  const y = ~~coords[1];
 
   if (x >= layer.width || x < 0) {
     return null;

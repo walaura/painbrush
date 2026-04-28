@@ -2,13 +2,9 @@
 import poxelHandle from "painbrush/_DEFAULT_FONT_.pxfont";
 //@ts-expect-error`
 import lucasHandle from "./lucas.pxfont";
-import { useFont } from "painbrush/typography";
 import { makeRenderCall } from "./draw.ts";
 
 const init = async () => {
-  const POXEL = await useFont(poxelHandle);
-  const LUCAS = await useFont(poxelHandle);
-
   let c = window.lolw2.value;
   let b = window.lolw.value;
 
