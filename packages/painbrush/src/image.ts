@@ -10,7 +10,7 @@ import {
   COLOR_ALPHA,
   COLOR_BLACK,
   colorFromRgb,
-  isAlphaColor,
+  colorToRgb,
   solidFillBrush,
   type Brush,
 } from "./color.ts";
@@ -23,19 +23,11 @@ import {
 export const toImage = (
   layer: Layer,
 ): Uint8Array<ArrayBufferLike> => {
-  const data = layer.pixels
-    .map((px) => {
-      const r = (px >> 24) & 0xff;
-      const g = (px >> 16) & 0xff;
-      const b = (px >> 8) & 0xff;
+  const data = [];
 
-      if (isAlphaColor(px)) {
-        return [r, g, b];
-      }
-      const a = px & 0xff;
-      return [g, b, a];
-    })
-    .flat();
+  for (const pixel of layer.pixels) {
+    data.push(...colorToRgb(pixel));
+  }
 
   const encoded = encode({
     ...layer,

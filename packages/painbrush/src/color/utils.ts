@@ -9,10 +9,9 @@ export const COLOR_WHITE: Color = 0xffffff;
 export const COLOR_BLACK: Color = 0x000000;
 
 /**
- * Alphas are a cursed implementation detail that gets treated differently at blending, rn its just -1,-1,-1 but maybe in the future this can be loaded with alpha depth? or not. lol that sounds cursed.
+ * Alphas are a cursed implementation detail that gets treated differently at blending, rn its just -1 but maybe in the future this can be loaded with alpha depth? or not. lol that sounds cursed.
  */
 export const isAlphaColor = (color: Color): color is AlphaColor => {
-  //return true;
   return color === -1;
 };
 
@@ -22,6 +21,20 @@ export const colorFromRgb = (
   b: number,
 ): Color => {
   return (1 << 24) | (r << 16) | (g << 8) | b;
+};
+
+export const colorToRgb = (
+  color: Color,
+): [number, number, number] => {
+  const r = (color >> 24) & 0xff;
+  const g = (color >> 16) & 0xff;
+  const b = (color >> 8) & 0xff;
+
+  if (isAlphaColor(color)) {
+    return [r, g, b];
+  }
+  const a = color & 0xff;
+  return [g, b, a];
 };
 
 /**
@@ -42,15 +55,5 @@ export const blendColor = (
 };
 
 export const makeRandomColor = (r: number) => {
-  const next = (seed: number) => {
-    seed = Math.sin(seed) * 10000;
-    return seed - ~~seed;
-  };
-
-  const g = next(r);
-  const b = next(g);
-
-  return colorFromRgb(
-    ...([r, g, b].map((c) => c * 255) as [number, number, number]),
-  );
+  return ~~(r * 0xffffff);
 };
