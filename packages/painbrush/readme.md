@@ -2,13 +2,15 @@
 
 <div align="center">
   
-![""](../example/image.bmp)
+![""](https://github.com/walaura/painbrush/raw/main/packages/example/image.bmp)
 
-to my knowledge, the only node-based bitmap raster drawing program - i do not wish to be challenged on this.
+_to my knowledge, the only node-based bitmap raster drawing program - i do not wish to be challenged on this._
 
 </div>
 
-You can use this lib to generate images and text on the much loved bmp format. It's handy for og images for example, if you want that retro look ig
+# HEY!! this is still undergoing lots of active dev so updates may break. im sticking to semver as much as a i can but yk take care
+
+You can use this lib to generate images and text in the much loved bmp format. It's handy for og images for example, if you want that retro look ig
 
 ## Getting started
 
@@ -44,7 +46,7 @@ First you will need a pixel font. I make mine in aseprite and left them here if 
 
 <div align=center>
 
-![""](./doc/pixel.png)
+![""](https://github.com/walaura/painbrush/raw/main/packages/painbrush/doc/pixel.png)
 
 </div>
 
@@ -91,7 +93,7 @@ You'll get a cool specimen file for your troubles, with all the characters. this
 
 <div align=center>
 
-![""](../example/fonts/poxel-specimen.bmp)
+![""](https://github.com/walaura/painbrush/raw/main/packages/example/fonts/poxel-specimen.bmp)
 
 </div>
 

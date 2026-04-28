@@ -6,3 +6,6 @@ await writeFile("./dist/package.json", pkg.replaceAll(".ts", ".js"));
 await cp("./static", "./dist/static", {
   recursive: true,
 });
+await cp("./readme.md", "./dist/readme.md", {
+  recursive: true,
+});
