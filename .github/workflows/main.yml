@@ -1,0 +1,30 @@
+name: Report tests
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch: 
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 25
+      - name: npm install
+        run: npm i
+      - name: run tests
+        run: npm run test -- run
+        working-directory: ./packages/painbrush
