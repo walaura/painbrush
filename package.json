@@ -4,8 +4,13 @@
   "description": "",
   "author": "walaura",
   "dependencies": {
+    "@jest/globals": "^30.3.0",
     "wah": "file:./packages/painbrush",
-    "woo": "file:./packages/example",
-    "weh": "file:./packages/example-browser"
+    "weh": "file:./packages/example-browser",
+    "woo": "file:./packages/example"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.3.0"
   }
 }

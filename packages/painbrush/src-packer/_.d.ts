@@ -19,3 +19,21 @@ export type FontMetaJSON = {
     background: Color;
   };
 };
+
+export type PackerIntakeData = {
+  img: NonSharedBuffer;
+  fontMeta: FontMetaJSON;
+  fontName: string;
+};
+
+export type PackerCharacter = (o | 1)[];
+
+export type PackerCharactersWithTrim = [
+  trim: number,
+  char: PackerCharacter,
+][];
+
+export type PackerFileOp<Contents> = [
+  name: string,
+  contents: Contents,
+];

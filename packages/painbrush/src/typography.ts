@@ -1,5 +1,6 @@
 import { readFile } from "fs/promises";
 import type { SingleChannelLayer } from "./layer.ts";
+import type { PackerCharactersWithTrim } from "../src-packer/_.js";
 
 export type FontHandle =
   | Buffer<ArrayBuffer>
@@ -15,7 +16,7 @@ export type FontMetrics = {
 
 export type PxFontFile = {
   alphabet: string;
-  characters: [number, number[]][];
+  characters: PackerCharactersWithTrim;
   metrics: FontMetrics;
 };
 

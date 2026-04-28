@@ -1,23 +1,24 @@
 #!/usr/bin/env node
 
 import { program } from "commander";
-import { decode } from "fast-bmp";
 import { writeFile } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
-import { makeTextLayer } from "./src/layer/make-text.ts";
-import { toImage } from "./src/image.ts";
-import { solidFillBrush } from "./src/color/brush.ts";
-import { overlayLayerOver, padLayer } from "./src/layer/transform.ts";
 import chalk from "chalk";
 import {
   printCharacter,
   reportNay,
   reportYay,
 } from "./src-packer/helpers.ts";
-import type { FontMetaJSON } from "./src-packer/_.js";
+import type {
+  FontMetaJSON,
+  PackerIntakeData,
+} from "./src-packer/_.js";
 import path from "node:path";
-import { useFont, type PxFontFile } from "./src/typography.ts";
-import { makeRectangleLayer } from "./src/layer.ts";
+import {
+  generateCharacters,
+  generatePxFontFile,
+  generateSpecimenImage,
+} from "./src-packer/pipeline.ts";
 
 program.addHelpText(
   "beforeAll",
@@ -54,155 +55,40 @@ const options = program.opts();
 const inPath = path.join(process.cwd(), options.font);
 const fontName = path.parse(options.font.split("/").pop()).name;
 
-const { img, fontMeta } = await (async () => {
+const intakeData: PackerIntakeData = await (async () => {
   const img = await readFile(inPath + ".bmp");
 
   const fontMeta = JSON.parse(
     (await readFile(inPath + ".json")).toString(),
   ) as FontMetaJSON;
 
-  return { img, fontMeta };
+  reportYay(`Found bmp, json is valid`);
+  return { img, fontMeta, fontName };
 })().catch((e) => {
   reportNay(`JSON/BMP for ${fontName} missing`);
   throw e;
 });
 
-reportYay(`Found bmp, json is valid`);
+const characters = await generateCharacters(intakeData);
 
-const { metrics } = fontMeta;
-const data = decode(img);
-const rawCharacters: (0 | 1)[][] = [[]];
-
-const colspan = fontMeta.cols * metrics.width;
-
-(data.data as Uint8Array).forEach((item, index) => {
-  const pixelX = index % colspan;
-  const pixelY = ~~(index / colspan);
-
-  const charX = ~~(pixelX / metrics.width);
-  const charY = ~~(pixelY / metrics.height);
-
-  const charXPixelOffset = pixelX - charX * metrics.width;
-  const charYPixelOffset = pixelY - charY * metrics.height;
-
-  const charPos = charX + charY * fontMeta.cols;
-
-  if (!rawCharacters[charPos]) {
-    rawCharacters[charPos] = [];
-  }
-
-  const charPixelPos =
-    charXPixelOffset + charYPixelOffset * metrics.width;
-
-  rawCharacters[charPos][charPixelPos] = item as 0 | 1;
-});
-
-const alphabet = fontMeta.alphabet.join("");
-
-const characters = rawCharacters.map((char, index) => {
-  const letter = alphabet[index];
-
-  const maybeTrim =
-    fontMeta.trim[letter] ?? fontMeta.trim["__DEFAULT__"];
-  if (!maybeTrim) {
-    return [metrics.width, char];
-  }
-
-  let newChar = [];
-  for (let i = 0; i < char.length; i++) {
-    const pos = i % metrics.width;
-    if (pos < metrics.width - maybeTrim) {
-      newChar.push(char[i]);
-    }
-  }
-  return [metrics.width - maybeTrim, newChar];
-});
-
-if (options.print) {
-  characters.forEach((char, index) => {
-    printCharacter(char[1], char[0]);
-
-    console.log("- " + alphabet[index]);
-    console.log("");
-  });
-}
-
-reportYay(`${characters.length} characters in ${fontName}`);
-
-// Function to generate the pxfont file content
-const generatePxFontFile = (): [string, string] => {
-  const fontFileAt = path.join(
-    process.cwd() + "/fonts/" + fontName + ".pxfont",
-  );
-  return [
-    fontFileAt,
-    JSON.stringify(
-      {
-        metrics,
-        alphabet,
-        characters,
-      } as PxFontFile,
-      null,
-      2,
-    ),
-  ];
-};
-
-// Function to generate the specimen image
-const generateSpecimenImage = async (): Promise<[string, Uint8Array]> => {
-  const specimenImgPd = padLayer(
-    await makeTextLayer(
-      fontName.toUpperCase() +
-      "\n" +
-      "\n" +
-      "? " +
-      alphabet
-        .split("")
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .sort()
-        .join(""),
-      await useFont(readFile(generatePxFontFile()[0])),
-      solidFillBrush(fontMeta.specimen?.color ?? [0, 0, 0]),
-      {
-        maxLengthPx: metrics.width * 12,
-        breakLinesOn: "", // break on anything
-      },
-    ),
-    { x: metrics.width, y: metrics.height },
-  );
-
-  const specimenImg = overlayLayerOver(
-    makeRectangleLayer({
-      x: specimenImgPd.width,
-      y: specimenImgPd.height
-    }, solidFillBrush(fontMeta.specimen?.background ?? [255, 255, 255]),),
-    specimenImgPd
-  );
-
-  const specimenFileAt = path.join(
-    process.cwd() + "/fonts/" + fontName + "-specimen.bmp",
-  );
-
-  return [specimenFileAt, toImage(specimenImg)];
-};
-
-// Write files
-const [fontFileAt, fontContent] = generatePxFontFile();
-await writeFile(fontFileAt, fontContent).catch((e) => {
+const fontWriteOp = generatePxFontFile(characters, intakeData);
+await writeFile(...fontWriteOp).catch((e) => {
   reportNay(
-    `Font out directory does not exist at ${chalk.underline(path.parse(fontFileAt).dir)}`,
+    `Font out directory does not exist at ${chalk.underline(path.parse(fontWriteOp[0]).dir)}`,
   );
   throw e;
 });
 
-reportYay(`Wrote pxfont file at ${chalk.underline(fontFileAt)}`);
+reportYay(`Wrote pxfont file at ${chalk.underline(fontWriteOp[0])}`);
 
-const [specimenFileAt, specimenImageData] = await generateSpecimenImage();
-await writeFile(specimenFileAt, specimenImageData);
+const imageWriteOp = await generateSpecimenImage(
+  fontWriteOp,
+  intakeData,
+);
+await writeFile(...imageWriteOp);
 
 reportYay(
-  `Wrote specimen file at ${chalk.cyan.underline(specimenFileAt)} (check it out!)`,
+  `Wrote specimen file at ${chalk.cyan.underline(imageWriteOp[0])} (check it out!)`,
 );
 
 console.log("");
