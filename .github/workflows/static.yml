@@ -37,7 +37,9 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 25
-      - name: NPM install
+      - name: npm install
+        run: npm i
+      - name: npm install (sub)
         run: npm i && npm run build
         working-directory: ./packages/example-browser
       - name: Upload artifact
