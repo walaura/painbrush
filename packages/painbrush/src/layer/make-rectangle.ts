@@ -1,4 +1,4 @@
-import { blendColor } from "../color/utils.ts";
+import { COLOR_BLACK } from "../color/utils.ts";
 import {
   type Brush,
   solidFillBrush,
@@ -13,18 +13,17 @@ Useful for the initial canvas
 */
 export const makeRectangleLayer = (
   { x: width, y: height }: XYCoords,
-  brush: Brush = solidFillBrush([255, 255, 255]),
+  brush: Brush = solidFillBrush(COLOR_BLACK),
 ): Layer => {
   let data = [];
   const meta = {
     width,
     id: Math.random(),
     height,
-    channels: 3,
   };
 
   for (let index = 0; index < width * height * 3; index = index + 3) {
-    const color = blendColor(null, brush(index, meta));
+    const color = brush(index, meta);
     data.push(color[0]);
     data.push(color[1]);
     data.push(color[2]);

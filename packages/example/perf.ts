@@ -1,20 +1,55 @@
 import { solidFillBrush } from "painbrush/color";
-import { makeTextLayer } from "painbrush/layer";
+import { makeTextLayer, scaleLayer } from "painbrush/layer";
 import { loadBuiltInFont } from "painbrush/typography";
+
+const TEST_FAC = 50;
 
 console.time("Loading poxel");
 const POXEL = await loadBuiltInFont();
 console.timeEnd("Loading poxel");
 
-console.time("Long sentence 100x");
-for (let i = 0; i < 100; i++) {
-  makeTextLayer(
-    "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
-    POXEL,
-    solidFillBrush([255, 255, 255]),
-    {
-      maxLengthPx: 200,
-    },
-  );
-}
-console.timeEnd("Long sentence 100x");
+const wrap =
+  (name: string, fn: () => void): (() => void) =>
+  () => {
+    console.time(name);
+    fn();
+    console.timeEnd(name);
+  };
+const longSentence = wrap("Long sentence", () => {
+  for (let i = 0; i < TEST_FAC; i++) {
+    makeTextLayer(
+      "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
+      POXEL,
+      solidFillBrush([255, 255, 255]),
+      {
+        maxLengthPx: 200,
+      },
+    );
+  }
+});
+
+const st = makeTextLayer(
+  "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
+  POXEL,
+  solidFillBrush([255, 255, 255]),
+  {
+    maxLengthPx: 200,
+  },
+);
+
+const scale2 = wrap("Scale 2X", () => {
+  for (let i = 0; i < TEST_FAC; i++) {
+    scaleLayer(st, { x: 2, y: 2 });
+  }
+});
+
+console.log(st.width * 10, st.height * 10);
+const scale20 = wrap("Scale 20X", () => {
+  for (let i = 0; i < TEST_FAC; i++) {
+    scaleLayer(st, { x: 10, y: 10 });
+  }
+});
+
+scale20();
+// longSentence();
+// scale2();

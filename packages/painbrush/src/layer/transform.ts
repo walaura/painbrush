@@ -13,6 +13,7 @@ import {
 import {
   blendColor,
   COLOR_ALPHA,
+  COLOR_BLACK,
   type Color,
 } from "../color/utils.ts";
 import {
@@ -39,13 +40,12 @@ export const scaleLayer = (
       y: ~~(source.height * scaleY),
     },
     (index, meta) => {
-      const { x, y } = getPixelXYCoords(index, meta);
+      const coords = getPixelXYCoords(index, meta);
       const maybeTargetPixel = getPixelColor(
-        { x: Math.floor(x / scaleX), y: Math.floor(y / scaleY) },
+        { x: ~~(coords.x / scaleX), y: ~~(coords.y / scaleY) },
         source,
       );
-
-      return maybeTargetPixel ?? [0, 255, 0];
+      return maybeTargetPixel ?? COLOR_ALPHA;
     },
   );
 };
@@ -118,7 +118,7 @@ export const deflateLayer = (layer: FourChannelLayer): Layer => {
  * */
 export const inflateLayer = (
   layer: SingleChannelLayer,
-  fgBrush: Brush = solidFillBrush([255, 255, 255]),
+  fgBrush: Brush = solidFillBrush(COLOR_BLACK),
   bgBrush: Brush = alphaBrush(),
 ): Layer => {
   return makeRectangleLayer(
