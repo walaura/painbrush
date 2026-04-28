@@ -34,8 +34,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Npm install
+      - name: NPM install
         run: npm i && npm run build
+        working-directory: ./packages/example-browser
+      - name: Build
+        run: npm run build
         working-directory: ./packages/example-browser
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
