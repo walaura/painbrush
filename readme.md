@@ -20,3 +20,4 @@ This is a monorepo bc im fancy like that, so:
 
 - You can read an intro to painbrush on [packages/painbrush](/packages/painbrush/)
 - You can see an example of many features of painbrush in use at [packages/example](/packages/example/)
+- You can painbrush running on your browser at [packages/example-browser](https://walaura.github.io/painbrush/). its awful. use canvas.

@@ -28,9 +28,11 @@ export const makeRenderCall = async (
   return async ({
     bgColor,
     pos,
+    zoom,
   }: {
     bgColor: number;
     pos: number;
+    zoom: number;
   }) => {
     const sun = makeRectangleLayer(
       { x: 30, y: 30 },
@@ -68,7 +70,7 @@ export const makeRenderCall = async (
           maxLengthPx: 50,
         },
       ),
-      { x: 2, y: 2 },
+      { x: zoom, y: zoom },
     );
     const clockShadow = paintLayer(clock, (existingColor) =>
       isAlphaColor(existingColor)
