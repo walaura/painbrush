@@ -7,7 +7,7 @@ import {
   isAlphaColor,
   solidFillBrush,
 } from "painbrush/color";
-import { toImage } from "painbrush/image";
+import { export } from "painbrush/image";
 import {
   makeBlankLayer,
   scaleLayer,
@@ -22,7 +22,7 @@ import { getPixelXYCoords } from "painbrush/pixel";
 import {
   getDefaultFontHandleNode,
   useFont,
-} from "painbrush/typography";
+} from "../painbrush/src/painbrush/font.ts";
 
 /*
 
@@ -226,4 +226,4 @@ const layers = overlayLayersOver(
   [bg],
 );
 
-await writeFile("image.bmp", toImage(layers));
+await writeFile("image.bmp", export(layers));

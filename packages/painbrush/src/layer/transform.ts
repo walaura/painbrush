@@ -8,12 +8,12 @@ import {
   makeLayer,
   type Layer,
   type LayerMeta,
-} from '../../layer.ts';
+} from '../../api/layer.ts';
 import {
   type XYCoords,
   getPixelXYCoords,
   getPixelColor,
-} from '../../pixel.ts';
+} from '../../api/pixel.ts';
 import { punchLayerOver, overlayLayerOver } from './compose.ts';
 import {
   makeBlankLayer,

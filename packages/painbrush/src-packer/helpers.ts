@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import type { FontMetrics } from '../src/typography.ts';
+import type { FontMetrics } from '../src/painbrush/font.ts';
 
 export type FontMetaJSON = {
   metrics: FontMetrics;

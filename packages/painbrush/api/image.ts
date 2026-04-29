@@ -6,7 +6,7 @@ import { colorToRgb } from './color.ts';
   Exports a layer to a bmp image, keeps size and forces 24 bit.
   See fast-bmp for more options
   */
-export const toImage = (
+export const exportImage = (
   layer: Layer,
 ): Uint8Array<ArrayBufferLike> => {
   const data = [];
@@ -28,16 +28,3 @@ export const toImage = (
 
   return encoded;
 };
-
-export interface ImageMeta {
-  width: number;
-  height: number;
-}
-export interface SingleChannelImage extends ImageMeta {
-  data: number[];
-  channels: 1;
-}
-export interface MultiChannelImage extends ImageMeta {
-  data: number[];
-  channels: 3 | 4;
-}

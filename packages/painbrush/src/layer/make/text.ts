@@ -1,7 +1,7 @@
 import { brush, type Brush, COLOR_BLACK } from 'painbrush/color';
-import { importSingleChannelImage } from '../../../image/import.ts';
 import { composeLayer, makeLayer, type Layer } from 'painbrush/layer';
-import type { Font } from 'painbrush/typography';
+import type { Font } from '../../font/font.ts';
+import { importSingleChannelImage } from '../../image/import.ts';
 
 /**
  * Step through for props docs

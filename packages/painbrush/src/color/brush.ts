@@ -1,5 +1,5 @@
-import type { LayerMeta } from '../../layer.ts';
-import { getPixelXYCoords } from '../../pixel.ts';
+import type { LayerMeta } from '../../api/layer.ts';
+import { getPixelXYCoords } from '../../api/pixel.ts';
 import { type Color, COLOR_ALPHA, COLOR_BLACK } from '../../color.ts';
 
 /**

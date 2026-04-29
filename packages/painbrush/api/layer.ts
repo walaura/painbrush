@@ -5,21 +5,21 @@ import {
   punchLayerOver,
   overlayLayerOver,
   overlayLayersOver,
-} from './__private__/layer/compose.ts';
+} from '../src/layer/compose.ts';
 import {
   makeBlankLayer,
   makeBlankLayerWithAlpha,
-} from './__private__/layer/make/blank.ts';
-import { makeImageLayer } from './__private__/layer/make/image.ts';
-import { makeTextLayer } from './__private__/layer/make/text.ts';
+} from '../src/layer/make/blank.ts';
+import { makeImageLayer } from '../src/layer/make/image.ts';
+import { makeTextLayer } from '../src/layer/make/text.ts';
 import {
   scaleLayer,
   paintLayer,
   padLayer,
   setBackgroundOfLayer,
-} from './__private__/layer/transform.ts';
+} from '../src/layer/transform.ts';
 
-export type * from './__private__/layer/make/blank.ts';
+export type * from '../src/layer/make/blank.ts';
 
 import type { Color } from 'painbrush/color';
 import type { XYCoords } from 'painbrush/pixel';

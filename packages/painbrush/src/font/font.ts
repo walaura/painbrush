@@ -1,7 +1,8 @@
 import { readFile } from 'fs/promises';
-import type { SingleChannelImage } from './image.ts';
+
 import path from 'path';
-import type { PackerCharactersWithTrim } from '../src-packer/helpers.ts';
+import type { PackerCharactersWithTrim } from '../../src-packer/helpers.ts';
+import type { SingleChannelImage } from '../image/image.js';
 
 export type FontHandle =
   | Buffer<ArrayBuffer>
@@ -39,10 +40,6 @@ export type CharMap = {
   [k: string]: SingleChannelImage;
 };
 
-/**
- * This is poxel, a lil pixel font i whipped up to start with.
- * its very limited
- */
 export const getDefaultFontHandleNode = () =>
   readFile(
     path.resolve(import.meta.dirname, `../static/poxel.pxfont`),
@@ -70,7 +67,7 @@ export const DEFAULT_CHAR_RESOLVER =
     );
   };
 
-const useFont_INTERNAL = async (
+export const useFont = async (
   handle: Promise<FontHandle>,
   charResolver: CharResolver = DEFAULT_CHAR_RESOLVER,
 ): Promise<Font> => {
@@ -114,9 +111,3 @@ const unpackFontHandle = async (
   }
   return JSON.parse((await handle).toString()) as PxFontFile;
 };
-
-/**
-'Unpacks' a handle to a .pxfont file into images so it
-can be used to draw.
-*/
-export const useFont = useFont_INTERNAL;

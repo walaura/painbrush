@@ -6,13 +6,13 @@ import {
   colorFromRgb,
   solidFillBrush,
 } from '../src/color.ts';
-import { toImage } from '../src/image.ts';
+import { export } from '../api/image.ts';
 import {
   padLayer,
   makeTextLayer,
   addBackgroundToLayer,
-} from '../src/layer.ts';
-import { type PxFontFile, useFont } from '../src/typography.ts';
+} from '../api/layer.ts';
+import { type PxFontFile, useFont } from '../src/painbrush/font.ts';
 import type {
   PackerCharacter,
   PackerCharactersWithTrim,
@@ -146,5 +146,5 @@ export const generateSpecimenImage = async (
     fontName + `-specimen.bmp`,
   );
 
-  return [specimenFileAt, toImage(specimenImg)];
+  return [specimenFileAt, export(specimenImg)];
 };

@@ -2,16 +2,14 @@ import {
   COLOR_ALPHA,
   colorFromRgb,
   type Brush,
-  solidFillBrush,
   COLOR_BLACK,
-  alphaBrush,
-} from '../color.ts';
-import { type Layer, makeBlankLayer } from '../layer.ts';
-import {
-  type MultiChannelImage,
-  type SingleChannelImage,
-} from '../image.ts';
-import type { XYCoords } from '../pixel.ts';
+  brush,
+} from 'painbrush/color';
+import { makeLayer, type Layer } from 'painbrush/layer';
+import type {
+  MultiChannelImage,
+  SingleChannelImage,
+} from './image.js';
 
 /**
  * Turns a bmp image into a layer.
@@ -47,10 +45,10 @@ export const importMultiChannelImage = (
  * */
 export const importSingleChannelImage = (
   image: SingleChannelImage,
-  fgBrush: Brush = solidFillBrush(COLOR_BLACK),
-  bgBrush: Brush = alphaBrush(),
+  fgBrush: Brush = brush.solidFill(COLOR_BLACK),
+  bgBrush: Brush = brush.alphaSolidFill(),
 ): Layer => {
-  return makeBlankLayer(
+  return makeLayer.blank(
     { x: Math.floor(image.width), y: Math.floor(image.height) },
     (index, meta) => {
       return image.data[index]
@@ -58,7 +56,4 @@ export const importSingleChannelImage = (
         : bgBrush(index, meta);
     },
   );
-};
-export type LayerParams = {
-  offset?: XYCoords;
 };

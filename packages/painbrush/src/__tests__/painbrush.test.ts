@@ -17,11 +17,14 @@ import {
   makeBlankLayerWithAlpha,
   type Layer,
   makeImageLayer,
-} from '../layer.ts';
-import { getPixelXYCoords } from '../pixel.ts';
+} from '../../api/layer.ts';
+import { getPixelXYCoords } from '../../api/pixel.ts';
 import { readFile, writeFile } from 'fs/promises';
-import { toImage } from '../image.ts';
-import { getDefaultFontHandleNode, useFont } from '../typography.ts';
+import { exportImage } from '../../api/image.ts';
+import {
+  getDefaultFontHandleNode,
+  useFont,
+} from '../painbrush/font.ts';
 
 vi.stubGlobal(`Math`, {
   random: () => 0.5,
@@ -150,7 +153,7 @@ describe(`Painbrush`, async () => {
       [bg],
     );
 
-    const bmp = toImage(layers);
+    const bmp = exportImage(layers);
     await writeFile(
       import.meta.dirname + `/__snapshots__/snap.bmp`,
       bmp,

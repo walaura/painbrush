@@ -1,17 +1,21 @@
 import { blendColor, type Color } from 'painbrush/color';
-import type { LayerParams } from '../../image/import.ts';
 import { makeLayer, type Layer } from 'painbrush/layer';
 import {
   COORDS_ZERO,
   getPixelColor,
   getPixelIndexFromCoords,
   getPixelXYCoords,
-} from '../../pixel.js';
+  type XYCoords,
+} from '../../api/pixel.ts';
+
+export type LayerComposeParams = {
+  offset?: XYCoords;
+};
 
 export const punchLayerOver = (
   back: Layer,
   front: Layer,
-  { offset = COORDS_ZERO }: LayerParams = {},
+  { offset = COORDS_ZERO }: LayerComposeParams = {},
 ): void => {
   const pixels = back.pixels;
   for (let index = 0; index < front.x * front.y; index = index + 1) {
@@ -33,7 +37,7 @@ export const punchLayerOver = (
 export const overlayLayerOver = (
   back: Layer,
   front: Layer,
-  { offset = COORDS_ZERO }: LayerParams = {},
+  { offset = COORDS_ZERO }: LayerComposeParams = {},
 ) => {
   const pixels = [...back.pixels];
   for (let index = 0; index < front.x * front.y; index = index + 1) {
@@ -61,7 +65,7 @@ export const overlayLayerOver = (
 };
 
 export const overlayLayersOver = (
-  ...args: [Layer, LayerParams?][]
+  ...args: [Layer, LayerComposeParams?][]
 ) => {
   const flippedArgs = args.reverse();
   const first = flippedArgs.shift();

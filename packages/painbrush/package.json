@@ -29,12 +29,12 @@
     "vitest": "^4.1.5"
   },
   "exports": {
-    "./image": "./src/image.ts",
-    "./pixel": "./src/pixel.ts",
-    "./color": "./src/color.ts",
-    "./layer": "./src/layer.ts",
-    "./typography": "./src/typography.ts",
-    "./_DEFAULT_FONT_.pxfont": "./static/poxel.pxfont"
+    "./image": "./api/image.ts",
+    "./pixel": "./api/pixel.ts",
+    "./color": "./api/color.ts",
+    "./layer": "./api/layer.ts",
+    "./font": "./api/font.ts",
+    "./font/__DEFAULT_FONT__.pxfont": "./static/poxel.pxfont"
   },
   "bin": {
     "painbrush-font-packer": "./packer.ts"

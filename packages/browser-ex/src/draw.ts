@@ -6,7 +6,7 @@ import {
   colorFromRgb,
   isAlphaColor,
 } from 'painbrush/color';
-import { toImage } from 'painbrush/image';
+import { exportImage } from 'painbrush/image';
 import {
   composeLayer,
   makeLayer,
@@ -14,7 +14,7 @@ import {
   type Layer,
 } from 'painbrush/layer';
 import { getPixelXYCoords } from 'painbrush/pixel';
-import { useFont, type FontHandle } from 'painbrush/typography';
+import { useFont } from 'painbrush/';
 
 export const makeRenderCall = async (
   poxelHandle: Promise<FontHandle>,
@@ -169,6 +169,6 @@ const images = overlayLayersOver(
       [bg],
     );
 
-    return toImage(layers);
+    return exportImage(layers);
   };
 };
