@@ -9,19 +9,19 @@ import {
   COLOR_BLACK,
 } from "../color.ts";
 import {
-  makeRectangleLayer,
+  makeBlankLayer,
   makeTextLayer,
   scaleLayer,
   paintLayer,
   overlayLayersOver,
-  makeBlankLayer,
+  makeBlankLayerWithAlpha,
   type Layer,
   makeImageLayer,
 } from "../layer.ts";
 import { getPixelXYCoords } from "../pixel.ts";
 import { readFile, writeFile } from "fs/promises";
 import { toImage } from "../image.ts";
-import { DEFAULT_FONT_HANDLE, useFont } from "../typography.ts";
+import { getDefaultFontHandleNode, useFont } from "../typography.ts";
 
 vi.stubGlobal("Math", {
   random: () => 0.5,
@@ -33,9 +33,9 @@ vi.stubGlobal("Math", {
 
 describe("Painbrush", async () => {
   it("should generate an image that vaguely looks good", async () => {
-    const POXEL = await useFont(DEFAULT_FONT_HANDLE);
+    const POXEL = await useFont(getDefaultFontHandleNode());
 
-    const sun = makeRectangleLayer(
+    const sun = makeBlankLayer(
       { x: 30, y: 30 },
       borderBrush(3, 0xffff00),
     );
@@ -49,17 +49,14 @@ describe("Painbrush", async () => {
       },
     );
 
-    const bg = makeRectangleLayer(
-      { x: 280, y: 360 },
-      (index, layer) => {
-        const { x, y } = getPixelXYCoords(index, layer);
-        return colorFromRgb(
-          (x / layer.width) * 255,
-          (y / layer.height) * 255,
-          255,
-        );
-      },
-    );
+    const bg = makeBlankLayer({ x: 280, y: 360 }, (index, layer) => {
+      const { x, y } = getPixelXYCoords(index, layer);
+      return colorFromRgb(
+        (x / layer.x) * 255,
+        (y / layer.y) * 255,
+        255,
+      );
+    });
 
     const clock = scaleLayer(
       makeTextLayer(
@@ -81,7 +78,12 @@ describe("Painbrush", async () => {
     const clockWithShadow = overlayLayersOver(
       [clock],
       [clockShadow, { offset: { x: 2, y: 2 } }],
-      [makeBlankLayer({ x: clock.width + 2, y: clock.height + 2 })],
+      [
+        makeBlankLayerWithAlpha({
+          x: clock.x + 2,
+          y: clock.y + 2,
+        }),
+      ],
     );
 
     const images = makeImageLayer(
@@ -97,11 +99,11 @@ describe("Painbrush", async () => {
       const gap = 4;
       return overlayLayersOver(
         [titleLayer],
-        [layer, { offset: { x: 0, y: titleLayer.height + gap } }],
+        [layer, { offset: { x: 0, y: titleLayer.y + gap } }],
         [
-          makeBlankLayer({
-            x: Math.max(titleLayer.width, layer.width),
-            y: titleLayer.height + gap + layer.height,
+          makeBlankLayerWithAlpha({
+            x: Math.max(titleLayer.x, layer.x),
+            y: titleLayer.y + gap + layer.y,
           }),
         ],
       );
@@ -132,7 +134,7 @@ describe("Painbrush", async () => {
         {
           offset: {
             x: 10,
-            y: 10 + textWithTitle.height + 10,
+            y: 10 + textWithTitle.y + 10,
           },
         },
       ],
@@ -141,12 +143,7 @@ describe("Painbrush", async () => {
         {
           offset: {
             x: 10,
-            y:
-              10 +
-              textWithTitle.height +
-              10 +
-              clockWithTitle.height +
-              10,
+            y: 10 + textWithTitle.y + 10 + clockWithTitle.y + 10,
           },
         },
       ],

@@ -2,9 +2,9 @@
 
 exports[`Painbrush > should generate an image that vaguely looks good 1`] = `
 "{
-  "width": 280,
+  "x": 280,
+  "y": 360,
   "id": 0.5,
-  "height": 360,
   "__isLayer": true,
   "pixels": [
     16777471,

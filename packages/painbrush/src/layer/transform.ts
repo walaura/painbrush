@@ -6,17 +6,13 @@ import {
   getPixelIndexFromCoords,
 } from "../pixel.ts";
 import {
+  makeBlankLayerWithAlpha,
   makeBlankLayer,
-  makeRectangleLayer,
-} from "./make-rectangle.ts";
-import {
-  blendColor,
-  COLOR_ALPHA,
-  type Color,
-} from "../color/utils.ts";
+} from "./make/empty.ts";
+import { blendColor, COLOR_ALPHA, type Color } from "../color.ts";
 import { type Brush } from "../color/brush.ts";
 import type { Layer } from "../layer.ts";
-import type { LayerParams } from "../image.ts";
+import type { LayerParams } from "../image/import.ts";
 
 /**
  * Applies what i think is a nearest-neighbor transform to the layer. only integer transforms _really_ work for precise results but you can get some cool effects with floats
@@ -25,10 +21,10 @@ export const scaleLayer = (
   source: Layer,
   { x: scaleX, y: scaleY }: XYCoords,
 ): Layer => {
-  return makeRectangleLayer(
+  return makeBlankLayer(
     {
-      x: ~~(source.width * scaleX),
-      y: ~~(source.height * scaleY),
+      x: ~~(source.x * scaleX),
+      y: ~~(source.y * scaleY),
     },
     (index, meta) => {
       const coords = getPixelXYCoords(index, meta);
@@ -46,11 +42,7 @@ export const paintLayer = (
   painterFn: (existingColor: Color) => Brush,
 ): Layer => {
   const pixels = [];
-  for (
-    let index = 0;
-    index < layer.width * layer.height;
-    index = index + 1
-  ) {
+  for (let index = 0; index < layer.x * layer.y; index = index + 1) {
     const coords = getPixelXYCoords(index, layer);
     const sourcePixelColor = getPixelColor(
       coords,
@@ -69,9 +61,9 @@ export const paintLayer = (
  * moving stuff
  */
 export const padLayer = (source: Layer, offset: XYCoords) => {
-  const target = makeBlankLayer({
-    x: source.width + offset.x * 2,
-    y: source.height + offset.y * 2,
+  const target = makeBlankLayerWithAlpha({
+    x: source.x + offset.x * 2,
+    y: source.y + offset.y * 2,
   });
   punchLayerOver(target, source, {
     offset,
@@ -88,11 +80,7 @@ export const punchLayerOver = (
   { offset = COORDS_ZERO }: LayerParams = {},
 ): void => {
   const pixels = back.pixels;
-  for (
-    let index = 0;
-    index < front.width * front.height;
-    index = index + 1
-  ) {
+  for (let index = 0; index < front.x * front.y; index = index + 1) {
     const coords = getPixelXYCoords(index, front);
     const frontPixelColor = getPixelColor(coords, front) as Color;
 
@@ -117,11 +105,7 @@ export const overlayLayerOver = (
   { offset = COORDS_ZERO }: LayerParams = {},
 ) => {
   const pixels = [...back.pixels];
-  for (
-    let index = 0;
-    index < front.width * front.height;
-    index = index + 1
-  ) {
+  for (let index = 0; index < front.x * front.y; index = index + 1) {
     const coords = getPixelXYCoords(index, front);
     const coordsAtBack = {
       x: coords.x + offset.x,
@@ -156,7 +140,7 @@ export const overlayLayersOver = (
   const first = flippedArgs.shift();
   if (first == null) {
     console.warn("You tried to overlay 0 layers wtf");
-    return makeBlankLayer(COORDS_ZERO);
+    return makeBlankLayerWithAlpha(COORDS_ZERO);
   }
   let [canvas, canvasParams] = first;
   if (canvasParams != null) {

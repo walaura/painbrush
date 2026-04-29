@@ -1,11 +1,14 @@
 import { COLOR_WHITE, solidFillBrush } from "painbrush/color";
 import { makeTextLayer, scaleLayer } from "painbrush/layer";
-import { DEFAULT_FONT_HANDLE, useFont } from "painbrush/typography";
+import {
+  getDefaultFontHandleNode,
+  useFont,
+} from "painbrush/typography";
 
 const TEST_FAC = 50;
 
 console.time("Loading poxel");
-const POXEL = await useFont(DEFAULT_FONT_HANDLE);
+const POXEL = await useFont(getDefaultFontHandleNode());
 console.timeEnd("Loading poxel");
 
 const wrap =
@@ -43,7 +46,6 @@ const scale2 = wrap("Scale 2X", () => {
   }
 });
 
-console.log(st.width * 10, st.height * 10);
 const scale20 = wrap("Scale 20X", () => {
   for (let i = 0; i < TEST_FAC; i++) {
     scaleLayer(st, { x: 10, y: 10 });

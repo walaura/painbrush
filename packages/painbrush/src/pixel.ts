@@ -1,23 +1,26 @@
-import type { Color } from "./color/utils.ts";
-import type { Layer, ImageMeta, LayerMeta } from "./layer.ts";
+import type { Color } from "./color.ts";
+import type { Layer, LayerMeta } from "./layer.ts";
 
 export const COORDS_ZERO = { x: 0, y: 0 };
 
-export type XYCoords = { x: number; y: number };
+export interface XYCoords {
+  x: number;
+  y: number;
+}
 
 export const getPixelIndexFromCoords = (
   coords: XYCoords,
-  { width }: Layer,
-) => coords.y * width + coords.x;
+  layer: Layer,
+) => coords.y * layer.x + coords.x;
 
 export const getPixelXYCoords = (
   index: number,
-  { width }: LayerMeta,
+  layer: LayerMeta,
 ): XYCoords => {
   const pixelIndex = ~~index;
   return {
-    x: pixelIndex % width,
-    y: ~~(pixelIndex / width),
+    x: pixelIndex % layer.x,
+    y: ~~(pixelIndex / layer.x),
   };
 };
 
@@ -32,15 +35,15 @@ export const getPixelColor = (
 
 const normalize = (
   coords: XYCoords,
-  layer: ImageMeta,
+  layer: Layer,
 ): XYCoords | null => {
   const x = ~~coords.x;
   const y = ~~coords.y;
 
-  if (x >= layer.width || x < 0) {
+  if (x >= layer.x || x < 0) {
     return null;
   }
-  if (y >= layer.height || y < 0) {
+  if (y >= layer.y || y < 0) {
     return null;
   }
 

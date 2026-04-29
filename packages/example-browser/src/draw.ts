@@ -10,12 +10,12 @@ import {
 import type { Color } from "painbrush/color";
 import { toImage } from "painbrush/image";
 import {
-  makeRectangleLayer,
+  makeBlankLayer,
   scaleLayer,
   makeTextLayer,
   overlayLayersOver,
   paintLayer,
-  makeBlankLayer,
+  makeBlankLayerWithAlpha,
   type Layer,
 } from "painbrush/layer";
 import { getPixelXYCoords } from "painbrush/pixel";
@@ -39,7 +39,7 @@ export const makeRenderCall = async (
     posY: number;
     zoom: number;
   }) => {
-    const sun = makeRectangleLayer(
+    const sun = makeBlankLayer(
       { x: 30, y: 30 },
       borderBrush(3, 0xffff00),
     );
@@ -53,17 +53,14 @@ export const makeRenderCall = async (
       },
     );
 
-    const bg = makeRectangleLayer(
-      { x: 280, y: 360 },
-      (index, layer) => {
-        const { x, y } = getPixelXYCoords(index, layer);
-        return colorFromRgb(
-          (x / layer.width) * 255,
-          (y / layer.height) * 255,
-          bgColor,
-        );
-      },
-    );
+    const bg = makeBlankLayer({ x: 280, y: 360 }, (index, layer) => {
+      const { x, y } = getPixelXYCoords(index, layer);
+      return colorFromRgb(
+        (x / layer.x) * 255,
+        (y / layer.y) * 255,
+        bgColor,
+      );
+    });
 
     const clock = scaleLayer(
       makeTextLayer(
@@ -85,7 +82,12 @@ export const makeRenderCall = async (
     const clockWithShadow = overlayLayersOver(
       [clock],
       [clockShadow, { offset: { x: 2, y: 2 } }],
-      [makeBlankLayer({ x: clock.width + 2, y: clock.height + 2 })],
+      [
+        makeBlankLayerWithAlpha({
+          x: clock.x + 2,
+          y: clock.y + 2,
+        }),
+      ],
     );
 
     /*
@@ -103,7 +105,7 @@ const images = overlayLayersOver(
       offset: [32, 0],
     },
   ],
-  [makeBlankLayer([16 * 3, 16])],
+  [makeBlankLayerWithAlpha([16 * 3, 16])],
 ) as Layer;
  */
 
@@ -116,11 +118,11 @@ const images = overlayLayersOver(
       const gap = 4;
       return overlayLayersOver(
         [titleLayer],
-        [layer, { offset: { x: 0, y: titleLayer.height + gap } }],
+        [layer, { offset: { x: 0, y: titleLayer.y + gap } }],
         [
-          makeBlankLayer({
-            x: Math.max(titleLayer.width, layer.width),
-            y: titleLayer.height + gap + layer.height,
+          makeBlankLayerWithAlpha({
+            x: Math.max(titleLayer.x, layer.x),
+            y: titleLayer.y + gap + layer.y,
           }),
         ],
       );
@@ -154,7 +156,7 @@ const images = overlayLayersOver(
         {
           offset: {
             x: 10,
-            y: 10 + textWithTitle.height + 10,
+            y: 10 + textWithTitle.y + 10,
           },
         },
       ],

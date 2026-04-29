@@ -1,16 +1,16 @@
-import { punchLayerOver } from "./transform.ts";
-import { inflateImage } from "../image.ts";
-import { overlayLayersOver } from "./transform.ts";
+import { punchLayerOver } from "../transform.ts";
+import { importSingleChannelImage } from "../../image/import.ts";
+import { overlayLayersOver } from "../transform.ts";
 
 import {
   solidFillBrush,
   alphaBrush,
   type Brush,
-} from "../color/brush.ts";
-import { makeRectangleLayer } from "./make-rectangle.ts";
-import type { Font } from "../typography.ts";
-import type { Layer } from "../layer.ts";
-import { COLOR_WHITE } from "../color.ts";
+} from "../../color/brush.ts";
+import { makeBlankLayer } from "./empty.ts";
+import type { Font } from "../../typography.ts";
+import type { Layer } from "../../layer.ts";
+import { COLOR_WHITE } from "../../color.ts";
 
 type TextLayerProps = {
   /**
@@ -83,7 +83,7 @@ export const makeTextLayer = (
         newline();
         continue;
       }
-      const char = inflateImage(
+      const char = importSingleChannelImage(
         getCharacter(character),
         brush,
         letterPlateBrush,
@@ -93,7 +93,7 @@ export const makeTextLayer = (
         char,
         wordOffset,
       ]);
-      wordOffset += char.width;
+      wordOffset += char.x;
     }
 
     const prevLineOffset = lineOffset;
@@ -116,7 +116,7 @@ export const makeTextLayer = (
     );
   }
 
-  const textLayer = makeRectangleLayer(
+  const textLayer = makeBlankLayer(
     {
       x: (maxWidth = Math.max(lineOffset, maxWidth)),
       y: lineHeight * lines,

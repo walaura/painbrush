@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import type { SingleChannelImage } from "./layer.ts";
+import type { SingleChannelImage } from "./ImageMeta.ts";
 import type { PackerCharactersWithTrim } from "../dist/src-packer/helpers.js";
 import path from "path";
 
@@ -43,9 +43,10 @@ export type CharMap = {
  * This is poxel, a lil pixel font i whipped up to start with.
  * its very limited
  */
-export const DEFAULT_FONT_HANDLE = readFile(
-  path.resolve(import.meta.dirname, "../static/poxel.pxfont"),
-);
+export const getDefaultFontHandleNode = () =>
+  readFile(
+    path.resolve(import.meta.dirname, "../static/poxel.pxfont"),
+  );
 
 /**
  * Feel free to add to this in yours to maybe remove accents etc

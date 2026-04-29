@@ -11,7 +11,7 @@ import {
   padLayer,
   makeTextLayer,
   overlayLayerOver,
-  makeRectangleLayer,
+  makeBlankLayer,
 } from "../src/layer.ts";
 import { type PxFontFile, useFont } from "../src/typography.ts";
 import type {
@@ -130,10 +130,10 @@ export const generateSpecimenImage = async (
   );
 
   const specimenImg = overlayLayerOver(
-    makeRectangleLayer(
+    makeBlankLayer(
       {
-        x: specimenImgPd.width,
-        y: specimenImgPd.height,
+        x: specimenImgPd.x,
+        y: specimenImgPd.y,
       },
       solidFillBrush(
         fontMeta.specimen?.background
