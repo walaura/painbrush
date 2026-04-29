@@ -5,9 +5,10 @@
   "author": "walaura",
   "dependencies": {
     "@jest/globals": "^30.3.0",
-    "painbrush": "file:./packages/painbrush",
     "lc-browser-ex": "file:./packages/browser-ex",
-    "lc-node-ex": "file:./packages/node-ex"
+    "lc-node-ex": "file:./packages/node-ex",
+    "painbrush": "file:./packages/painbrush",
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

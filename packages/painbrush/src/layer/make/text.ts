@@ -92,12 +92,10 @@ export const makeTextLayer = (
       wordOffset += char.x;
     }
 
-    const prevLineOffset = lineOffset;
-    const verticalOffset = lineHeight * (lines - 1);
-    lineOffset = lineOffset + wordOffset;
-    if (lineOffset > maxLengthPx) {
+    if (lineOffset + wordOffset > maxLengthPx) {
       newline();
     }
+
     charLayers.push(
       ...wordLayers.map(
         (layer) =>
@@ -105,13 +103,14 @@ export const makeTextLayer = (
             layer[0],
             {
               offset: {
-                x: prevLineOffset + (layer[1] as number),
-                y: verticalOffset,
+                x: lineOffset + (layer[1] as number),
+                y: lineHeight * (lines - 1),
               },
             },
           ] as CharLayer,
       ),
     );
+    lineOffset = lineOffset + wordOffset;
   }
 
   const textLayer = makeLayer.blankWithAlpha({

@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { makeLayer } from 'painbrush/layer';
 import { readFile, writeFile } from 'fs/promises';
 import { exportImage } from 'painbrush/image';
-import { SET_COLORS } from 'painbrush/color';
+import { brush, SET_COLORS } from 'painbrush/color';
 import { getDefaultFontHandleNode, useFont } from 'painbrush/font';
 
 // Stub Math.random for consistent results
@@ -77,7 +77,7 @@ describe(`makeLayer functions`, () => {
         POXEL,
         undefined,
         {
-          maxLengthPx: 120,
+          maxLengthPx: 100,
         },
       );
 
@@ -110,6 +110,27 @@ describe(`makeLayer functions`, () => {
       const bmp = exportImage(layer);
       await writeFile(
         import.meta.dirname + `/__snapshots__/snap-text-layer-3.bmp`,
+        bmp,
+      );
+      expect(JSON.stringify(layer, null, 2)).toMatchSnapshot();
+    });
+    it(`should create a text layer without a hanging space`, async () => {
+      const POXEL = await useFont(getDefaultFontHandleNode());
+      const layer = makeLayer.text(
+        'test for words',
+        POXEL,
+        undefined,
+        {
+          maxLengthPx: 50,
+          letterPlateBrush: brush.border(1, SET_COLORS.BLUE),
+        },
+      );
+
+      console.log(layer.x);
+
+      const bmp = exportImage(layer);
+      await writeFile(
+        import.meta.dirname + `/__snapshots__/snap-text-layer-4.bmp`,
         bmp,
       );
       expect(JSON.stringify(layer, null, 2)).toMatchSnapshot();
