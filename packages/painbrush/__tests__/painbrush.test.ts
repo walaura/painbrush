@@ -151,6 +151,12 @@ describe(`Painbrush`, async () => {
       import.meta.dirname + `/__snapshots__/snap.bmp`,
       bmp,
     );
-    expect(JSON.stringify(layers, null, 2)).toMatchSnapshot();
+    expect(
+      JSON.stringify(
+        transformLayer.scale(layers, { x: 0.1, y: 0.1 }),
+        null,
+        2,
+      ),
+    ).toMatchSnapshot();
   });
 });

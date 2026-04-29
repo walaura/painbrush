@@ -24,6 +24,7 @@ export const makeImageLayer = (
       data: [...imageData.data],
     } as SingleChannelImage);
   }
+
   if (imageData.bitsPerPixel === 24) {
     return importMultiChannelImage({
       ...imageData,

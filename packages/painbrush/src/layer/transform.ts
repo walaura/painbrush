@@ -11,6 +11,7 @@ import {
   getXYCoords,
 } from 'painbrush/pixel';
 import type { LayerMeta } from './layer.js';
+import { getPixelColor, getPixelXYCoords } from '../pixel.ts';
 
 export const scaleLayer = (
   source: Layer,
@@ -60,3 +61,90 @@ export const setBackgroundOfLayer = (
   source: Layer,
   bgBrush: Brush = brush.solidFill(0xff00ff),
 ) => composeLayer.overlay(makeLayer.blank(source, bgBrush), source);
+
+export const stack =
+  (stackAxis: keyof XYCoords) =>
+  (sources: Layer[], gap: number = 0) => {
+    const counterAxis: keyof XYCoords = stackAxis === 'x' ? 'y' : 'x';
+    const stackAxisLength = sources.reduce((a, b, c) => {
+      // add them up
+      return (
+        a +
+        (c === sources.length - 1 ? b[stackAxis] : b[stackAxis] + gap)
+      );
+    }, 0);
+
+    const counterAxisLength = Math.max(
+      ...sources.map((s) => s[counterAxis]),
+    );
+
+    const bg = makeLayer.blank({
+      [counterAxis]: counterAxisLength,
+      [stackAxis]: stackAxisLength,
+    } as unknown as XYCoords);
+
+    let spacing = 0;
+    for (const source of sources) {
+      composeLayer.punch(bg, source, {
+        offset: {
+          [counterAxis]: 0,
+          [stackAxis]: spacing,
+        } as unknown as XYCoords,
+      });
+      spacing += source[stackAxis] + gap;
+    }
+
+    return bg;
+  };
+
+export const rotate = (source: Layer, tilt: 0 | 90 | 180 | 270) => {
+  switch (tilt) {
+    case 90: {
+      return makeLayer.blank(
+        { x: source.y, y: source.x },
+        (index, layer) => {
+          const currentCoords = getPixelXYCoords(index, layer);
+
+          return getPixelColor(
+            {
+              x: layer.y - 1 - currentCoords.y,
+              y: layer.x - 1 - currentCoords.x,
+            },
+            source,
+          ) as Color;
+        },
+      );
+    }
+    case 180: {
+      return makeLayer.blank(source, (index, layer) => {
+        const currentCoords = getPixelXYCoords(index, layer);
+
+        return getPixelColor(
+          {
+            y: layer.y - 1 - currentCoords.y,
+            x: layer.x - 1 - currentCoords.x,
+          },
+          source,
+        ) as Color;
+      });
+    }
+    case 270: {
+      return makeLayer.blank(
+        { x: source.y, y: source.x },
+        (index, layer) => {
+          const currentCoords = getPixelXYCoords(index, layer);
+          return getPixelColor(
+            {
+              x: currentCoords.y,
+              y: currentCoords.x,
+            },
+            source,
+          ) as Color;
+        },
+      );
+    }
+    default: {
+      return source;
+    }
+  }
+};

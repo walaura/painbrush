@@ -17,6 +17,8 @@ import {
   paintLayer,
   padLayer,
   setBackgroundOfLayer,
+  rotate,
+  stack,
 } from '../src/layer/transform.ts';
 
 export type { Layer } from '../src/layer/layer.d.ts';
@@ -62,6 +64,20 @@ export const transformLayer = {
   Loop over layer pixels to paint them in a different way
   */
   paint: paintLayer,
+
+  /**
+  Rotate in quarter steps
+  */
+  rotate,
+
+  /**
+  Stack several layers without overlap, great for layouts and stuff
+  */
+  stackHorizontal: stack('x'),
+  /**
+  Stack several layers without overlap, great for layouts and stuff
+  */
+  stackVertical: stack('y'),
 
   /**
   Adds a padding to all four sides of any layer in a

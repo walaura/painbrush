@@ -36,7 +36,7 @@ export const colorFromRgb = (
   g: number,
   b: number,
 ): Color => {
-  return (1 << 24) | (r << 16) | (g << 8) | b;
+  return (r << 16) | (g << 8) | b;
 };
 
 /**

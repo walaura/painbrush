@@ -1,6 +1,7 @@
 {
   "include": [
-    "./api/*.ts"
+    "./api/*.ts",
+    "./packer.ts"
   ],
   "compilerOptions": {
     "target": "esnext",
