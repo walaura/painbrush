@@ -78,7 +78,7 @@ export const stack =
       ...sources.map((s) => s[counterAxis]),
     );
 
-    const bg = makeLayer.blank({
+    const bg = makeLayer.blankWithAlpha({
       [counterAxis]: counterAxisLength,
       [stackAxis]: stackAxisLength,
     } as unknown as XYCoords);
