@@ -14,6 +14,7 @@ export default defineConfig([
   tseslint.configs.recommended,
   {
     rules: {
+      'max-len': ["error", { "comments": 79, code: Infinity }],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

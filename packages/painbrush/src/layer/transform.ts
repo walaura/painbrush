@@ -15,7 +15,9 @@ import type { Layer } from '../layer.ts';
 import type { LayerParams } from '../image/import.ts';
 
 /**
-  Applies what i think is a nearest-neighbor transform to the layer. only integer transforms _really_ work for precise results but you can get some cool effects with floats
+  Applies what i think is a nearest-neighbor transform 
+  to the layer. only integer transforms _really_ work 
+  for precise results but you can get some cool effects with floats
   */
 export const scaleLayer = (
   source: Layer,
@@ -79,7 +81,10 @@ export const addBackgroundToLayer = (
 ) => overlayLayerOver(makeBlankLayer(source, bgBrush), source);
 
 /*
-Faster but destructive. No blend modes, no checks, super useful if painting over canvases tho. overrides source.
+  Faster but destructive. No blend modes, no checks, 
+  super useful if painting over canvases tho. 
+  
+  OVERRIDES SOURCE!!
 */
 export const punchLayerOver = (
   back: Layer,
@@ -104,7 +109,8 @@ export const punchLayerOver = (
 };
 
 /*
-Overlay a layer over another, apply an offset and maybe eventually a blend mode??
+  Overlay a layer over another, apply an offset 
+  and maybe eventually a blend mode??
 */
 export const overlayLayerOver = (
   back: Layer,
@@ -137,8 +143,11 @@ export const overlayLayerOver = (
 };
 
 /**
- * Join a bunch of layers.
- * Note that this is reversed (front to back) so it matches how most layers work in software. its confusing if you think about it but makes sense if you do
+  Join a bunch of layers.
+  
+  Note that this is reversed (front to back) so 
+  it matches how most layers work in software. 
+  its confusing if you think about it but makes sense if you do
  */
 export const overlayLayersOver = (
   ...args: [Layer, LayerParams?][]
@@ -153,8 +162,8 @@ export const overlayLayersOver = (
   if (canvasParams != null) {
     console.warn(
       `Your initial canvas had layer transform parameters.` +
-        `\n` +
-        `If you want to do that, place that layer it on top of a blank non-transformed layer`,
+      `\n` +
+      `If you want to do that, place that` + `layer it on top of a blank non-transformed layer`,
     );
   }
 

@@ -8,11 +8,19 @@ export interface XYCoords {
   y: number;
 }
 
+/**
+ Given a layer (color[]) and coords, 
+ identify the pixel index of those coords
+ */
 export const getPixelIndexFromCoords = (
   coords: XYCoords,
   layer: Layer,
 ) => coords.y * layer.x + coords.x;
 
+/**
+ Given a layer (color[]), 
+ identify the x,y coords of the pixel at index
+ */
 export const getPixelXYCoords = (
   index: number,
   layer: LayerMeta,
@@ -24,6 +32,10 @@ export const getPixelXYCoords = (
   };
 };
 
+/**
+ Given a layer (color[]) and coords, 
+ identify the pixel color of those coords
+ */
 export const getPixelColor = (
   coords: XYCoords,
   layer: Layer,
