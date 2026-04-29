@@ -19,6 +19,7 @@ import {
   setBackgroundOfLayer,
   rotate,
   stack,
+  cropLayer,
 } from '../src/layer/transform.ts';
 
 export type { Layer } from '../src/layer/layer.d.ts';
@@ -64,6 +65,11 @@ export const transformLayer = {
   Loop over layer pixels to paint them in a different way
   */
   paint: paintLayer,
+
+  /**
+  Remove extra pixels for the bleeding edges of the layer
+  */
+  crop: cropLayer,
 
   /**
   Rotate in quarter steps

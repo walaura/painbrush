@@ -12,6 +12,10 @@ type TextLayerProps = {
    */
   maxLengthPx?: number;
   /**
+   * Minimum width of the container
+   */
+  minLengthPx?: number;
+  /**
    * Background behind each individual character
    */
   letterPlateBrush?: Brush;
@@ -34,6 +38,7 @@ export const makeTextLayer = (
   {
     letterPlateBrush = brush.alphaSolidFill(),
     maxLengthPx = Infinity,
+    minLengthPx = 0,
     breakLinesOn = ` `,
   }: TextLayerProps = {},
 ): Layer => {
@@ -110,7 +115,7 @@ export const makeTextLayer = (
   }
 
   const textLayer = makeLayer.blankWithAlpha({
-    x: (maxWidth = Math.max(lineOffset, maxWidth)),
+    x: Math.max(minLengthPx, Math.max(lineOffset, maxWidth)),
     y: lineHeight * lines,
   });
 

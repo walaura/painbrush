@@ -70,5 +70,49 @@ describe(`makeLayer functions`, () => {
       );
       expect(JSON.stringify(layer, null, 2)).toMatchSnapshot();
     });
+    it(`should create a text layer at the max specified size`, async () => {
+      const POXEL = await useFont(getDefaultFontHandleNode());
+      const layer = makeLayer.text(
+        'test testtestt esttesttes ttest test',
+        POXEL,
+        undefined,
+        {
+          maxLengthPx: 120,
+        },
+      );
+
+      const bmp = exportImage(layer);
+      await writeFile(
+        import.meta.dirname + `/__snapshots__/snap-text-layer-1.bmp`,
+        bmp,
+      );
+      expect(JSON.stringify(layer, null, 2)).toMatchSnapshot();
+    });
+    it(`should create a text layer without extra space`, async () => {
+      const POXEL = await useFont(getDefaultFontHandleNode());
+      const layer = makeLayer.text('test', POXEL, undefined, {
+        maxLengthPx: 120,
+      });
+
+      const bmp = exportImage(layer);
+      await writeFile(
+        import.meta.dirname + `/__snapshots__/snap-text-layer-2.bmp`,
+        bmp,
+      );
+      expect(JSON.stringify(layer, null, 2)).toMatchSnapshot();
+    });
+    it(`should create a text layer leaving hanging space`, async () => {
+      const POXEL = await useFont(getDefaultFontHandleNode());
+      const layer = makeLayer.text('test', POXEL, undefined, {
+        minLengthPx: 120,
+      });
+
+      const bmp = exportImage(layer);
+      await writeFile(
+        import.meta.dirname + `/__snapshots__/snap-text-layer-3.bmp`,
+        bmp,
+      );
+      expect(JSON.stringify(layer, null, 2)).toMatchSnapshot();
+    });
   });
 });

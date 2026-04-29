@@ -97,4 +97,37 @@ describe(`transformLayer functions`, async () => {
       ).toMatchSnapshot();
     });
   });
+
+  describe('crop', () => {
+    it(`should crop a layer `, async () => {
+      const croppedLayer = transformLayer.crop(originalLayer, {
+        x: 10,
+        y: 10,
+      });
+      const bmp = exportImage(croppedLayer);
+      await writeFile(
+        import.meta.dirname + `/__snapshots__/snap-cropped-layer.bmp`,
+        bmp,
+      );
+      expect(JSON.stringify(croppedLayer, null, 2)).toMatchSnapshot();
+    });
+  });
+  it(`should crop a layer with an offset`, async () => {
+    const croppedLayer = transformLayer.crop(
+      originalLayer,
+      {
+        x: 10,
+        y: 5,
+      },
+      {
+        offset: { x: -5, y: -2 },
+      },
+    );
+    const bmp = exportImage(croppedLayer);
+    await writeFile(
+      import.meta.dirname + `/__snapshots__/snap-cropped-layer-2.bmp`,
+      bmp,
+    );
+    expect(JSON.stringify(croppedLayer, null, 2)).toMatchSnapshot();
+  });
 });

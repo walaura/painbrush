@@ -6,6 +6,7 @@ import {
 } from 'painbrush/color';
 import { composeLayer, makeLayer, type Layer } from 'painbrush/layer';
 import {
+  COORDS_ZERO,
   type XYCoords,
   getColor,
   getXYCoords,
@@ -147,4 +148,27 @@ export const rotate = (source: Layer, tilt: 0 | 90 | 180 | 270) => {
       return source;
     }
   }
+};
+
+export const cropLayer = (
+  source: Layer,
+  newDimensions: XYCoords,
+  {
+    offset = COORDS_ZERO,
+  }: {
+    offset?: XYCoords;
+  } = {},
+) => {
+  return makeLayer.blank(newDimensions, (index, target) => {
+    const coords = getXYCoords(index, target);
+    const colorFromSource = getPixelColor(
+      {
+        x: coords.x - offset.x,
+        y: coords.y - offset.y,
+      },
+      source,
+    );
+
+    return colorFromSource ?? SET_COLORS.ALPHA;
+  });
 };
