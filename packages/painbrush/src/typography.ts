@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises";
 import type { SingleChannelImage } from "./layer.ts";
-import type { PackerCharactersWithTrim } from "../src-packer/_.js";
+import type { PackerCharactersWithTrim } from "../dist/src-packer/helpers.js";
 import path from "path";
 
 export type FontHandle =
@@ -23,53 +23,36 @@ export type PxFontFile = {
 
 export interface Font {
   getCharacter: (c: string) => SingleChannelImage;
+  getMetrics: () => FontMetrics;
 }
 
-export const loadBuiltInFont = async () => {
-  return await useFont(
-    readFile(
-      path.resolve(import.meta.dirname, "../static/poxel.pxfont"),
-    ),
-  );
+export type CharResolver = (
+  charmap: CharMap,
+) => (c: string) => SingleChannelImage;
+
+/**
+ * The map of characters to their glyph ({a: pictureOfAnA, ...}).
+ * maybe treat this as opaque bc theres no way im sticking
+ * w this as soon as i want emoji
+ */
+export type CharMap = {
+  [k: string]: SingleChannelImage;
 };
 
-const unpackFontHandle = async (
-  handle: Promise<FontHandle>,
-): Promise<PxFontFile> => {
-  const file = await handle;
-  if (file instanceof Object && "alphabet" in file) {
-    return file;
-  }
-  return JSON.parse((await handle).toString()) as PxFontFile;
-};
+/**
+ * This is poxel, a lil pixel font i whipped up to start with.
+ * its very limited
+ */
+export const DEFAULT_FONT_HANDLE = readFile(
+  path.resolve(import.meta.dirname, "../static/poxel.pxfont"),
+);
 
-export const useFont = async (
-  handle: Promise<FontHandle>,
-): Promise<Font> => {
-  const chars = await unpackFontHandle(handle);
-
-  const charmap = Object.fromEntries(
-    chars.alphabet.split("").map((l, index) => {
-      const char = chars.characters[index];
-      return [
-        l,
-        {
-          isSingleChannel: true,
-          data: char[1],
-          width: char[0],
-          height: chars.metrics.height,
-        },
-      ];
-    }),
-  );
-  charmap[" "] = {
-    isSingleChannel: true,
-    data: [],
-    width: chars.metrics.spaces,
-    height: 0,
-  };
-
-  const getCharacterFromFont = (c: string) => {
+/**
+ * Feel free to add to this in yours to maybe remove accents etc
+ */
+export const DEFAULT_CHAR_RESOLVER =
+  (charmap: CharMap) =>
+  (c: string): SingleChannelImage => {
     if (c in charmap) {
       return charmap[c];
     }
@@ -81,17 +64,56 @@ export const useFont = async (
     if (lower in charmap) {
       return charmap[lower];
     }
-    return charmap[chars.alphabet[0]];
+    return (
+      charmap["?"] ?? charmap["X"] ?? charmap["x"] ?? charmap[" "]
+    );
   };
 
-  const FONT = {
-    getCharacter: (c: string): SingleChannelImage => {
-      return {
-        ...getCharacterFromFont(c),
-        id: Math.random(),
-      } as SingleChannelImage;
-    },
+/**
+ * 'Unpacks' a handle to a .pxfont file into images so it
+ * can be used to draw.
+ */
+export const useFont = async (
+  handle: Promise<FontHandle>,
+  charResolver: CharResolver = DEFAULT_CHAR_RESOLVER,
+): Promise<Font> => {
+  const chars = await unpackFontHandle(handle);
+
+  const charmap: CharMap = Object.fromEntries(
+    chars.alphabet.split("").map((l, index) => {
+      const char = chars.characters[index];
+      return [
+        l,
+        {
+          channels: 1,
+          data: char[1],
+          width: char[0],
+          height: chars.metrics.height,
+        },
+      ];
+    }),
+  );
+  charmap[" "] = {
+    channels: 1,
+    data: [],
+    width: chars.metrics.spaces,
+    height: 0,
   };
 
-  return FONT;
+  const getCharacter = charResolver(charmap);
+  const getMetrics = () => chars.metrics;
+  return {
+    getCharacter,
+    getMetrics,
+  };
+};
+
+const unpackFontHandle = async (
+  handle: Promise<FontHandle>,
+): Promise<PxFontFile> => {
+  const file = await handle;
+  if (file instanceof Object && "alphabet" in file) {
+    return file;
+  }
+  return JSON.parse((await handle).toString()) as PxFontFile;
 };

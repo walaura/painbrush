@@ -20,7 +20,7 @@ import {
   type Layer,
 } from "painbrush/layer";
 import { getPixelXYCoords } from "painbrush/pixel";
-import { loadBuiltInFont, useFont } from "painbrush/typography";
+import { DEFAULT_FONT_HANDLE, useFont } from "painbrush/typography";
 
 /*
 
@@ -29,7 +29,7 @@ FONT LOADING
 You wanna get this out of the way once since its doing some parsing 
 behind the scenes.
 
-Poxel is bundled (as loadBuiltInFont) so you can get writing ascii 
+Poxel is bundled (as DEFAULT_FONT_HANDLE) so you can get writing ascii 
 out of the park. 
 
 Custom fonts are really fun to make! theres some easy-to-run 
@@ -39,7 +39,7 @@ starting point, check out nom run pack-font on this project.
 
 const [LUCAS, POXEL] = await Promise.all([
   useFont(readFile("./fonts/lucas.pxfont")),
-  loadBuiltInFont(),
+  useFont(DEFAULT_FONT_HANDLE),
 ]);
 
 /*

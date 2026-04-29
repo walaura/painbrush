@@ -18,11 +18,14 @@ You can use this lib to generate images and text in the much loved bmp format. I
 import { writeFile } from "fs/promises";
 import { toImage } from "painbrush/image";
 import { makeTextLayer } from "painbrush/layer";
-import { loadBuiltInFont } from "painbrush/typography";
+import { DEFAULT_FONT_HANDLE } from "painbrush/typography";
+import { solidFillBrush } from "painbrush/color";
 
+const POXEL = await useFont(DEFAULT_FONT_HANDLE);
 const clock = makeTextLayer(
   Date.now().toString(),
-  await loadBuiltInFont(),
+  POXEL,
+  solidFillBrush(0xc0ffee),
 );
 
 await writeFile("image.bmp", toImage(clock));

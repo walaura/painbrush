@@ -1,8 +1,9 @@
 import type { Color } from "./color/utils.ts";
 import type {
-  LayerMeta,
   Layer,
   SingleChannelImage,
+  ImageMeta,
+  LayerMeta,
 } from "./layer.ts";
 
 export const COORDS_ZERO = { x: 0, y: 0 };
@@ -11,11 +12,8 @@ export type XYCoords = { x: number; y: number };
 
 export const getPixelIndexFromCoords = (
   coords: XYCoords,
-  { width }: LayerMeta,
-) => {
-  const xPosition = coords.y * width + coords.x;
-  return xPosition;
-};
+  { width }: Layer,
+) => coords.y * width + coords.x;
 
 export const getPixelXYCoords = (
   index: number,
@@ -34,27 +32,12 @@ export const getPixelColor = (
 ): Color | null => {
   const normalXYCoords = normalize(coords, layer);
   if (!normalXYCoords) return null;
-  const { x, y } = normalXYCoords;
-
-  const pos = x + y * layer.width;
-  return layer.pixels[pos];
-};
-
-export const getPixelFromSingleChannelImage = (
-  coords: XYCoords,
-  layer: SingleChannelImage,
-): number | null => {
-  const normalXYCoords = normalize(coords, layer);
-  if (!normalXYCoords) return null;
-  const { x, y } = normalXYCoords;
-
-  const pos = x + y * layer.width;
-  return layer.data[pos];
+  return layer.pixels[getPixelIndexFromCoords(coords, layer)];
 };
 
 const normalize = (
   coords: XYCoords,
-  layer: LayerMeta,
+  layer: ImageMeta,
 ): XYCoords | null => {
   const x = ~~coords.x;
   const y = ~~coords.y;

@@ -19,7 +19,7 @@ import type {
   PackerCharactersWithTrim,
   PackerFileOp,
   PackerIntakeData,
-} from "./_.js";
+} from "../dist/src-packer/helpers.js";
 
 export const generateCharacters = async ({
   img,

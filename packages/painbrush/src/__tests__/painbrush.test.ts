@@ -19,9 +19,9 @@ import {
   makeImageLayer,
 } from "../layer.ts";
 import { getPixelXYCoords } from "../pixel.ts";
-import { loadBuiltInFont } from "../typography.ts";
 import { readFile, writeFile } from "fs/promises";
 import { toImage } from "../image.ts";
+import { DEFAULT_FONT_HANDLE, useFont } from "../typography.ts";
 
 vi.stubGlobal("Math", {
   random: () => 0.5,
@@ -33,7 +33,7 @@ vi.stubGlobal("Math", {
 
 describe("Painbrush", async () => {
   it("should generate an image that vaguely looks good", async () => {
-    const POXEL = await loadBuiltInFont();
+    const POXEL = await useFont(DEFAULT_FONT_HANDLE);
 
     const sun = makeRectangleLayer(
       { x: 30, y: 30 },
@@ -153,17 +153,11 @@ describe("Painbrush", async () => {
       [bg],
     );
 
-    expect(
-      require("crypto")
-        .createHash("sha1")
-        .update(JSON.stringify(layers))
-        .digest("base64"),
-    ).toMatchSnapshot();
-
     const bmp = toImage(layers);
     await writeFile(
       import.meta.dirname + "/__snapshots__/snap.bmp",
       bmp,
     );
+    expect(JSON.stringify(layers, null, 2)).toMatchSnapshot();
   });
 });

@@ -4,15 +4,11 @@ import { program } from "commander";
 import { writeFile } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 import chalk from "chalk";
-import {
-  printCharacter,
-  reportNay,
-  reportYay,
-} from "./src-packer/helpers.ts";
+import { reportNay, reportYay } from "./src-packer/helpers.ts";
 import type {
   FontMetaJSON,
   PackerIntakeData,
-} from "./src-packer/_.js";
+} from "./dist/src-packer/helpers.js";
 import path from "node:path";
 import {
   generateCharacters,

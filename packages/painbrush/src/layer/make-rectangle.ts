@@ -20,6 +20,7 @@ export const makeRectangleLayer = (
     width,
     id: Math.random(),
     height,
+    __isLayer: true as const,
   };
 
   for (let index = 0; index < width * height; index = index + 1) {

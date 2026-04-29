@@ -16,7 +16,6 @@ export const makeImageLayer = (
       data: [...imageData.data],
       ...imageData,
       isSingleChannel: true,
-      id: Math.random(),
     });
   }
   if (imageData.bitsPerPixel === 24) {
@@ -24,7 +23,6 @@ export const makeImageLayer = (
     return deflateImage({
       ...imageData,
       data: [...imageData.data],
-      id: Math.random(),
     });
   }
 
@@ -35,8 +33,7 @@ export const makeImageLayer = (
     return deflateImage({
       ...imageData,
       data: [...imageData.data],
-      isFourChannel: true,
-      id: Math.random(),
+      channels: imageData.channels as 3 | 4,
     });
   }
 

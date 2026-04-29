@@ -26,7 +26,7 @@ export const makeRenderCall = async (
   lucasHandle: Promise<FontHandle>,
 ) => {
   const [POXEL, LUCAS] = await Promise.all(
-    [poxelHandle, lucasHandle].map(useFont),
+    [poxelHandle, lucasHandle].map((f) => useFont(f)),
   );
   return async ({
     bgColor,

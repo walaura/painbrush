@@ -1,7 +1,7 @@
 import { encode } from "fast-bmp";
 import {
   makeRectangleLayer,
-  type FourChannelImage,
+  type MultiChannelImage,
   type Layer,
   type SingleChannelImage,
 } from "./layer.ts";
@@ -14,11 +14,7 @@ import {
   solidFillBrush,
   type Brush,
 } from "./color.ts";
-import {
-  getPixelXYCoords,
-  getPixelFromSingleChannelImage,
-  type XYCoords,
-} from "./pixel.ts";
+import { type XYCoords } from "./pixel.ts";
 
 export const toImage = (
   layer: Layer,
@@ -45,7 +41,7 @@ export const toImage = (
 /**
  * Turns a bmp image into a layer.
  * */
-export const deflateImage = (image: FourChannelImage): Layer => {
+export const deflateImage = (image: MultiChannelImage): Layer => {
   let pixels = [];
   for (let i = 0; i < [...image.data].length; i += image.channels) {
     if (image.channels === 4 && image.data[i] === 0) {
@@ -60,9 +56,12 @@ export const deflateImage = (image: FourChannelImage): Layer => {
       ),
     );
   }
-  const { isFourChannel, ...otherLayerStuff } = image;
+  const { width, height } = image;
   return {
-    ...otherLayerStuff,
+    __isLayer: true as const,
+    id: Math.random(),
+    width,
+    height,
     pixels,
   };
 };
@@ -71,20 +70,14 @@ export const deflateImage = (image: FourChannelImage): Layer => {
  * Turns a 1 bit image into a layer.
  * */
 export const inflateImage = (
-  layer: SingleChannelImage,
+  image: SingleChannelImage,
   fgBrush: Brush = solidFillBrush(COLOR_BLACK),
   bgBrush: Brush = alphaBrush(),
 ): Layer => {
   return makeRectangleLayer(
-    { x: Math.floor(layer.width), y: Math.floor(layer.height) },
+    { x: Math.floor(image.width), y: Math.floor(image.height) },
     (index, meta) => {
-      const coords = getPixelXYCoords(index, meta);
-      const maybeTargetPixel = getPixelFromSingleChannelImage(
-        coords,
-        layer,
-      );
-
-      return maybeTargetPixel
+      return image.data[index]
         ? fgBrush(index, meta)
         : bgBrush(index, meta);
     },
