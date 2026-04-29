@@ -14,6 +14,7 @@
     "jest": "^30.3.0"
   },
   "scripts": {
-    "preflight": "npm explore painbrush -- npm run preflight && npm explore lc-browser-ex -- npm run preflight  && npm explore lc-node-ex -- npm run preflight"
+    "preflight": "npm explore painbrush -- npm run preflight && npm explore lc-browser-ex -- npm run preflight  && npm explore lc-node-ex -- npm run preflight",
+    "publish-js": "npm run preflight && cd packages/painbrush && npm run publish-js-int"
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "painbrush",
   "type": "module",
-  "version": "3.0.0",
+  "version": "3.2.0",
   "description": "",
   "homepage": "https://github.com/walaura/painbrush#readme",
   "bugs": {
@@ -50,6 +50,6 @@
     "preflight": "npm run test",
     "test": "tsc && eslint && vitest run --exclude dist",
     "build": "tsc --outDir dist --project tsconfig-build.json && node prepare.ts",
-    "publish-js": "npm run build && cd ./dist && npm publish"
+    "publish-js-int": "npm run build && cd ./dist && npm publish"
   }
 }

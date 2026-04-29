@@ -1,4 +1,7 @@
 {
+  "include": [
+    "./api/*.ts"
+  ],
   "compilerOptions": {
     "target": "esnext",
     "module": "nodenext",
