@@ -46,8 +46,8 @@ export const generateCharacters = async ({
       rawCharacters[charPos] = [];
     }
 
-    const charPixelPos
-      = charXPixelOffset + charYPixelOffset * metrics.width;
+    const charPixelPos =
+      charXPixelOffset + charYPixelOffset * metrics.width;
 
     rawCharacters[charPos][charPixelPos] = item as PackerCharacter[0];
   });
@@ -57,8 +57,8 @@ export const generateCharacters = async ({
   return rawCharacters.map((char, index) => {
     const letter = alphabet[index];
 
-    const maybeTrim
-      = fontMeta.trim[letter] ?? fontMeta.trim[`__DEFAULT__`];
+    const maybeTrim =
+      fontMeta.trim[letter] ?? fontMeta.trim[`__DEFAULT__`];
     if (!maybeTrim) {
       return [metrics.width, char];
     }
@@ -105,16 +105,16 @@ export const generateSpecimenImage = async (
   const specimenImg = addBackgroundToLayer(
     padLayer(
       await makeTextLayer(
-        fontName.toUpperCase()
-        + `\n`
-        + `\n`
-        + `? `
-        + alphabet
-          .split(``)
-          .map(s => s.trim())
-          .filter(Boolean)
-          .sort()
-          .join(``),
+        fontName.toUpperCase() +
+          `\n` +
+          `\n` +
+          `? ` +
+          alphabet
+            .split(``)
+            .map((s) => s.trim())
+            .filter(Boolean)
+            .sort()
+            .join(``),
         await useFont(Promise.resolve(pxFontFile)),
         solidFillBrush(
           fontMeta.specimen?.color

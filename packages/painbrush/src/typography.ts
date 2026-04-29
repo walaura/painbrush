@@ -3,11 +3,11 @@ import type { SingleChannelImage } from './image.ts';
 import path from 'path';
 import type { PackerCharactersWithTrim } from '../src-packer/helpers.ts';
 
-export type FontHandle
-  = | Buffer<ArrayBuffer>
-    | string
-    | { toString: () => string }
-    | PxFontFile;
+export type FontHandle =
+  | Buffer<ArrayBuffer>
+  | string
+  | { toString: () => string }
+  | PxFontFile;
 
 export type FontMetrics = {
   height: number;
@@ -51,24 +51,24 @@ export const getDefaultFontHandleNode = () =>
 /**
  * Feel free to add to this in yours to maybe remove accents etc
  */
-export const DEFAULT_CHAR_RESOLVER
-  = (charmap: CharMap) =>
-    (c: string): SingleChannelImage => {
-      if (c in charmap) {
-        return charmap[c];
-      }
-      const upper = c.toUpperCase();
-      if (upper in charmap) {
-        return charmap[upper];
-      }
-      const lower = c.toLowerCase();
-      if (lower in charmap) {
-        return charmap[lower];
-      }
-      return (
-        charmap[`?`] ?? charmap[`X`] ?? charmap[`x`] ?? charmap[` `]
-      );
-    };
+export const DEFAULT_CHAR_RESOLVER =
+  (charmap: CharMap) =>
+  (c: string): SingleChannelImage => {
+    if (c in charmap) {
+      return charmap[c];
+    }
+    const upper = c.toUpperCase();
+    if (upper in charmap) {
+      return charmap[upper];
+    }
+    const lower = c.toLowerCase();
+    if (lower in charmap) {
+      return charmap[lower];
+    }
+    return (
+      charmap[`?`] ?? charmap[`X`] ?? charmap[`x`] ?? charmap[` `]
+    );
+  };
 
 /**
  * 'Unpacks' a handle to a .pxfont file into images so it

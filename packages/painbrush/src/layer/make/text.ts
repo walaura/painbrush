@@ -57,7 +57,7 @@ export const makeTextLayer = (
     .map((word, idx, arr) =>
       arr.length === idx + 1 ? word : word + breakLinesOn,
     )
-    .map(word =>
+    .map((word) =>
       word
         .split(`\n`)
         .map((word, idx, arr) =>
@@ -103,7 +103,7 @@ export const makeTextLayer = (
       newline();
     }
     charLayers.push(
-      ...(wordLayers.map(layer => [
+      ...(wordLayers.map((layer) => [
         layer[0],
         {
           skipBlending: true,

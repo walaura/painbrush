@@ -70,7 +70,7 @@ describe(`Painbrush`, async () => {
       ),
       { x: 2, y: 3 },
     );
-    const clockShadow = paintLayer(clock, existingColor =>
+    const clockShadow = paintLayer(clock, (existingColor) =>
       isAlphaColor(existingColor)
         ? () => existingColor
         : solidFillBrush(COLOR_BLACK),

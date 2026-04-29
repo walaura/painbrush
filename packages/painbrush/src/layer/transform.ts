@@ -152,9 +152,9 @@ export const overlayLayersOver = (
   let [canvas, canvasParams] = first;
   if (canvasParams != null) {
     console.warn(
-      `Your initial canvas had layer transform parameters.`
-      + `\n`
-      + `If you want to do that, place that layer it on top of a blank non-transformed layer`,
+      `Your initial canvas had layer transform parameters.` +
+        `\n` +
+        `If you want to do that, place that layer it on top of a blank non-transformed layer`,
     );
   }
 
