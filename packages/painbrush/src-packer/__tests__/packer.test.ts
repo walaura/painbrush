@@ -4,7 +4,7 @@ import {
   generatePxFontFile,
   generateSpecimenImage,
 } from '../pipeline.ts';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import path from 'path';
 import type { PackerIntakeData } from '../helpers.ts';
 
@@ -41,6 +41,11 @@ describe(`Packer`, async () => {
     const image = await generateSpecimenImage(pxFont, intakeData);
     expect(image[0]).toEqual(
       `C:/__TEST__/not-fonts/test-serif-specimen.bmp`,
+    );
+
+    await writeFile(
+      import.meta.dirname + `/__snapshots__/snap.bmp`,
+      image[1],
     );
     expect(image).toMatchSnapshot();
   });
