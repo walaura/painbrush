@@ -10,8 +10,7 @@ import { toImage } from "../src/image.ts";
 import {
   padLayer,
   makeTextLayer,
-  overlayLayerOver,
-  makeBlankLayer,
+  addBackgroundToLayer,
 } from "../src/layer.ts";
 import { type PxFontFile, useFont } from "../src/typography.ts";
 import type {
@@ -19,7 +18,7 @@ import type {
   PackerCharactersWithTrim,
   PackerFileOp,
   PackerIntakeData,
-} from "../dist/src-packer/helpers.js";
+} from "./helpers.ts";
 
 export const generateCharacters = async ({
   img,
@@ -50,7 +49,7 @@ export const generateCharacters = async ({
     const charPixelPos =
       charXPixelOffset + charYPixelOffset * metrics.width;
 
-    rawCharacters[charPos][charPixelPos] = item as 0 | 1;
+    rawCharacters[charPos][charPixelPos] = item as PackerCharacter[0];
   });
 
   const alphabet = fontMeta.alphabet.join("");
@@ -71,7 +70,7 @@ export const generateCharacters = async ({
         newChar.push(char[i]);
       }
     }
-    return [metrics.width - maybeTrim, newChar];
+    return [metrics.width - maybeTrim, newChar as PackerCharacter];
   });
 };
 
@@ -103,45 +102,37 @@ export const generateSpecimenImage = async (
 ): Promise<PackerFileOp<Uint8Array<ArrayBufferLike>>> => {
   const alphabet = fontMeta.alphabet.join("");
 
-  const specimenImgPd = padLayer(
-    await makeTextLayer(
-      fontName.toUpperCase() +
-        "\n" +
-        "\n" +
-        "? " +
-        alphabet
-          .split("")
-          .map((s) => s.trim())
-          .filter(Boolean)
-          .sort()
-          .join(""),
-      await useFont(Promise.resolve(pxFontFile)),
-      solidFillBrush(
-        fontMeta.specimen?.color
-          ? colorFromRgb(...fontMeta.specimen.color)
-          : COLOR_BLACK,
+  const specimenImg = addBackgroundToLayer(
+    padLayer(
+      await makeTextLayer(
+        fontName.toUpperCase() +
+          "\n" +
+          "\n" +
+          "? " +
+          alphabet
+            .split("")
+            .map((s) => s.trim())
+            .filter(Boolean)
+            .sort()
+            .join(""),
+        await useFont(Promise.resolve(pxFontFile)),
+        solidFillBrush(
+          fontMeta.specimen?.color
+            ? colorFromRgb(...fontMeta.specimen.color)
+            : COLOR_BLACK,
+        ),
+        {
+          maxLengthPx: fontMeta.metrics.width * 12,
+          breakLinesOn: "", // break on anything
+        },
       ),
-      {
-        maxLengthPx: fontMeta.metrics.width * 12,
-        breakLinesOn: "", // break on anything
-      },
+      { x: fontMeta.metrics.width, y: fontMeta.metrics.height },
     ),
-    { x: fontMeta.metrics.width, y: fontMeta.metrics.height },
-  );
-
-  const specimenImg = overlayLayerOver(
-    makeBlankLayer(
-      {
-        x: specimenImgPd.x,
-        y: specimenImgPd.y,
-      },
-      solidFillBrush(
-        fontMeta.specimen?.background
-          ? colorFromRgb(...fontMeta.specimen.background)
-          : COLOR_WHITE,
-      ),
+    solidFillBrush(
+      fontMeta.specimen?.background
+        ? colorFromRgb(...fontMeta.specimen.background)
+        : COLOR_WHITE,
     ),
-    specimenImgPd,
   );
 
   const specimenFileAt = path.join(

@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import type { SingleChannelImage } from "./ImageMeta.ts";
+import type { SingleChannelImage } from "./image.ts";
 import type { PackerCharactersWithTrim } from "../dist/src-packer/helpers.js";
 import path from "path";
 

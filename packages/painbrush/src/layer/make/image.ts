@@ -7,7 +7,7 @@ import type { Layer } from "../../layer.ts";
 import type {
   MultiChannelImage,
   SingleChannelImage,
-} from "../../ImageMeta.ts";
+} from "../../image.ts";
 
 export const makeImageLayer = (
   buffer: Buffer<ArrayBuffer>,

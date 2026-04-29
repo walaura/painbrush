@@ -1,4 +1,47 @@
 import chalk from "chalk";
+import type { FontMetrics } from "../src/typography.ts";
+
+export type FontMetaJSON = {
+  metrics: FontMetrics;
+  cols: number;
+  /**
+   * row-separated array of strings representing the characters shown in the bmp
+   */
+  alphabet: string[];
+  /**
+   * Keyed object specifying how many trailing horizontal pixel columns to trim from the character, for narrow characters
+   */
+  trim: {
+    [key: string]: number;
+  };
+  /**
+   * Configure how the specimen image will show up
+   */
+  specimen: {
+    color: [number, number, number];
+    background: [number, number, number];
+  };
+};
+
+export type PackerIntakeData = {
+  img: NonSharedBuffer;
+  fontMeta: FontMetaJSON;
+  fontName: string;
+  cwd: string;
+  outDir: string;
+};
+
+export type PackerCharacter = (0 | 1)[];
+
+export type PackerCharactersWithTrim = [
+  trim: number,
+  char: PackerCharacter,
+][];
+
+export type PackerFileOp<Contents> = [
+  name: string,
+  contents: Contents,
+];
 
 export const printCharacter = (char: (0 | 1)[], width: number) => {
   for (let index = 0; index < char.length; index++) {

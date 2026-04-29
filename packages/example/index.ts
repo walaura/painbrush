@@ -7,7 +7,6 @@ import {
   isAlphaColor,
   solidFillBrush,
 } from "painbrush/color";
-import type { Color } from "painbrush/color";
 import { toImage } from "painbrush/image";
 import {
   makeBlankLayer,

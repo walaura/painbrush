@@ -9,11 +9,17 @@ Normally you just wanna use a solid color and theres solidFillBrush for that. ch
 */
 export type Brush = (index: number, layer: LayerMeta) => Color;
 
+/**
+ * Paints the whole area in a single color. fast.
+ */
 export const solidFillBrush =
   (color: Color): Brush =>
   () =>
     color;
 
+/**
+ * Paints a border of x size
+ */
 export const borderBrush =
   (
     size: number = 1,
@@ -31,4 +37,7 @@ export const borderBrush =
     return innerColor;
   };
 
+/**
+ * Paints a whole area in alpha
+ */
 export const alphaBrush = (): Brush => () => COLOR_ALPHA;

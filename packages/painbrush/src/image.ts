@@ -2,6 +2,10 @@ import { encode } from "fast-bmp";
 import { type Layer } from "./layer.ts";
 import { colorToRgb } from "./color.ts";
 
+/**
+  Exports a layer to a bmp image, keeps size and forces 24 bit. 
+  See fast-bmp for more options
+  */
 export const toImage = (
   layer: Layer,
 ): Uint8Array<ArrayBufferLike> => {
@@ -24,11 +28,11 @@ export const toImage = (
 
   return encoded;
 };
+
 export interface ImageMeta {
   width: number;
   height: number;
 }
-
 export interface SingleChannelImage extends ImageMeta {
   data: number[];
   channels: 1;

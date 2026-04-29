@@ -8,9 +8,8 @@ import type { Layer } from "../../layer.ts";
 import type { XYCoords } from "../../pixel.ts";
 
 /**
-This makes a rectangle with any fill. 
-Useful for the initial canvas
-*/
+  This makes a basic layer with any fill brush. Great base canvas
+  */
 export const makeBlankLayer = (
   size: XYCoords,
   brush: Brush = solidFillBrush(COLOR_BLACK),
@@ -33,7 +32,7 @@ export const makeBlankLayer = (
 };
 
 /**
- * Utility method to make a blank rectangle, makes a great bg
- */
+  Utility method to make a blank rectangle, makes a great bg
+  */
 export const makeBlankLayerWithAlpha = (coords: XYCoords) =>
   makeBlankLayer(coords, alphaBrush());

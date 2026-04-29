@@ -10,13 +10,13 @@ import {
   makeBlankLayer,
 } from "./make/empty.ts";
 import { blendColor, COLOR_ALPHA, type Color } from "../color.ts";
-import { type Brush } from "../color/brush.ts";
+import { solidFillBrush, type Brush } from "../color/brush.ts";
 import type { Layer } from "../layer.ts";
 import type { LayerParams } from "../image/import.ts";
 
 /**
- * Applies what i think is a nearest-neighbor transform to the layer. only integer transforms _really_ work for precise results but you can get some cool effects with floats
- * */
+  Applies what i think is a nearest-neighbor transform to the layer. only integer transforms _really_ work for precise results but you can get some cool effects with floats
+  */
 export const scaleLayer = (
   source: Layer,
   { x: scaleX, y: scaleY }: XYCoords,
@@ -37,19 +37,16 @@ export const scaleLayer = (
   );
 };
 
+/**
+  Loop over layer pixels to paint them in a different way
+  */
 export const paintLayer = (
   layer: Layer,
   painterFn: (existingColor: Color) => Brush,
 ): Layer => {
   const pixels = [];
   for (let index = 0; index < layer.x * layer.y; index = index + 1) {
-    const coords = getPixelXYCoords(index, layer);
-    const sourcePixelColor = getPixelColor(
-      coords,
-      layer,
-    ) as NonNullable<Color>;
-
-    const newColor = painterFn(sourcePixelColor)(index, layer);
+    const newColor = painterFn(layer.pixels[index])(index, layer);
     pixels.push(newColor);
   }
 
@@ -57,9 +54,10 @@ export const paintLayer = (
 };
 
 /**
- * Helper for quickly spazzing out layouts, easier than manually
- * moving stuff
- */
+  Adds a padding to all four sides of any layer in a 
+  transparent background, you can composite this layer 
+  with addBackgroundToLayer
+*/
 export const padLayer = (source: Layer, offset: XYCoords) => {
   const target = makeBlankLayerWithAlpha({
     x: source.x + offset.x * 2,
@@ -70,6 +68,15 @@ export const padLayer = (source: Layer, offset: XYCoords) => {
   });
   return target;
 };
+
+/**
+  Puts a background color under a transparent layer, 
+  great for using with padLayer
+*/
+export const addBackgroundToLayer = (
+  source: Layer,
+  bgBrush: Brush = solidFillBrush(0xff00ff),
+) => overlayLayerOver(makeBlankLayer(source, bgBrush), source);
 
 /*
 Faster but destructive. No blend modes, no checks, super useful if painting over canvases tho. overrides source.

@@ -10,7 +10,7 @@ import { type Layer, makeBlankLayer } from "../layer.ts";
 import {
   type MultiChannelImage,
   type SingleChannelImage,
-} from "../ImageMeta.ts";
+} from "../image.ts";
 import type { XYCoords } from "../pixel.ts";
 
 /**
