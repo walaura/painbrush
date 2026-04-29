@@ -31,19 +31,19 @@ const clock = makeTextLayer(
 await writeFile('image.bmp', toImage(clock));
 ```
 
-Your code wont look that clean tho, see [this example file](https://github.com/walaura/painbrush/blob/main/packages/example/index.ts) for detailed comments. Whole directory is really good stuff. I'm not a good doc writer
+Your code wont look that clean tho, see [this example file](https://github.com/walaura/painbrush/blob/main/packages/node-ex/index.ts) for detailed comments. Whole directory is really good stuff. I'm not a good doc writer
 
 There's more good stuff in there and the code is typescripted and somewhat commented so just have a play around
 
 ### Painbrush in use
 
-- The aforementioned [example](https://github.com/walaura/painbrush/blob/main/packages/example/index.ts)
+- The aforementioned [example](https://github.com/walaura/painbrush/blob/main/packages/node-ex/index.ts)
 - i intend to put this on my website at a minimum but unfortunately i am awaiting for npm support to recover access to my account because i didnt set up a passkey or something
 - Packing a font creates a specimen file. [see how at the end of this](https://github.com/walaura/painbrush/blob/main/packages/painbrush/packer.ts).
 
 ## Packing a font?
 
-Ah my pride and joy. You can see how this is set up in the [examples project](https://github.com/walaura/painbrush/blob/main/packages/example) as well. Painbrush uses a custom pixel font format.
+Ah my pride and joy. You can see how this is set up in the [examples project](https://github.com/walaura/painbrush/blob/main/packages/node-ex) as well. Painbrush uses a custom pixel font format.
 
 First you will need a pixel font. I make mine in aseprite and left them here if you wanna play around with them. Annoyingly you need to work in 2 bits (indexed color, 2 colors) or things won't work. your sprite can be in any format you want as long as its a consistent grid of letters, in any order.
 
@@ -77,7 +77,7 @@ Save this as a bmp and next we need a little manifest for it, which is a json fi
 
 ```
 
-there's some example manifests [here](https://github.com/walaura/painbrush/blob/main/packages/example/test-junk/raw-fonts) that use these features (and even some more!)
+there's some example manifests [here](https://github.com/walaura/painbrush/blob/main/packages/node-ex/test-junk/raw-fonts) that use these features (and even some more!)
 
 when you are done run `painbrush-font-packer`. you can install this globally or reference it in your package.json, i dont really care what you do tbh
 
@@ -96,7 +96,7 @@ You'll get a cool specimen file for your troubles, with all the characters. this
 
 <div align=center>
 
-![""](https://github.com/walaura/painbrush/raw/main/packages/example/fonts/poxel-specimen.bmp)
+![""](https://github.com/walaura/painbrush/raw/main/packages/node-ex/fonts/poxel-specimen.bmp)
 
 </div>
 

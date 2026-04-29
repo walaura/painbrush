@@ -47,8 +47,8 @@
     "typescript-eslint": "^8.59.1"
   },
   "scripts": {
-    "lint": "eslint",
-    "test": "tsc && npm run lint && vitest run --exclude dist",
+    "preflight": "npm run test",
+    "test": "tsc && eslint && vitest run --exclude dist",
     "build": "tsc --outDir dist --project tsconfig-build.json && node prepare.ts",
     "publish-js": "npm run build && cd ./dist && npm publish"
   }

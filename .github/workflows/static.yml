@@ -41,11 +41,11 @@ jobs:
         run: npm i
       - name: npm install (sub)
         run: npm i && npm run build
-        working-directory: ./packages/example-browser
+        working-directory: ./packages/browser-ex
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './packages/example-browser/dist'
+          path: './packages/browser-ex/dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5

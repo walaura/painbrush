@@ -1,8 +1,8 @@
 {
-  "name": "painbrush-example",
+  "name": "painbrush-browser-ex",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "preflight": "tsc",
     "pack-font": "painbrush-font-packer"
   },
   "version": "1.0.0",

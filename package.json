@@ -5,15 +5,15 @@
   "author": "walaura",
   "dependencies": {
     "@jest/globals": "^30.3.0",
-    "wah": "file:./packages/painbrush",
-    "weh": "file:./packages/example-browser",
-    "woo": "file:./packages/example"
+    "lc-painbrush": "file:./packages/painbrush",
+    "lc-browser-ex": "file:./packages/browser-ex",
+    "lc-node-ex": "file:./packages/node-ex"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "jest": "^30.3.0"
   },
   "scripts": {
-    "preflight": "tsc && npm explore painbrush -- npm run test"
+    "preflight": "npm explore lc-painbrush -- npm run preflight && npm explore lc-browser-ex -- npm run preflight  && npm explore lc-node-ex -- npm run preflight"
   }
 }

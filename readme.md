@@ -19,5 +19,5 @@ Ahh!! Because this is really meant for og images on my blog fonts are a big deal
 This is a monorepo bc im fancy like that, so:
 
 - You can read an intro to painbrush on [packages/painbrush](/packages/painbrush/)
-- You can see an example of many features of painbrush in use at [packages/example](/packages/example/)
-- You can painbrush running on your browser at [packages/example-browser](https://walaura.github.io/painbrush/). its awful. use canvas.
+- You can see an example of many features of painbrush in use at [packages/node-ex](/packages/node-ex/)
+- You can painbrush running on your browser at [packages/browser-ex](https://walaura.github.io/painbrush/). its awful. use canvas.

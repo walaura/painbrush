@@ -4,6 +4,7 @@
     "packageExports": true
   },
   "scripts": {
+    "preflight": "tsc",
     "start": "rm -rf dist .parcel-cache && parcel serve ./src/index.html",
     "build": "rm -rf dist .parcel-cache && parcel build ./src/index.html --public-url ./"
   },
