@@ -1,25 +1,25 @@
 #!/usr/bin/env node
 
-import { program } from "commander";
-import { writeFile } from "node:fs/promises";
-import { readFile } from "node:fs/promises";
-import chalk from "chalk";
+import { program } from 'commander';
+import { writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
+import chalk from 'chalk';
 import {
   reportNay,
   reportYay,
   type FontMetaJSON,
   type PackerIntakeData,
-} from "./src-packer/helpers.ts";
-import path from "node:path";
+} from './src-packer/helpers.ts';
+import path from 'node:path';
 import {
   generateCharacters,
   generatePxFontFile,
   generateSpecimenImage,
-} from "./src-packer/pipeline.ts";
+} from './src-packer/pipeline.ts';
 
 program.addHelpText(
-  "beforeAll",
-  `${chalk.cyanBright("> font packer")}
+  `beforeAll`,
+  `${chalk.cyanBright(`> font packer`)}
 If you aren't sure how to author a font check out the docs 
 or try repacking the bundled ones yourself.
 You can download them from the repo!!
@@ -27,17 +27,17 @@ You can download them from the repo!!
 );
 program.showHelpAfterError();
 program.requiredOption(
-  "-f, --font <font-name>",
-  "path to the raw font files, make sure theres a bmp AND a json!!",
+  `-f, --font <font-name>`,
+  `path to the raw font files, make sure theres a bmp AND a json!!`,
 );
 program.option(
-  "-o, --out <directory>",
-  "path to the output directory, your font will show up there",
-  "fonts",
+  `-o, --out <directory>`,
+  `path to the output directory, your font will show up there`,
+  `fonts`,
 );
 program.option(
-  "-p, --print",
-  "Stream the characters into the terminal during parsing",
+  `-p, --print`,
+  `Stream the characters into the terminal during parsing`,
 );
 program.parse();
 
@@ -49,16 +49,16 @@ const options = program.opts();
  * I used aseprite on indexed color
  */
 
-const fontName = path.parse(options.font.split("/").pop()).name;
+const fontName = path.parse(options.font.split(`/`).pop()).name;
 
 const intakeData: PackerIntakeData = await (async () => {
   const cwd = process.cwd();
-  const outDir = options.out ?? "fonts";
+  const outDir = options.out ?? `fonts`;
   const inPath = path.join(cwd, options.font);
-  const img = await readFile(inPath + ".bmp");
+  const img = await readFile(inPath + `.bmp`);
 
   const fontMeta = JSON.parse(
-    (await readFile(inPath + ".json")).toString(),
+    (await readFile(inPath + `.json`)).toString(),
   ) as FontMetaJSON;
 
   reportYay(`Found bmp, json is valid`);
@@ -96,6 +96,6 @@ reportYay(
   `Wrote specimen file at ${chalk.cyan.underline(imageWriteOp[0])} (check it out!)`,
 );
 
-console.log("");
+console.log(``);
 reportYay(`You can now use ${chalk.yellow(fontName)} as a font`);
-console.log("");
+console.log(``);

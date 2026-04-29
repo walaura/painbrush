@@ -5,13 +5,13 @@ import {
   solidFillBrush,
   COLOR_BLACK,
   alphaBrush,
-} from "../color.ts";
-import { type Layer, makeBlankLayer } from "../layer.ts";
+} from '../color.ts';
+import { type Layer, makeBlankLayer } from '../layer.ts';
 import {
   type MultiChannelImage,
   type SingleChannelImage,
-} from "../image.ts";
-import type { XYCoords } from "../pixel.ts";
+} from '../image.ts';
+import type { XYCoords } from '../pixel.ts';
 
 /**
  * Turns a bmp image into a layer.

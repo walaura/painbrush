@@ -1,5 +1,5 @@
-import type { Color } from "./color.ts";
-import type { XYCoords } from "./pixel.ts";
+import type { Color } from './color.ts';
+import type { XYCoords } from './pixel.ts';
 
 type LayerId = number;
 
@@ -15,7 +15,7 @@ export interface Layer extends LayerMeta {
   pixels: Color[];
 }
 
-export * from "./layer/make/image.ts";
-export * from "./layer/make/empty.ts";
-export * from "./layer/make/text.ts";
-export * from "./layer/transform.ts";
+export * from './layer/make/image.ts';
+export * from './layer/make/empty.ts';
+export * from './layer/make/text.ts';
+export * from './layer/transform.ts';

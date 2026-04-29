@@ -1,13 +1,13 @@
-import { decode } from "fast-bmp";
+import { decode } from 'fast-bmp';
 import {
   importMultiChannelImage,
   importSingleChannelImage,
-} from "../../image/import.ts";
-import type { Layer } from "../../layer.ts";
+} from '../../image/import.ts';
+import type { Layer } from '../../layer.ts';
 import type {
   MultiChannelImage,
   SingleChannelImage,
-} from "../../image.ts";
+} from '../../image.ts';
 
 export const makeImageLayer = (
   buffer: Buffer<ArrayBuffer>,
@@ -16,11 +16,11 @@ export const makeImageLayer = (
 
   if (imageData.bitsPerPixel === 1) {
     console.warn(
-      "Inflating 1bit image to 24. Will use default colors in importSingleChannelImage",
+      `Inflating 1bit image to 24. Will use default colors in importSingleChannelImage`,
     );
     return importSingleChannelImage({
       ...imageData,
-      //@ts-expect-error this array sucks
+      // @ts-expect-error this array sucks
       data: [...imageData.data],
     } as SingleChannelImage);
   }
@@ -33,7 +33,7 @@ export const makeImageLayer = (
 
   if (imageData.bitsPerPixel === 32) {
     console.warn(
-      "Deflating 32bit image to 24bit. Alpha will be guessed (did u know bmps have alpha??)",
+      `Deflating 32bit image to 24bit. Alpha will be guessed (did u know bmps have alpha??)`,
     );
     return importMultiChannelImage({
       ...imageData,

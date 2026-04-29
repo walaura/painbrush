@@ -1,16 +1,16 @@
-import { punchLayerOver } from "../transform.ts";
-import { importSingleChannelImage } from "../../image/import.ts";
-import { overlayLayersOver } from "../transform.ts";
+import { punchLayerOver } from '../transform.ts';
+import { importSingleChannelImage } from '../../image/import.ts';
+import { overlayLayersOver } from '../transform.ts';
 
 import {
   solidFillBrush,
   alphaBrush,
   type Brush,
-} from "../../color/brush.ts";
-import { makeBlankLayer } from "./empty.ts";
-import type { Font } from "../../typography.ts";
-import type { Layer } from "../../layer.ts";
-import { COLOR_WHITE } from "../../color.ts";
+} from '../../color/brush.ts';
+import { makeBlankLayer } from './empty.ts';
+import type { Font } from '../../typography.ts';
+import type { Layer } from '../../layer.ts';
+import { COLOR_WHITE } from '../../color.ts';
 
 type TextLayerProps = {
   /**
@@ -43,12 +43,12 @@ export const makeTextLayer = (
     letterPlateBrush = alphaBrush(),
     bgPlateBrush = alphaBrush(),
     maxLengthPx = Infinity,
-    breakLinesOn = " ",
+    breakLinesOn = ` `,
   }: TextLayerProps = {},
 ): Layer => {
   const { getCharacter } = font;
 
-  const lineHeight = getCharacter("X").height;
+  const lineHeight = getCharacter(`X`).height;
 
   const charLayers: Parameters<typeof overlayLayersOver> = [];
 
@@ -57,11 +57,11 @@ export const makeTextLayer = (
     .map((word, idx, arr) =>
       arr.length === idx + 1 ? word : word + breakLinesOn,
     )
-    .map((word) =>
+    .map(word =>
       word
-        .split("\n")
+        .split(`\n`)
         .map((word, idx, arr) =>
-          arr.length === idx + 1 ? word : [word, "\n"],
+          arr.length === idx + 1 ? word : [word, `\n`],
         ),
     )
     .flat(2);
@@ -79,7 +79,7 @@ export const makeTextLayer = (
     let wordOffset = 0;
 
     for (const character of word) {
-      if (character === "\n") {
+      if (character === `\n`) {
         newline();
         continue;
       }
@@ -103,7 +103,7 @@ export const makeTextLayer = (
       newline();
     }
     charLayers.push(
-      ...(wordLayers.map((layer) => [
+      ...(wordLayers.map(layer => [
         layer[0],
         {
           skipBlending: true,

@@ -1,5 +1,5 @@
-import type { Color } from "./color.ts";
-import type { Layer, LayerMeta } from "./layer.ts";
+import type { Color } from './color.ts';
+import type { Layer, LayerMeta } from './layer.ts';
 
 export const COORDS_ZERO = { x: 0, y: 0 };
 

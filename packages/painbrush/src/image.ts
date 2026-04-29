@@ -1,9 +1,9 @@
-import { encode } from "fast-bmp";
-import { type Layer } from "./layer.ts";
-import { colorToRgb } from "./color.ts";
+import { encode } from 'fast-bmp';
+import { type Layer } from './layer.ts';
+import { colorToRgb } from './color.ts';
 
 /**
-  Exports a layer to a bmp image, keeps size and forces 24 bit. 
+  Exports a layer to a bmp image, keeps size and forces 24 bit.
   See fast-bmp for more options
   */
 export const toImage = (

@@ -1,13 +1,13 @@
-import { readFile } from "fs/promises";
-import type { SingleChannelImage } from "./image.ts";
-import type { PackerCharactersWithTrim } from "../dist/src-packer/helpers.js";
-import path from "path";
+import { readFile } from 'fs/promises';
+import type { SingleChannelImage } from './image.ts';
+import path from 'path';
+import type { PackerCharactersWithTrim } from '../src-packer/helpers.ts';
 
-export type FontHandle =
-  | Buffer<ArrayBuffer>
-  | string
-  | { toString: () => string }
-  | PxFontFile;
+export type FontHandle
+  = | Buffer<ArrayBuffer>
+    | string
+    | { toString: () => string }
+    | PxFontFile;
 
 export type FontMetrics = {
   height: number;
@@ -45,30 +45,30 @@ export type CharMap = {
  */
 export const getDefaultFontHandleNode = () =>
   readFile(
-    path.resolve(import.meta.dirname, "../static/poxel.pxfont"),
+    path.resolve(import.meta.dirname, `../static/poxel.pxfont`),
   );
 
 /**
  * Feel free to add to this in yours to maybe remove accents etc
  */
-export const DEFAULT_CHAR_RESOLVER =
-  (charmap: CharMap) =>
-  (c: string): SingleChannelImage => {
-    if (c in charmap) {
-      return charmap[c];
-    }
-    const upper = c.toUpperCase();
-    if (upper in charmap) {
-      return charmap[upper];
-    }
-    const lower = c.toLowerCase();
-    if (lower in charmap) {
-      return charmap[lower];
-    }
-    return (
-      charmap["?"] ?? charmap["X"] ?? charmap["x"] ?? charmap[" "]
-    );
-  };
+export const DEFAULT_CHAR_RESOLVER
+  = (charmap: CharMap) =>
+    (c: string): SingleChannelImage => {
+      if (c in charmap) {
+        return charmap[c];
+      }
+      const upper = c.toUpperCase();
+      if (upper in charmap) {
+        return charmap[upper];
+      }
+      const lower = c.toLowerCase();
+      if (lower in charmap) {
+        return charmap[lower];
+      }
+      return (
+        charmap[`?`] ?? charmap[`X`] ?? charmap[`x`] ?? charmap[` `]
+      );
+    };
 
 /**
  * 'Unpacks' a handle to a .pxfont file into images so it
@@ -81,7 +81,7 @@ export const useFont = async (
   const chars = await unpackFontHandle(handle);
 
   const charmap: CharMap = Object.fromEntries(
-    chars.alphabet.split("").map((l, index) => {
+    chars.alphabet.split(``).map((l, index) => {
       const char = chars.characters[index];
       return [
         l,
@@ -94,7 +94,7 @@ export const useFont = async (
       ];
     }),
   );
-  charmap[" "] = {
+  charmap[` `] = {
     channels: 1,
     data: [],
     width: chars.metrics.spaces,
@@ -113,7 +113,7 @@ const unpackFontHandle = async (
   handle: Promise<FontHandle>,
 ): Promise<PxFontFile> => {
   const file = await handle;
-  if (file instanceof Object && "alphabet" in file) {
+  if (file instanceof Object && `alphabet` in file) {
     return file;
   }
   return JSON.parse((await handle).toString()) as PxFontFile;

@@ -1,24 +1,24 @@
-import path from "path/posix";
-import { decode } from "fast-bmp";
+import path from 'path/posix';
+import { decode } from 'fast-bmp';
 import {
   COLOR_BLACK,
   COLOR_WHITE,
   colorFromRgb,
   solidFillBrush,
-} from "../src/color.ts";
-import { toImage } from "../src/image.ts";
+} from '../src/color.ts';
+import { toImage } from '../src/image.ts';
 import {
   padLayer,
   makeTextLayer,
   addBackgroundToLayer,
-} from "../src/layer.ts";
-import { type PxFontFile, useFont } from "../src/typography.ts";
+} from '../src/layer.ts';
+import { type PxFontFile, useFont } from '../src/typography.ts';
 import type {
   PackerCharacter,
   PackerCharactersWithTrim,
   PackerFileOp,
   PackerIntakeData,
-} from "./helpers.ts";
+} from './helpers.ts';
 
 export const generateCharacters = async ({
   img,
@@ -46,19 +46,19 @@ export const generateCharacters = async ({
       rawCharacters[charPos] = [];
     }
 
-    const charPixelPos =
-      charXPixelOffset + charYPixelOffset * metrics.width;
+    const charPixelPos
+      = charXPixelOffset + charYPixelOffset * metrics.width;
 
     rawCharacters[charPos][charPixelPos] = item as PackerCharacter[0];
   });
 
-  const alphabet = fontMeta.alphabet.join("");
+  const alphabet = fontMeta.alphabet.join(``);
 
   return rawCharacters.map((char, index) => {
     const letter = alphabet[index];
 
-    const maybeTrim =
-      fontMeta.trim[letter] ?? fontMeta.trim["__DEFAULT__"];
+    const maybeTrim
+      = fontMeta.trim[letter] ?? fontMeta.trim[`__DEFAULT__`];
     if (!maybeTrim) {
       return [metrics.width, char];
     }
@@ -78,8 +78,8 @@ export const generatePxFontFile = (
   characters: PackerCharactersWithTrim,
   { fontName, fontMeta, cwd, outDir }: PackerIntakeData,
 ): PackerFileOp<string> => {
-  const fontFileAt = path.join(cwd, outDir, fontName + ".pxfont");
-  const alphabet = fontMeta.alphabet.join("");
+  const fontFileAt = path.join(cwd, outDir, fontName + `.pxfont`);
+  const alphabet = fontMeta.alphabet.join(``);
   const metrics = fontMeta.metrics;
 
   return [
@@ -100,21 +100,21 @@ export const generateSpecimenImage = async (
   [_, pxFontFile]: PackerFileOp<string>,
   { fontName, fontMeta, cwd, outDir }: PackerIntakeData,
 ): Promise<PackerFileOp<Uint8Array<ArrayBufferLike>>> => {
-  const alphabet = fontMeta.alphabet.join("");
+  const alphabet = fontMeta.alphabet.join(``);
 
   const specimenImg = addBackgroundToLayer(
     padLayer(
       await makeTextLayer(
-        fontName.toUpperCase() +
-          "\n" +
-          "\n" +
-          "? " +
-          alphabet
-            .split("")
-            .map((s) => s.trim())
-            .filter(Boolean)
-            .sort()
-            .join(""),
+        fontName.toUpperCase()
+        + `\n`
+        + `\n`
+        + `? `
+        + alphabet
+          .split(``)
+          .map(s => s.trim())
+          .filter(Boolean)
+          .sort()
+          .join(``),
         await useFont(Promise.resolve(pxFontFile)),
         solidFillBrush(
           fontMeta.specimen?.color
@@ -123,7 +123,7 @@ export const generateSpecimenImage = async (
         ),
         {
           maxLengthPx: fontMeta.metrics.width * 12,
-          breakLinesOn: "", // break on anything
+          breakLinesOn: ``, // break on anything
         },
       ),
       { x: fontMeta.metrics.width, y: fontMeta.metrics.height },
@@ -138,7 +138,7 @@ export const generateSpecimenImage = async (
   const specimenFileAt = path.join(
     cwd,
     outDir,
-    fontName + "-specimen.bmp",
+    fontName + `-specimen.bmp`,
   );
 
   return [specimenFileAt, toImage(specimenImg)];

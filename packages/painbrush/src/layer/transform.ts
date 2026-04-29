@@ -4,15 +4,15 @@ import {
   type XYCoords,
   COORDS_ZERO,
   getPixelIndexFromCoords,
-} from "../pixel.ts";
+} from '../pixel.ts';
 import {
   makeBlankLayerWithAlpha,
   makeBlankLayer,
-} from "./make/empty.ts";
-import { blendColor, COLOR_ALPHA, type Color } from "../color.ts";
-import { solidFillBrush, type Brush } from "../color/brush.ts";
-import type { Layer } from "../layer.ts";
-import type { LayerParams } from "../image/import.ts";
+} from './make/empty.ts';
+import { blendColor, COLOR_ALPHA, type Color } from '../color.ts';
+import { solidFillBrush, type Brush } from '../color/brush.ts';
+import type { Layer } from '../layer.ts';
+import type { LayerParams } from '../image/import.ts';
 
 /**
   Applies what i think is a nearest-neighbor transform to the layer. only integer transforms _really_ work for precise results but you can get some cool effects with floats
@@ -54,8 +54,8 @@ export const paintLayer = (
 };
 
 /**
-  Adds a padding to all four sides of any layer in a 
-  transparent background, you can composite this layer 
+  Adds a padding to all four sides of any layer in a
+  transparent background, you can composite this layer
   with addBackgroundToLayer
 */
 export const padLayer = (source: Layer, offset: XYCoords) => {
@@ -70,7 +70,7 @@ export const padLayer = (source: Layer, offset: XYCoords) => {
 };
 
 /**
-  Puts a background color under a transparent layer, 
+  Puts a background color under a transparent layer,
   great for using with padLayer
 */
 export const addBackgroundToLayer = (
@@ -146,15 +146,15 @@ export const overlayLayersOver = (
   const flippedArgs = args.reverse();
   const first = flippedArgs.shift();
   if (first == null) {
-    console.warn("You tried to overlay 0 layers wtf");
+    console.warn(`You tried to overlay 0 layers wtf`);
     return makeBlankLayerWithAlpha(COORDS_ZERO);
   }
   let [canvas, canvasParams] = first;
   if (canvasParams != null) {
     console.warn(
-      "Your initial canvas had layer transform parameters." +
-        "\n" +
-        "If you want to do that, place that layer it on top of a blank non-transformed layer",
+      `Your initial canvas had layer transform parameters.`
+      + `\n`
+      + `If you want to do that, place that layer it on top of a blank non-transformed layer`,
     );
   }
 

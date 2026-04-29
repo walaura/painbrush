@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi } from 'vitest';
 
 import {
   borderBrush,
@@ -7,7 +7,7 @@ import {
   colorFromRgb,
   COLOR_WHITE,
   COLOR_BLACK,
-} from "../color.ts";
+} from '../color.ts';
 import {
   makeBlankLayer,
   makeTextLayer,
@@ -17,13 +17,13 @@ import {
   makeBlankLayerWithAlpha,
   type Layer,
   makeImageLayer,
-} from "../layer.ts";
-import { getPixelXYCoords } from "../pixel.ts";
-import { readFile, writeFile } from "fs/promises";
-import { toImage } from "../image.ts";
-import { getDefaultFontHandleNode, useFont } from "../typography.ts";
+} from '../layer.ts';
+import { getPixelXYCoords } from '../pixel.ts';
+import { readFile, writeFile } from 'fs/promises';
+import { toImage } from '../image.ts';
+import { getDefaultFontHandleNode, useFont } from '../typography.ts';
 
-vi.stubGlobal("Math", {
+vi.stubGlobal(`Math`, {
   random: () => 0.5,
   floor: Math.floor,
   ceil: Math.ceil,
@@ -31,8 +31,8 @@ vi.stubGlobal("Math", {
   min: Math.min,
 });
 
-describe("Painbrush", async () => {
-  it("should generate an image that vaguely looks good", async () => {
+describe(`Painbrush`, async () => {
+  it(`should generate an image that vaguely looks good`, async () => {
     const POXEL = await useFont(getDefaultFontHandleNode());
 
     const sun = makeBlankLayer(
@@ -41,7 +41,7 @@ describe("Painbrush", async () => {
     );
 
     const text = makeTextLayer(
-      "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
+      `the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop`,
       POXEL,
       solidFillBrush(0xffffff),
       {
@@ -60,17 +60,17 @@ describe("Painbrush", async () => {
 
     const clock = scaleLayer(
       makeTextLayer(
-        "1234567890",
+        `1234567890`,
         POXEL,
         solidFillBrush(COLOR_WHITE),
         {
-          breakLinesOn: "", // break on anything
+          breakLinesOn: ``, // break on anything
           maxLengthPx: 50,
         },
       ),
       { x: 2, y: 3 },
     );
-    const clockShadow = paintLayer(clock, (existingColor) =>
+    const clockShadow = paintLayer(clock, existingColor =>
       isAlphaColor(existingColor)
         ? () => existingColor
         : solidFillBrush(COLOR_BLACK),
@@ -87,7 +87,7 @@ describe("Painbrush", async () => {
     );
 
     const images = makeImageLayer(
-      await readFile(import.meta.dirname + "/goomba-24.bmp"),
+      await readFile(import.meta.dirname + `/goomba-24.bmp`),
     );
 
     const withTitle = (layer: Layer, title: string) => {
@@ -109,9 +109,9 @@ describe("Painbrush", async () => {
       );
     };
 
-    const textWithTitle = withTitle(text, "little text");
-    const clockWithTitle = withTitle(clockWithShadow, "Clock");
-    const imagesWithTitle = withTitle(images, "Goombas");
+    const textWithTitle = withTitle(text, `little text`);
+    const clockWithTitle = withTitle(clockWithShadow, `Clock`);
+    const imagesWithTitle = withTitle(images, `Goombas`);
 
     const layers = overlayLayersOver(
       [
@@ -152,7 +152,7 @@ describe("Painbrush", async () => {
 
     const bmp = toImage(layers);
     await writeFile(
-      import.meta.dirname + "/__snapshots__/snap.bmp",
+      import.meta.dirname + `/__snapshots__/snap.bmp`,
       bmp,
     );
     expect(JSON.stringify(layers, null, 2)).toMatchSnapshot();

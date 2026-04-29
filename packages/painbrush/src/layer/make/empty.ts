@@ -1,11 +1,11 @@
-import { COLOR_BLACK } from "../../color.ts";
+import { COLOR_BLACK } from '../../color.ts';
 import {
   type Brush,
   solidFillBrush,
   alphaBrush,
-} from "../../color/brush.ts";
-import type { Layer } from "../../layer.ts";
-import type { XYCoords } from "../../pixel.ts";
+} from '../../color/brush.ts';
+import type { Layer } from '../../layer.ts';
+import type { XYCoords } from '../../pixel.ts';
 
 /**
   This makes a basic layer with any fill brush. Great base canvas

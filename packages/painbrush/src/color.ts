@@ -1,4 +1,4 @@
-export * from "./color/brush.ts";
+export * from './color/brush.ts';
 
 /**
   hex values from -1 (see alpha to 0xffffff) matching web colors
