@@ -6,7 +6,7 @@ import {
 } from '../pipeline.ts';
 import { readFile } from 'node:fs/promises';
 import path from 'path';
-import type { PackerIntakeData } from '../../dist/src-packer/helpers.js';
+import type { PackerIntakeData } from '../helpers.ts';
 
 describe(`Packer`, async () => {
   const intakeData: PackerIntakeData = await (async () => {
