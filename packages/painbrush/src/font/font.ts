@@ -42,7 +42,7 @@ export type CharMap = {
 
 export const getDefaultFontHandleNode = () =>
   readFile(
-    path.resolve(import.meta.dirname, `../static/poxel.pxfont`),
+    path.resolve(import.meta.dirname, `../../static/poxel.pxfont`),
   );
 
 /**

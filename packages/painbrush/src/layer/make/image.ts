@@ -3,11 +3,11 @@ import {
   importMultiChannelImage,
   importSingleChannelImage,
 } from '../../image/import.ts';
-import type { Layer } from '../../layer.ts';
+import type { Layer } from 'painbrush/layer';
 import type {
   MultiChannelImage,
   SingleChannelImage,
-} from '../../image.ts';
+} from '../../image/image.js';
 
 export const makeImageLayer = (
   buffer: Buffer<ArrayBuffer>,

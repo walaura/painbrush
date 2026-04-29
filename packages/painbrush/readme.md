@@ -15,20 +15,19 @@ You can use this lib to generate images and text in the much loved bmp format. I
 ## Getting started
 
 ```ts
-import { writeFile } from 'fs/promises';
-import { export } from 'painbrush/image';
-import { makeTextLayer } from 'painbrush/layer';
-import { getDefaultFontHandleNode } from 'painbrush/typography';
-import { solidFillBrush } from 'painbrush/color';
+import { brush } from "painbrush/color";
+import { useFont, getDefaultFontHandleNode } from "painbrush/font";
+import { exportImage } from "painbrush/image";
+import { makeLayer } from "painbrush/layer";
 
 const POXEL = await useFont(getDefaultFontHandleNode());
-const clock = makeTextLayer(
+const clock = makeLayer.text(
   Date.now().toString(),
   POXEL,
-  solidFillBrush(0xc0ffee),
+  brush.solidFill(0xc0ffee),
 );
 
-await writeFile('image.bmp', export(clock));
+await writeFile('image.bmp', exportImage(clock));
 ```
 
 Your code wont look that clean tho, see [this example file](https://github.com/walaura/painbrush/blob/main/packages/node-ex/index.ts) for detailed comments. Whole directory is really good stuff. I'm not a good doc writer

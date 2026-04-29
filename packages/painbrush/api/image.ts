@@ -1,6 +1,6 @@
 import { encode } from 'fast-bmp';
 import { type Layer } from './layer.ts';
-import { colorToRgb } from './color.ts';
+import { convertColor } from './color.ts';
 
 /**
   Exports a layer to a bmp image, keeps size and forces 24 bit.
@@ -12,7 +12,7 @@ export const exportImage = (
   const data = [];
 
   for (const pixel of layer.pixels) {
-    data.push(...colorToRgb(pixel));
+    data.push(...convertColor.toRGB(pixel));
   }
 
   const encoded = encode({

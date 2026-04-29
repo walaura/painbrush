@@ -1,12 +1,13 @@
-import { blendColor, type Color } from 'painbrush/color';
+import { type Color } from 'painbrush/color';
 import { makeLayer, type Layer } from 'painbrush/layer';
 import {
   COORDS_ZERO,
-  getPixelColor,
-  getPixelIndexFromCoords,
+  getColor,
+  getIndexFromCoords,
   getXYCoords,
   type XYCoords,
-} from '../../api/pixel.ts';
+} from 'painbrush/pixel';
+import { blendColor } from '../color/color.ts';
 
 export type LayerComposeParams = {
   offset?: XYCoords;
@@ -20,9 +21,9 @@ export const punchLayerOver = (
   const pixels = back.pixels;
   for (let index = 0; index < front.x * front.y; index = index + 1) {
     const coords = getXYCoords(index, front);
-    const frontPixelColor = getPixelColor(coords, front) as Color;
+    const frontPixelColor = getColor(coords, front) as Color;
 
-    const backPixelIndex = getPixelIndexFromCoords(
+    const backPixelIndex = getIndexFromCoords(
       {
         x: coords.x + offset.x,
         y: coords.y + offset.y,
@@ -47,16 +48,13 @@ export const overlayLayerOver = (
       y: coords.y + offset.y,
     };
 
-    const frontPixelColor = getPixelColor(coords, front) as Color;
-    const backPixelColor = getPixelColor(coordsAtBack, back);
+    const frontPixelColor = getColor(coords, front) as Color;
+    const backPixelColor = getColor(coordsAtBack, back);
     if (backPixelColor === null) {
       continue;
     }
 
-    const backPixelIndex = getPixelIndexFromCoords(
-      coordsAtBack,
-      back,
-    );
+    const backPixelIndex = getIndexFromCoords(coordsAtBack, back);
     const newColor = blendColor(frontPixelColor, backPixelColor);
     pixels[backPixelIndex] = newColor;
   }

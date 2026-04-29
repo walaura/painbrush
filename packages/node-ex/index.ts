@@ -1,28 +1,19 @@
-import { readFile, writeFile } from "fs/promises";
+import { readFile, writeFile } from 'fs/promises';
 import {
-  borderBrush,
-  SET_COLORS.BLACK,
-  SET_COLORS.WHITE,
-  colorFromRgb,
-  isAlphaColor,
-  solidFillBrush,
-} from "painbrush/color";
-import { export } from "painbrush/image";
+  brush,
+  convertColor,
+  isAlpha,
+  SET_COLORS,
+} from 'painbrush/color';
+import { getDefaultFontHandleNode, useFont } from 'painbrush/font';
+import { exportImage } from 'painbrush/image';
 import {
-  makeBlankLayer,
-  scaleLayer,
-  makeTextLayer,
-  overlayLayersOver,
-  makeImageLayer,
-  paintLayer,
-  makeBlankLayerWithAlpha,
+  composeLayer,
+  makeLayer,
+  transformLayer,
   type Layer,
-} from "painbrush/layer";
-import { getXYCoords } from "painbrush/pixel";
-import {
-  getDefaultFontHandleNode,
-  useFont,
-} from "../painbrush/src/painbrush/font.ts";
+} from 'painbrush/layer';
+import { getXYCoords } from 'painbrush/pixel';
 
 /*
 
@@ -40,7 +31,7 @@ starting point, check out nom run pack-font on this project.
 */
 
 const [LUCAS, POXEL] = await Promise.all([
-  useFont(readFile("./fonts/lucas.pxfont")),
+  useFont(readFile('./fonts/lucas.pxfont')),
   useFont(getDefaultFontHandleNode()),
 ]);
 
@@ -56,9 +47,9 @@ tho!)
 Everything is layers. In fairness your actual image is also a 
 'layer', just with extra data
 */
-const sun = makeBlankLayer(
+const sun = makeLayer.blank(
   { x: 30, y: 30 },
-  borderBrush(3, 0xffff00),
+  brush.border(3, 0xffff00),
 );
 
 /*
@@ -73,10 +64,10 @@ the characters, the back plate of a character, or the bounding box
 of the text. lots of fun to be had!
 */
 
-const text = makeTextLayer(
-  "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
+const text = makeLayer.text(
+  'the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop',
   POXEL,
-  solidFillBrush(SET_COLORS.BLACK),
+  brush.solidFill(SET_COLORS.BLACK),
   {
     maxLengthPx: 200,
   },
@@ -91,41 +82,45 @@ Brushes get the pixel position and layer metadata and
 decide what color to paint based on that.
 
 Normally you just wanna use a solid color and theres 
-solidFillBrush for that. This is a fancier one that 
+brush.solidFill for that. This is a fancier one that 
 makes a gradient:
 */
-const bg = makeBlankLayer({ x: 280, y: 360 }, (index, layer) => {
+const bg = makeLayer.blank({ x: 280, y: 360 }, (index, layer) => {
   const { x, y } = getXYCoords(index, layer);
-  return colorFromRgb((x / layer.x) * 255, (y / layer.y) * 255, 255);
+  return convertColor.fromRGB(
+    (x / layer.x) * 255,
+    (y / layer.y) * 255,
+    255,
+  );
 });
 
 /*
-Theres a lot of helpful methods like scaleLayer 
+Theres a lot of helpful methods like transformLayer.scale 
 that let you manipulate layers like this is an 
 actual image editor.
 */
-const clock = scaleLayer(
-  makeTextLayer(
+const clock = transformLayer.scale(
+  makeLayer.text(
     Date.now().toString(),
     LUCAS,
-    solidFillBrush(SET_COLORS.WHITE),
+    brush.solidFill(SET_COLORS.WHITE),
     {
-      breakLinesOn: "", // break on anything
+      breakLinesOn: '', // break on anything
       maxLengthPx: 50,
     },
   ),
   { x: 2, y: 2 },
 );
-const clockShadow = paintLayer(clock, (existingColor) =>
-  isAlphaColor(existingColor)
+const clockShadow = transformLayer.paint(clock, (existingColor) =>
+  isAlpha(existingColor)
     ? () => existingColor
-    : solidFillBrush(SET_COLORS.BLACK),
+    : brush.solidFill(SET_COLORS.BLACK),
 );
-const clockWithShadow = overlayLayersOver(
+const clockWithShadow = composeLayer.overlayStack(
   [clock],
   [clockShadow, { offset: { x: 2, y: 2 } }],
   [
-    makeBlankLayerWithAlpha({
+    makeLayer.blankWithAlpha({
       x: clock.x + 2,
       y: clock.y + 2,
     }),
@@ -140,23 +135,23 @@ anything thats not already 32 bit will go through
 conversion and maybe get messed up?
 
 I merged all three images in a single layer using
-overlayLayersOver but you don't have to!
+composeLayer.overlayStack but you don't have to!
 */
-const images = overlayLayersOver(
-  [makeImageLayer(await readFile("./test-junk/goomba-rgb.bmp"))],
+const images = composeLayer.overlayStack(
+  [makeLayer.image(await readFile('./test-junk/goomba-rgb.bmp'))],
   [
-    makeImageLayer(await readFile("./test-junk/goomba-24.bmp")),
+    makeLayer.image(await readFile('./test-junk/goomba-24.bmp')),
     {
       offset: { x: 16, y: 0 },
     },
   ],
   [
-    makeImageLayer(await readFile("./test-junk/goomba-8.bmp")),
+    makeLayer.image(await readFile('./test-junk/goomba-8.bmp')),
     {
       offset: { x: 32, y: 0 },
     },
   ],
-  [makeBlankLayerWithAlpha({ x: 16 * 3, y: 16 })],
+  [makeLayer.blankWithAlpha({ x: 16 * 3, y: 16 })],
 ) as Layer;
 
 /*
@@ -167,17 +162,17 @@ layer operations low, haven't benchmarked this
 or anything, it just feels nasty.
 */
 const withTitle = (layer: Layer, title: string) => {
-  const titleLayer = makeTextLayer(
+  const titleLayer = makeLayer.text(
     title.toUpperCase(),
     POXEL,
-    solidFillBrush(SET_COLORS.BLACK),
+    brush.solidFill(SET_COLORS.BLACK),
   );
   const gap = 4;
-  return overlayLayersOver(
+  return composeLayer.overlayStack(
     [titleLayer],
     [layer, { offset: { x: 0, y: titleLayer.y + gap } }],
     [
-      makeBlankLayerWithAlpha({
+      makeLayer.blankWithAlpha({
         x: Math.max(titleLayer.x, layer.x),
         y: titleLayer.y + gap + layer.y,
       }),
@@ -185,14 +180,14 @@ const withTitle = (layer: Layer, title: string) => {
   );
 };
 
-const textWithTitle = withTitle(text, "little text");
-const clockWithTitle = withTitle(clockWithShadow, "Clock");
+const textWithTitle = withTitle(text, 'little text');
+const clockWithTitle = withTitle(clockWithShadow, 'Clock');
 const imagesWithTitle = withTitle(
-  scaleLayer(images, { x: 6, y: 12 }),
-  "Goombas",
+  transformLayer.scale(images, { x: 6, y: 12 }),
+  'Goombas',
 );
 
-const layers = overlayLayersOver(
+const layers = composeLayer.overlayStack(
   [
     sun,
     {
@@ -226,4 +221,4 @@ const layers = overlayLayersOver(
   [bg],
 );
 
-await writeFile("image.bmp", export(layers));
+await writeFile('image.bmp', exportImage(layers));
