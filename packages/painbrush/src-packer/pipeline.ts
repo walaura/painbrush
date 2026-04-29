@@ -102,19 +102,24 @@ export const generateSpecimenImage = async (
 ): Promise<PackerFileOp<Uint8Array<ArrayBufferLike>>> => {
   const alphabet = fontMeta.alphabet.join(``);
 
+  const pangram = 'Blitz prende ex-vesgo com cheque fajuto';
+
+  const writeOut = fontName.toUpperCase() +
+    `\n\n` +
+    pangram +
+    `\n\n` +
+    `૴? ` +
+    alphabet
+      .split(``)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .sort()
+      .join(``);
+
   const specimenImg = addBackgroundToLayer(
     padLayer(
       await makeTextLayer(
-        fontName.toUpperCase() +
-          `\n` +
-          `\n` +
-          `? ` +
-          alphabet
-            .split(``)
-            .map((s) => s.trim())
-            .filter(Boolean)
-            .sort()
-            .join(``),
+        writeOut,
         await useFont(Promise.resolve(pxFontFile)),
         solidFillBrush(
           fontMeta.specimen?.color
