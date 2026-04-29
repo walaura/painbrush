@@ -1,24 +1,16 @@
 import {
-  COLOR_ALPHA,
+  SET_COLORS,
   type Color,
   type Brush,
   brush,
-} from '../../color.ts';
-import {
-  makeLayer,
-  type Layer,
-  type LayerMeta,
-} from '../../api/layer.ts';
+} from 'painbrush/color';
+import { composeLayer, makeLayer, type Layer } from 'painbrush/layer';
 import {
   type XYCoords,
-  getPixelXYCoords,
-  getPixelColor,
-} from '../../api/pixel.ts';
-import { punchLayerOver, overlayLayerOver } from './compose.ts';
-import {
-  makeBlankLayer,
-  makeBlankLayerWithAlpha,
-} from './make/blank.ts';
+  getColor,
+  getXYCoords,
+} from 'painbrush/pixel';
+import type { LayerMeta } from './layer.js';
 
 export const scaleLayer = (
   source: Layer,
@@ -30,12 +22,12 @@ export const scaleLayer = (
       y: ~~(source.y * scaleY),
     },
     (index: number, meta: LayerMeta) => {
-      const coords = getPixelXYCoords(index, meta);
-      const maybeTargetPixel = getPixelColor(
+      const coords = getXYCoords(index, meta);
+      const maybeTargetPixel = getColor(
         { x: ~~(coords.x / scaleX), y: ~~(coords.y / scaleY) },
         source,
       );
-      return maybeTargetPixel ?? COLOR_ALPHA;
+      return maybeTargetPixel ?? SET_COLORS.ALPHA;
     },
   );
 };
@@ -54,11 +46,11 @@ export const paintLayer = (
 };
 
 export const padLayer = (source: Layer, offset: XYCoords) => {
-  const target = makeBlankLayerWithAlpha({
+  const target = makeLayer.blankWithAlpha({
     x: source.x + offset.x * 2,
     y: source.y + offset.y * 2,
   });
-  punchLayerOver(target, source, {
+  composeLayer.punch(target, source, {
     offset,
   });
   return target;
@@ -67,4 +59,4 @@ export const padLayer = (source: Layer, offset: XYCoords) => {
 export const setBackgroundOfLayer = (
   source: Layer,
   bgBrush: Brush = brush.solidFill(0xff00ff),
-) => overlayLayerOver(makeBlankLayer(source, bgBrush), source);
+) => composeLayer.overlay(makeLayer.blank(source, bgBrush), source);

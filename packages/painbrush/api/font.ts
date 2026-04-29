@@ -28,3 +28,5 @@ export const getDefaultFontHandleNode =
  * Feel free to add to this in yours to maybe remove accents etc
  */
 export const DEFAULT_CHAR_RESOLVER = DEFAULT_CHAR_RESOLVER_INTERNAL;
+
+export { type Font } from '../src/font/font.ts';

@@ -4,7 +4,7 @@ import {
   COORDS_ZERO,
   getPixelColor,
   getPixelIndexFromCoords,
-  getPixelXYCoords,
+  getXYCoords,
   type XYCoords,
 } from '../../api/pixel.ts';
 
@@ -19,7 +19,7 @@ export const punchLayerOver = (
 ): void => {
   const pixels = back.pixels;
   for (let index = 0; index < front.x * front.y; index = index + 1) {
-    const coords = getPixelXYCoords(index, front);
+    const coords = getXYCoords(index, front);
     const frontPixelColor = getPixelColor(coords, front) as Color;
 
     const backPixelIndex = getPixelIndexFromCoords(
@@ -41,7 +41,7 @@ export const overlayLayerOver = (
 ) => {
   const pixels = [...back.pixels];
   for (let index = 0; index < front.x * front.y; index = index + 1) {
-    const coords = getPixelXYCoords(index, front);
+    const coords = getXYCoords(index, front);
     const coordsAtBack = {
       x: coords.x + offset.x,
       y: coords.y + offset.y,

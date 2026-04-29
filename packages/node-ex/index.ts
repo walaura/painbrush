@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "fs/promises";
 import {
   borderBrush,
-  COLOR_BLACK,
-  COLOR_WHITE,
+  SET_COLORS.BLACK,
+  SET_COLORS.WHITE,
   colorFromRgb,
   isAlphaColor,
   solidFillBrush,
@@ -18,7 +18,7 @@ import {
   makeBlankLayerWithAlpha,
   type Layer,
 } from "painbrush/layer";
-import { getPixelXYCoords } from "painbrush/pixel";
+import { getXYCoords } from "painbrush/pixel";
 import {
   getDefaultFontHandleNode,
   useFont,
@@ -76,7 +76,7 @@ of the text. lots of fun to be had!
 const text = makeTextLayer(
   "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
   POXEL,
-  solidFillBrush(COLOR_BLACK),
+  solidFillBrush(SET_COLORS.BLACK),
   {
     maxLengthPx: 200,
   },
@@ -95,7 +95,7 @@ solidFillBrush for that. This is a fancier one that
 makes a gradient:
 */
 const bg = makeBlankLayer({ x: 280, y: 360 }, (index, layer) => {
-  const { x, y } = getPixelXYCoords(index, layer);
+  const { x, y } = getXYCoords(index, layer);
   return colorFromRgb((x / layer.x) * 255, (y / layer.y) * 255, 255);
 });
 
@@ -108,7 +108,7 @@ const clock = scaleLayer(
   makeTextLayer(
     Date.now().toString(),
     LUCAS,
-    solidFillBrush(COLOR_WHITE),
+    solidFillBrush(SET_COLORS.WHITE),
     {
       breakLinesOn: "", // break on anything
       maxLengthPx: 50,
@@ -119,7 +119,7 @@ const clock = scaleLayer(
 const clockShadow = paintLayer(clock, (existingColor) =>
   isAlphaColor(existingColor)
     ? () => existingColor
-    : solidFillBrush(COLOR_BLACK),
+    : solidFillBrush(SET_COLORS.BLACK),
 );
 const clockWithShadow = overlayLayersOver(
   [clock],
@@ -170,7 +170,7 @@ const withTitle = (layer: Layer, title: string) => {
   const titleLayer = makeTextLayer(
     title.toUpperCase(),
     POXEL,
-    solidFillBrush(COLOR_BLACK),
+    solidFillBrush(SET_COLORS.BLACK),
   );
   const gap = 4;
   return overlayLayersOver(

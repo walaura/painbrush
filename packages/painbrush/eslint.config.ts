@@ -13,12 +13,23 @@ export default defineConfig([
   },
   tseslint.configs.recommended,
   {
+    files: ['*/src/*'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: ['*/api/*'],
+        },
+      ],
+    },
+  },
+  {
     rules: {
       'max-len': ['error', { comments: 79, code: Infinity }],
       'no-restricted-imports': [
         'error',
         {
-          patterns: ['*/__private__/*'],
+          patterns: ['*/__private__/*', '*/src/*'],
         },
       ],
       '@typescript-eslint/no-unused-vars': [

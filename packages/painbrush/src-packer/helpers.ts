@@ -1,8 +1,8 @@
 import chalk from 'chalk';
-import type { FontMetrics } from '../src/painbrush/font.ts';
+import type { Font } from '../api/font.ts';
 
 export type FontMetaJSON = {
-  metrics: FontMetrics;
+  metrics: ReturnType<Font['getMetrics']>;
   cols: number;
   /**
     row-separated array of strings representing 

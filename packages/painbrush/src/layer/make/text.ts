@@ -1,7 +1,7 @@
-import { brush, type Brush, COLOR_BLACK } from 'painbrush/color';
+import { brush, type Brush, SET_COLORS } from 'painbrush/color';
 import { composeLayer, makeLayer, type Layer } from 'painbrush/layer';
-import type { Font } from '../../font/font.ts';
 import { importSingleChannelImage } from '../../image/import.ts';
+import type { Font } from 'painbrush/font';
 
 /**
  * Step through for props docs
@@ -30,7 +30,7 @@ type CharLayer = [
 export const makeTextLayer = (
   text: string,
   font: Font,
-  brushFn: Brush = brush.solidFill(COLOR_BLACK),
+  brushFn: Brush = brush.solidFill(SET_COLORS.BLACK),
   {
     letterPlateBrush = brush.alphaSolidFill(),
     maxLengthPx = Infinity,

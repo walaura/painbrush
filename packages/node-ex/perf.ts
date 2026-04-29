@@ -1,4 +1,4 @@
-import { COLOR_WHITE, solidFillBrush } from 'painbrush/color';
+import { SET_COLORS.WHITE, solidFillBrush } from 'painbrush/color';
 import { makeTextLayer, scaleLayer } from 'painbrush/layer';
 import {
   getDefaultFontHandleNode,
@@ -23,7 +23,7 @@ const longSentence = wrap('Long sentence', () => {
     makeTextLayer(
       'the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop',
       POXEL,
-      solidFillBrush(COLOR_WHITE),
+      solidFillBrush(SET_COLORS.WHITE),
       {
         maxLengthPx: 200,
       },
@@ -34,7 +34,7 @@ const longSentence = wrap('Long sentence', () => {
 const st = makeTextLayer(
   'the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop',
   POXEL,
-  solidFillBrush(COLOR_WHITE),
+  solidFillBrush(SET_COLORS.WHITE),
   {
     maxLengthPx: 200,
   },

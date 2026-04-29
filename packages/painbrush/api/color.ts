@@ -6,82 +6,17 @@ import {
   alphaBrush,
   borderBrush,
   solidFillBrush,
-} from './__private__/color/brush.ts';
-export { type Brush } from './__private__/color/brush.ts';
-/**
-  hex values from -1 (see alpha to 0xffffff) matching web colors
- */
-export type Color = number;
+} from '../src/color/brush.ts';
+import {
+  colorFromRgb,
+  colorToRgb,
+  makeRandomColor as makeRandomColor_INTERNAL,
+  isAlphaColor as isAlphaColor_INTERNAL,
+  SET_COLORS,
+} from '../src/color/color.ts';
 
-/**
-  This is cheeky, but this would 
-  be impossible in normal colorspace and makes the math so easy
- */
-export type AlphaColor = -1;
-
-export const COLOR_ALPHA: AlphaColor = -1;
-export const COLOR_WHITE: Color = 0xffffff;
-export const COLOR_BLACK: Color = 0x000000;
-
-/**
-  Alphas are a cursed implementation detail that 
-  gets treated differently at blending.
-  rn its just -1 but maybe in the future this can 
-  be loaded with alpha depth? or not. lol that sounds cursed.
-  */
-export const isAlphaColor = (color: Color): color is AlphaColor => {
-  return color === -1;
-};
-
-/**
-  RGB to Hex
- */
-export const colorFromRgb = (
-  r: number,
-  g: number,
-  b: number,
-): Color => {
-  return (1 << 24) | (r << 16) | (g << 8) | b;
-};
-
-/**
-  Hex to RGB
- */
-export const colorToRgb = (
-  color: Color,
-): [number, number, number] => {
-  const r = (color >> 24) & 0xff;
-  const g = (color >> 16) & 0xff;
-  const b = (color >> 8) & 0xff;
-
-  if (isAlphaColor(color)) {
-    return [r, g, b];
-  }
-  const a = color & 0xff;
-  return [g, b, a];
-};
-
-/**
-  Layers use this to mix two colors together. 
-  this is where the alpha magic happens and where blend modes can go
- */
-export const blendColor = (
-  top: null | undefined | Color,
-  bottom: Color,
-): Color => {
-  if (top == null) {
-    return bottom;
-  }
-  if (isAlphaColor(top)) {
-    return bottom;
-  }
-
-  return top;
-};
-
-export const makeRandomColor = (r: number) => {
-  return ~~(r * 0xffffff);
-};
+export { type Brush } from '../src/color/brush.ts';
+export { type Color } from '../src/color/color.ts';
 
 export const brush = {
   /**
@@ -97,3 +32,26 @@ export const brush = {
   */
   alphaSolidFill: alphaBrush,
 };
+
+export const convertColor = {
+  /**
+  RGB to Hex color
+  */
+  fromRGB: colorFromRgb,
+  /**
+  Hex color to RGB
+  */
+  toRGB: colorToRgb,
+};
+
+/**
+Makes a random color using the layer id.
+*/
+export const makeRandom = makeRandomColor_INTERNAL;
+
+/**
+Checks if a color is alpha
+*/
+export const isAlpha = isAlphaColor_INTERNAL;
+
+export { SET_COLORS };

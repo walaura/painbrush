@@ -1,10 +1,10 @@
-import { brush, type Brush, COLOR_BLACK } from 'painbrush/color';
+import { brush, type Brush, SET_COLORS } from 'painbrush/color';
 import type { Layer } from 'painbrush/layer';
 import type { XYCoords } from 'painbrush/pixel';
 
 export const makeBlankLayer = (
   size: XYCoords,
-  brushFn: Brush = brush.solidFill(COLOR_BLACK),
+  brushFn: Brush = brush.solidFill(SET_COLORS.BLACK),
 ): Layer => {
   const pixels = [];
   const meta = {

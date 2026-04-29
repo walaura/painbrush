@@ -1,9 +1,8 @@
 import {
-  COLOR_ALPHA,
-  colorFromRgb,
+  SET_COLORS,
   type Brush,
-  COLOR_BLACK,
   brush,
+  convertColor,
 } from 'painbrush/color';
 import { makeLayer, type Layer } from 'painbrush/layer';
 import type {
@@ -20,11 +19,11 @@ export const importMultiChannelImage = (
   const pixels = [];
   for (let i = 0; i < [...image.data].length; i += image.channels) {
     if (image.channels === 4 && image.data[i] === 0) {
-      pixels.push(COLOR_ALPHA);
+      pixels.push(SET_COLORS.ALPHA);
       continue;
     }
     pixels.push(
-      colorFromRgb(
+      convertColor.fromRGB(
         image.data[i],
         image.data[i + 1],
         image.data[i + 2],
@@ -45,7 +44,7 @@ export const importMultiChannelImage = (
  * */
 export const importSingleChannelImage = (
   image: SingleChannelImage,
-  fgBrush: Brush = brush.solidFill(COLOR_BLACK),
+  fgBrush: Brush = brush.solidFill(SET_COLORS.BLACK),
   bgBrush: Brush = brush.alphaSolidFill(),
 ): Layer => {
   return makeLayer.blank(

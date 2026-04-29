@@ -1,30 +1,21 @@
 import { describe, it, expect, vi } from 'vitest';
 
 import {
-  borderBrush,
-  solidFillBrush,
-  isAlphaColor,
-  colorFromRgb,
-  COLOR_WHITE,
-  COLOR_BLACK,
-} from '../color.ts';
+  SET_COLORS,
+  brush,
+  convertColor,
+  isAlpha,
+} from 'painbrush/color';
 import {
-  makeBlankLayer,
-  makeTextLayer,
-  scaleLayer,
-  paintLayer,
-  overlayLayersOver,
-  makeBlankLayerWithAlpha,
+  composeLayer,
+  makeLayer,
+  transformLayer,
   type Layer,
-  makeImageLayer,
-} from '../../api/layer.ts';
-import { getPixelXYCoords } from '../../api/pixel.ts';
+} from 'painbrush/layer';
+import { getXYCoords } from 'painbrush/pixel';
 import { readFile, writeFile } from 'fs/promises';
-import { exportImage } from '../../api/image.ts';
-import {
-  getDefaultFontHandleNode,
-  useFont,
-} from '../painbrush/font.ts';
+import { exportImage } from 'painbrush/image';
+import { getDefaultFontHandleNode, useFont } from 'painbrush/font';
 
 vi.stubGlobal(`Math`, {
   random: () => 0.5,
@@ -38,34 +29,34 @@ describe(`Painbrush`, async () => {
   it(`should generate an image that vaguely looks good`, async () => {
     const POXEL = await useFont(getDefaultFontHandleNode());
 
-    const sun = makeBlankLayer(
+    const sun = makeLayer.blank(
       { x: 30, y: 30 },
-      borderBrush(3, 0xffff00),
+      brush.border(3, 0xffff00),
     );
 
-    const text = makeTextLayer(
+    const text = makeLayer.text(
       `the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop`,
       POXEL,
-      solidFillBrush(0xffffff),
+      brush.solidFill(0xffffff),
       {
         maxLengthPx: 200,
       },
     );
 
-    const bg = makeBlankLayer({ x: 280, y: 360 }, (index, layer) => {
-      const { x, y } = getPixelXYCoords(index, layer);
-      return colorFromRgb(
+    const bg = makeLayer.blank({ x: 280, y: 360 }, (index, layer) => {
+      const { x, y } = getXYCoords(index, layer);
+      return convertColor.fromRGB(
         (x / layer.x) * 255,
         (y / layer.y) * 255,
         255,
       );
     });
 
-    const clock = scaleLayer(
-      makeTextLayer(
+    const clock = transformLayer.scale(
+      makeLayer.text(
         `1234567890`,
         POXEL,
-        solidFillBrush(COLOR_WHITE),
+        brush.solidFill(SET_COLORS.WHITE),
         {
           breakLinesOn: ``, // break on anything
           maxLengthPx: 50,
@@ -73,38 +64,40 @@ describe(`Painbrush`, async () => {
       ),
       { x: 2, y: 3 },
     );
-    const clockShadow = paintLayer(clock, (existingColor) =>
-      isAlphaColor(existingColor)
-        ? () => existingColor
-        : solidFillBrush(COLOR_BLACK),
+    const clockShadow = transformLayer.paint(
+      clock,
+      (existingColor) =>
+        isAlpha(existingColor)
+          ? () => existingColor
+          : brush.solidFill(SET_COLORS.BLACK),
     );
-    const clockWithShadow = overlayLayersOver(
+    const clockWithShadow = composeLayer.overlayStack(
       [clock],
       [clockShadow, { offset: { x: 2, y: 2 } }],
       [
-        makeBlankLayerWithAlpha({
+        makeLayer.blankWithAlpha({
           x: clock.x + 2,
           y: clock.y + 2,
         }),
       ],
     );
 
-    const images = makeImageLayer(
+    const images = makeLayer.image(
       await readFile(import.meta.dirname + `/goomba-24.bmp`),
     );
 
     const withTitle = (layer: Layer, title: string) => {
-      const titleLayer = makeTextLayer(
+      const titleLayer = makeLayer.text(
         title.toUpperCase(),
         POXEL,
-        solidFillBrush(COLOR_BLACK),
+        brush.solidFill(SET_COLORS.BLACK),
       );
       const gap = 4;
-      return overlayLayersOver(
+      return composeLayer.overlayStack(
         [titleLayer],
         [layer, { offset: { x: 0, y: titleLayer.y + gap } }],
         [
-          makeBlankLayerWithAlpha({
+          makeLayer.blankWithAlpha({
             x: Math.max(titleLayer.x, layer.x),
             y: titleLayer.y + gap + layer.y,
           }),
@@ -116,7 +109,7 @@ describe(`Painbrush`, async () => {
     const clockWithTitle = withTitle(clockWithShadow, `Clock`);
     const imagesWithTitle = withTitle(images, `Goombas`);
 
-    const layers = overlayLayersOver(
+    const layers = composeLayer.overlayStack(
       [
         sun,
         {

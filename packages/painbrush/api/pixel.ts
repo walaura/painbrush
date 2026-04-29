@@ -1,63 +1,31 @@
-import type { Color } from './color.ts';
-import type { Layer, LayerMeta } from './layer.ts';
+/*
+eslint-disable no-restricted-imports
+*/
+import {
+  getPixelColor,
+  getPixelIndexFromCoords,
+  getPixelXYCoords,
+} from '../src/pixel.ts';
 
 export const COORDS_ZERO = { x: 0, y: 0 };
 
-export interface XYCoords {
-  x: number;
-  y: number;
-}
-
-/**
- Given a layer (color[]) and coords, 
- identify the pixel index of those coords
- */
-export const getPixelIndexFromCoords = (
-  coords: XYCoords,
-  layer: Layer,
-) => coords.y * layer.x + coords.x;
-
-/**
- Given a layer (color[]), 
- identify the x,y coords of the pixel at index
- */
-export const getPixelXYCoords = (
-  index: number,
-  layer: LayerMeta,
-): XYCoords => {
-  const pixelIndex = ~~index;
-  return {
-    x: pixelIndex % layer.x,
-    y: ~~(pixelIndex / layer.x),
-  };
-};
+export { type XYCoords } from '../src/pixel.ts';
 
 /**
  Given a layer (color[]) and coords, 
  identify the pixel color of those coords
  */
-export const getPixelColor = (
-  coords: XYCoords,
-  layer: Layer,
-): Color | null => {
-  const normalXYCoords = normalize(coords, layer);
-  if (!normalXYCoords) return null;
-  return layer.pixels[getPixelIndexFromCoords(coords, layer)];
-};
+export const getColor = getPixelColor;
 
-const normalize = (
-  coords: XYCoords,
-  layer: Layer,
-): XYCoords | null => {
-  const x = ~~coords.x;
-  const y = ~~coords.y;
+/**
+ Given a layer (color[]), 
+ identify the x,y coords of the pixel at index
+ */
+export const getXYCoords = getPixelXYCoords;
 
-  if (x >= layer.x || x < 0) {
-    return null;
-  }
-  if (y >= layer.y || y < 0) {
-    return null;
-  }
+/**
+ Given a layer (color[]) and coords, 
+ identify the pixel index of those coords
+ */
 
-  return { x, y };
-};
+export const getIndexFromCoords = getPixelIndexFromCoords;

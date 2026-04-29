@@ -19,24 +19,7 @@ import {
   setBackgroundOfLayer,
 } from '../src/layer/transform.ts';
 
-export type * from '../src/layer/make/blank.ts';
-
-import type { Color } from 'painbrush/color';
-import type { XYCoords } from 'painbrush/pixel';
-
-type LayerId = number;
-
-export interface LayerMeta extends XYCoords {
-  __isLayer: true;
-}
-export interface Layer extends LayerMeta {
-  /**
-   * This is a Math.rand() that can
-   * be used on brushes to apply per-layer effects
-   */
-  id: LayerId;
-  pixels: Color[];
-}
+export type { Layer } from '../src/layer/layer.d.ts';
 
 /**
 Operations to make new layers

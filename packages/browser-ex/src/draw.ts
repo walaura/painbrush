@@ -1,10 +1,8 @@
-import { readFile, writeFile } from 'fs/promises';
 import {
   brush,
-  COLOR_BLACK,
-  COLOR_WHITE,
-  colorFromRgb,
-  isAlphaColor,
+  convertColor,
+  isAlpha,
+  SET_COLORS,
 } from 'painbrush/color';
 import { exportImage } from 'painbrush/image';
 import {
@@ -13,12 +11,12 @@ import {
   transformLayer,
   type Layer,
 } from 'painbrush/layer';
-import { getPixelXYCoords } from 'painbrush/pixel';
-import { useFont } from 'painbrush/';
+import { getXYCoords } from 'painbrush/pixel';
+import { useFont } from 'painbrush/font';
 
 export const makeRenderCall = async (
-  poxelHandle: Promise<FontHandle>,
-  lucasHandle: Promise<FontHandle>,
+  poxelHandle: Promise<Parameters<typeof useFont>[0]>,
+  lucasHandle: Promise<Parameters<typeof useFont>[0]>,
 ) => {
   const [POXEL, LUCAS] = await Promise.all(
     [poxelHandle, lucasHandle].map((f) => useFont(f)),
@@ -49,8 +47,8 @@ export const makeRenderCall = async (
     );
 
     const bg = makeLayer.blank({ x: 280, y: 360 }, (index, layer) => {
-      const { x, y } = getPixelXYCoords(index, layer);
-      return colorFromRgb(
+      const { x, y } = getXYCoords(index, layer);
+      return convertColor.fromRGB(
         (x / layer.x) * 255,
         (y / layer.y) * 255,
         bgColor,
@@ -61,7 +59,7 @@ export const makeRenderCall = async (
       makeLayer.text(
         Date.now().toString(),
         LUCAS,
-        brush.solidFill(COLOR_WHITE),
+        brush.solidFill(SET_COLORS.WHITE),
         {
           breakLinesOn: '', // break on anything
           maxLengthPx: 50,
@@ -72,7 +70,7 @@ export const makeRenderCall = async (
     const clockShadow = transformLayer.paint(
       clock,
       (existingColor) =>
-        isAlphaColor(existingColor)
+        isAlpha(existingColor)
           ? () => existingColor
           : brush.solidFill(0x000000),
     );
@@ -110,7 +108,7 @@ const images = overlayLayersOver(
       const titleLayer = makeLayer.text(
         title.toUpperCase(),
         POXEL,
-        brush.solidFill(COLOR_BLACK),
+        brush.solidFill(SET_COLORS.BLACK),
       );
       const gap = 4;
       return composeLayer.overlayStack(

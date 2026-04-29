@@ -1,6 +1,6 @@
-import type { LayerMeta } from '../../api/layer.ts';
-import { getPixelXYCoords } from '../../api/pixel.ts';
-import { type Color, COLOR_ALPHA, COLOR_BLACK } from '../../color.ts';
+import { getXYCoords } from 'painbrush/pixel';
+import type { LayerMeta } from '../layer/layer.d.ts';
+import { SET_COLORS, type Color } from 'painbrush/color';
 
 /**
   Anything that paints on a layer is a brush 
@@ -21,11 +21,11 @@ export const solidFillBrush =
 export const borderBrush =
   (
     size: number = 1,
-    borderColor: Color = COLOR_BLACK,
-    innerColor: Color = COLOR_ALPHA,
+    borderColor: Color = SET_COLORS.BLACK,
+    innerColor: Color = SET_COLORS.ALPHA,
   ): Brush =>
   (index, layer) => {
-    const { x, y } = getPixelXYCoords(index, layer);
+    const { x, y } = getXYCoords(index, layer);
     if (y < size || layer.y - size <= y) {
       return borderColor;
     }
@@ -35,4 +35,4 @@ export const borderBrush =
     return innerColor;
   };
 
-export const alphaBrush = (): Brush => () => COLOR_ALPHA;
+export const alphaBrush = (): Brush => () => SET_COLORS.ALPHA;

@@ -1,24 +1,17 @@
 import path from 'path/posix';
 import { decode } from 'fast-bmp';
-import {
-  COLOR_BLACK,
-  COLOR_WHITE,
-  colorFromRgb,
-  solidFillBrush,
-} from '../src/color.ts';
-import { export } from '../api/image.ts';
-import {
-  padLayer,
-  makeTextLayer,
-  addBackgroundToLayer,
-} from '../api/layer.ts';
-import { type PxFontFile, useFont } from '../src/painbrush/font.ts';
 import type {
   PackerCharacter,
   PackerCharactersWithTrim,
   PackerFileOp,
   PackerIntakeData,
 } from './helpers.ts';
+// eslint-disable-next-line no-restricted-imports
+import type { PxFontFile } from '../src/font/font.ts';
+import { makeLayer, transformLayer } from '../api/layer.ts';
+import { useFont } from '../api/font.ts';
+import { brush, convertColor, SET_COLORS } from '../api/color.ts';
+import { exportImage } from '../api/image.ts';
 
 export const generateCharacters = async ({
   img,
@@ -104,7 +97,8 @@ export const generateSpecimenImage = async (
 
   const pangram = 'Blitz prende ex-vesgo com cheque fajuto';
 
-  const writeOut = fontName.toUpperCase() +
+  const writeOut =
+    fontName.toUpperCase() +
     `\n\n` +
     pangram +
     `\n\n` +
@@ -116,15 +110,15 @@ export const generateSpecimenImage = async (
       .sort()
       .join(``);
 
-  const specimenImg = addBackgroundToLayer(
-    padLayer(
-      await makeTextLayer(
+  const specimenImg = transformLayer.setBackground(
+    transformLayer.pad(
+      await makeLayer.text(
         writeOut,
         await useFont(Promise.resolve(pxFontFile)),
-        solidFillBrush(
+        brush.solidFill(
           fontMeta.specimen?.color
-            ? colorFromRgb(...fontMeta.specimen.color)
-            : COLOR_BLACK,
+            ? convertColor.fromRGB(...fontMeta.specimen.color)
+            : SET_COLORS.BLACK,
         ),
         {
           maxLengthPx: fontMeta.metrics.width * 12,
@@ -133,10 +127,10 @@ export const generateSpecimenImage = async (
       ),
       { x: fontMeta.metrics.width, y: fontMeta.metrics.height },
     ),
-    solidFillBrush(
+    brush.solidFill(
       fontMeta.specimen?.background
-        ? colorFromRgb(...fontMeta.specimen.background)
-        : COLOR_WHITE,
+        ? convertColor.fromRGB(...fontMeta.specimen.background)
+        : SET_COLORS.WHITE,
     ),
   );
 
@@ -146,5 +140,5 @@ export const generateSpecimenImage = async (
     fontName + `-specimen.bmp`,
   );
 
-  return [specimenFileAt, export(specimenImg)];
+  return [specimenFileAt, exportImage(specimenImg)];
 };
