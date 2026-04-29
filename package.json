@@ -12,5 +12,8 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "jest": "^30.3.0"
+  },
+  "scripts": {
+    "preflight": "tsc && npm explore painbrush -- npm run test"
   }
 }

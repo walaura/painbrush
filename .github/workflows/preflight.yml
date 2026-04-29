@@ -1,4 +1,4 @@
-name: Report tests
+name: Preflight check
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: "pages"
+  group: "preflight"
   cancel-in-progress: false
 
 
@@ -26,5 +26,5 @@ jobs:
       - name: npm install
         run: npm i
       - name: run tests
-        run: npm run test -- run
-        working-directory: ./packages/painbrush
+        run: npm run preflight
+        working-directory: ./
