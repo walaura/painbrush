@@ -1,4 +1,4 @@
-import { punchLayerOver, overlayLayerOver } from "./transform.ts";
+import { punchLayerOver } from "./transform.ts";
 import { inflateImage } from "../image.ts";
 import { overlayLayersOver } from "./transform.ts";
 
@@ -50,7 +50,7 @@ export const makeTextLayer = (
 
   const lineHeight = getCharacter("X").height;
 
-  let charLayers: Parameters<typeof overlayLayersOver> = [];
+  const charLayers: Parameters<typeof overlayLayersOver> = [];
 
   const words = text
     .split(breakLinesOn)
@@ -69,16 +69,16 @@ export const makeTextLayer = (
   let lineOffset = 0;
   let maxWidth = 0;
   let lines = 1;
-  for (let word of words) {
+  for (const word of words) {
     const newline = () => {
       maxWidth = Math.max(lineOffset, maxWidth);
       lineOffset = 0;
       lines++;
     };
-    let wordLayers = [];
+    const wordLayers = [];
     let wordOffset = 0;
 
-    for (let character of word) {
+    for (const character of word) {
       if (character === "\n") {
         newline();
         continue;
@@ -116,7 +116,7 @@ export const makeTextLayer = (
     );
   }
 
-  let textLayer = makeRectangleLayer(
+  const textLayer = makeRectangleLayer(
     {
       x: (maxWidth = Math.max(lineOffset, maxWidth)),
       y: lineHeight * lines,
@@ -124,7 +124,7 @@ export const makeTextLayer = (
     bgPlateBrush,
   );
 
-  for (let layer of charLayers) {
+  for (const layer of charLayers) {
     punchLayerOver(textLayer, layer[0], layer[1]);
   }
   return textLayer;

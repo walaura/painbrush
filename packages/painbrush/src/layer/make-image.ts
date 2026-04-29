@@ -1,6 +1,10 @@
 import { decode } from "fast-bmp";
 import { deflateImage, inflateImage } from "../image.ts";
-import type { Layer } from "../layer.ts";
+import type {
+  Layer,
+  MultiChannelImage,
+  SingleChannelImage,
+} from "../layer.ts";
 
 export const makeImageLayer = (
   buffer: Buffer<ArrayBuffer>,
@@ -12,18 +16,16 @@ export const makeImageLayer = (
       "Inflating 1bit image to 24. Will use default colors in inflateImage",
     );
     return inflateImage({
-      //@ts-expect-error
-      data: [...imageData.data],
       ...imageData,
-      isSingleChannel: true,
-    });
+      //@ts-expect-error this array sucks
+      data: [...imageData.data],
+    } as SingleChannelImage);
   }
   if (imageData.bitsPerPixel === 24) {
-    // @ts-expect-error
     return deflateImage({
       ...imageData,
       data: [...imageData.data],
-    });
+    } as MultiChannelImage);
   }
 
   if (imageData.bitsPerPixel === 32) {
@@ -33,8 +35,7 @@ export const makeImageLayer = (
     return deflateImage({
       ...imageData,
       data: [...imageData.data],
-      channels: imageData.channels as 3 | 4,
-    });
+    } as MultiChannelImage);
   }
 
   throw new Error(

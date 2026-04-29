@@ -42,7 +42,7 @@ export const toImage = (
  * Turns a bmp image into a layer.
  * */
 export const deflateImage = (image: MultiChannelImage): Layer => {
-  let pixels = [];
+  const pixels = [];
   for (let i = 0; i < [...image.data].length; i += image.channels) {
     if (image.channels === 4 && image.data[i] === 0) {
       pixels.push(COLOR_ALPHA);

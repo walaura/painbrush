@@ -15,7 +15,7 @@ export const makeRectangleLayer = (
   { x: width, y: height }: XYCoords,
   brush: Brush = solidFillBrush(COLOR_BLACK),
 ): Layer => {
-  let pixels = [];
+  const pixels = [];
   const meta = {
     width,
     id: Math.random(),

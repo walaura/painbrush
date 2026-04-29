@@ -22,6 +22,7 @@
     "chalk": "^5.6.2",
     "commander": "^14.0.3",
     "fast-bmp": "^4.0.1",
+    "jiti": "^2.6.1",
     "prettier": "^3.8.3",
     "prettier-plugin-multiline-arrays": "^4.1.7",
     "typescript": "^6.0.3",
@@ -39,9 +40,14 @@
     "painbrush-font-packer": "./packer.ts"
   },
   "devDependencies": {
-    "@types/node": "^25.6.0"
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.6.0",
+    "eslint": "^10.2.1",
+    "globals": "^17.5.0",
+    "typescript-eslint": "^8.59.1"
   },
   "scripts": {
+    "lint": "eslint ",
     "test": "vitest --exclude dist",
     "build": "tsc --outDir dist --project tsconfig-build.json && node prepare.ts",
     "publish-js": "npm run build && cd ./dist && npm publish"

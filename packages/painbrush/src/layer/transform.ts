@@ -153,7 +153,7 @@ export const overlayLayersOver = (
   ...args: [Layer, LayerParams?][]
 ) => {
   const flippedArgs = args.reverse();
-  let first = flippedArgs.shift();
+  const first = flippedArgs.shift();
   if (first == null) {
     console.warn("You tried to overlay 0 layers wtf");
     return makeBlankLayer(COORDS_ZERO);
@@ -167,7 +167,7 @@ export const overlayLayersOver = (
     );
   }
 
-  for (let arg of args) {
+  for (const arg of args) {
     canvas = overlayLayerOver(canvas, arg[0], arg[1]);
   }
   return canvas;

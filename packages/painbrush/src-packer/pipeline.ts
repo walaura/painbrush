@@ -64,7 +64,7 @@ export const generateCharacters = async ({
       return [metrics.width, char];
     }
 
-    let newChar = [];
+    const newChar = [];
     for (let i = 0; i < char.length; i++) {
       const pos = i % metrics.width;
       if (pos < metrics.width - maybeTrim) {
@@ -118,7 +118,7 @@ export const generateSpecimenImage = async (
       await useFont(Promise.resolve(pxFontFile)),
       solidFillBrush(
         fontMeta.specimen?.color
-          ? colorFromRgb(...fontMeta.specimen?.color)
+          ? colorFromRgb(...fontMeta.specimen.color)
           : COLOR_BLACK,
       ),
       {
@@ -137,7 +137,7 @@ export const generateSpecimenImage = async (
       },
       solidFillBrush(
         fontMeta.specimen?.background
-          ? colorFromRgb(...fontMeta.specimen?.background)
+          ? colorFromRgb(...fontMeta.specimen.background)
           : COLOR_WHITE,
       ),
     ),
