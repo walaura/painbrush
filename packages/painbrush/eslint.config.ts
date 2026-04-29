@@ -15,6 +15,9 @@ export default defineConfig([
   {
     rules: {
       'max-len': ["error", { "comments": 79, code: Infinity }],
+      "no-restricted-imports": ["error", {
+        "patterns": ["*/__private__/*"]
+      }],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

@@ -1,25 +1,20 @@
-import { readFile, writeFile } from "fs/promises";
+import { readFile, writeFile } from 'fs/promises';
 import {
-  borderBrush,
+  brush,
   COLOR_BLACK,
   COLOR_WHITE,
   colorFromRgb,
   isAlphaColor,
-  solidFillBrush,
-} from "painbrush/color";
-import type { Color } from "painbrush/color";
-import { toImage } from "painbrush/image";
+} from 'painbrush/color';
+import { toImage } from 'painbrush/image';
 import {
-  makeBlankLayer,
-  scaleLayer,
-  makeTextLayer,
-  overlayLayersOver,
-  paintLayer,
-  makeBlankLayerWithAlpha,
+  composeLayer,
+  makeLayer,
+  transformLayer,
   type Layer,
-} from "painbrush/layer";
-import { getPixelXYCoords } from "painbrush/pixel";
-import { useFont, type FontHandle } from "painbrush/typography";
+} from 'painbrush/layer';
+import { getPixelXYCoords } from 'painbrush/pixel';
+import { useFont, type FontHandle } from 'painbrush/typography';
 
 export const makeRenderCall = async (
   poxelHandle: Promise<FontHandle>,
@@ -39,21 +34,21 @@ export const makeRenderCall = async (
     posY: number;
     zoom: number;
   }) => {
-    const sun = makeBlankLayer(
+    const sun = makeLayer.blank(
       { x: 30, y: 30 },
-      borderBrush(3, 0xffff00),
+      brush.border(3, 0xffff00),
     );
 
-    const text = makeTextLayer(
-      "the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop",
+    const text = makeLayer.text(
+      'the quick brown spirindolious fox jumps over the lazy dog!? () THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\nWhy are you reading this far you are not supposed to be reading this stop',
       POXEL,
-      solidFillBrush(0xffffff),
+      brush.solidFill(0xffffff),
       {
         maxLengthPx: 200,
       },
     );
 
-    const bg = makeBlankLayer({ x: 280, y: 360 }, (index, layer) => {
+    const bg = makeLayer.blank({ x: 280, y: 360 }, (index, layer) => {
       const { x, y } = getPixelXYCoords(index, layer);
       return colorFromRgb(
         (x / layer.x) * 255,
@@ -62,28 +57,30 @@ export const makeRenderCall = async (
       );
     });
 
-    const clock = scaleLayer(
-      makeTextLayer(
+    const clock = transformLayer.scale(
+      makeLayer.text(
         Date.now().toString(),
         LUCAS,
-        solidFillBrush(COLOR_WHITE),
+        brush.solidFill(COLOR_WHITE),
         {
-          breakLinesOn: "", // break on anything
+          breakLinesOn: '', // break on anything
           maxLengthPx: 50,
         },
       ),
       { x: zoom, y: zoom },
     );
-    const clockShadow = paintLayer(clock, (existingColor) =>
-      isAlphaColor(existingColor)
-        ? () => existingColor
-        : solidFillBrush(0x000000),
+    const clockShadow = transformLayer.paint(
+      clock,
+      (existingColor) =>
+        isAlphaColor(existingColor)
+          ? () => existingColor
+          : brush.solidFill(0x000000),
     );
-    const clockWithShadow = overlayLayersOver(
+    const clockWithShadow = composeLayer.overlayStack(
       [clock],
       [clockShadow, { offset: { x: 2, y: 2 } }],
       [
-        makeBlankLayerWithAlpha({
+        makeLayer.blankWithAlpha({
           x: clock.x + 2,
           y: clock.y + 2,
         }),
@@ -110,17 +107,17 @@ const images = overlayLayersOver(
  */
 
     const withTitle = (layer: Layer, title: string) => {
-      const titleLayer = makeTextLayer(
+      const titleLayer = makeLayer.text(
         title.toUpperCase(),
         POXEL,
-        solidFillBrush(COLOR_BLACK),
+        brush.solidFill(COLOR_BLACK),
       );
       const gap = 4;
-      return overlayLayersOver(
+      return composeLayer.overlayStack(
         [titleLayer],
         [layer, { offset: { x: 0, y: titleLayer.y + gap } }],
         [
-          makeBlankLayerWithAlpha({
+          makeLayer.blankWithAlpha({
             x: Math.max(titleLayer.x, layer.x),
             y: titleLayer.y + gap + layer.y,
           }),
@@ -128,14 +125,14 @@ const images = overlayLayersOver(
       );
     };
 
-    const textWithTitle = withTitle(text, "little text");
-    const clockWithTitle = withTitle(clockWithShadow, "Clock");
+    const textWithTitle = withTitle(text, 'little text');
+    const clockWithTitle = withTitle(clockWithShadow, 'Clock');
     // const imagesWithTitle = withTitle(
     //   scaleLayer(images, [6, 12]),
     //   "Goombas",
     // );
 
-    const layers = overlayLayersOver(
+    const layers = composeLayer.overlayStack(
       [
         sun,
         {

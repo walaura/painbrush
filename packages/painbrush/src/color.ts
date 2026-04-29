@@ -1,5 +1,13 @@
-export * from './color/brush.ts';
+/*
+eslint-disable no-restricted-imports
+*/
 
+import {
+  alphaBrush,
+  borderBrush,
+  solidFillBrush,
+} from './__private__/color/brush.ts';
+export { type Brush } from './__private__/color/brush.ts';
 /**
   hex values from -1 (see alpha to 0xffffff) matching web colors
  */
@@ -73,4 +81,19 @@ export const blendColor = (
 
 export const makeRandomColor = (r: number) => {
   return ~~(r * 0xffffff);
+};
+
+export const brush = {
+  /**
+  Paints the whole area in a single color. fast.
+  */
+  solidFill: solidFillBrush,
+  /**
+  Paints a border of x size
+  */
+  border: borderBrush,
+  /**
+  Paints a whole area in alpha
+  */
+  alphaSolidFill: alphaBrush,
 };

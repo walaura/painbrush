@@ -70,11 +70,7 @@ export const DEFAULT_CHAR_RESOLVER =
     );
   };
 
-/**
- * 'Unpacks' a handle to a .pxfont file into images so it
- * can be used to draw.
- */
-export const useFont = async (
+const useFont_INTERNAL = async (
   handle: Promise<FontHandle>,
   charResolver: CharResolver = DEFAULT_CHAR_RESOLVER,
 ): Promise<Font> => {
@@ -118,3 +114,9 @@ const unpackFontHandle = async (
   }
   return JSON.parse((await handle).toString()) as PxFontFile;
 };
+
+/**
+'Unpacks' a handle to a .pxfont file into images so it
+can be used to draw.
+*/
+export const useFont = useFont_INTERNAL;

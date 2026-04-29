@@ -9,10 +9,6 @@ import type {
   SingleChannelImage,
 } from '../../image.ts';
 
-/**
-  Loads up a bmp file as a layer, only some 
-  bits are supported! but anything from mspaint should be fine
-  */
 export const makeImageLayer = (
   buffer: Buffer<ArrayBuffer>,
 ): Layer => {

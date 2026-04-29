@@ -5,7 +5,7 @@
   "author": "walaura",
   "dependencies": {
     "@jest/globals": "^30.3.0",
-    "lc-painbrush": "file:./packages/painbrush",
+    "painbrush": "file:./packages/painbrush",
     "lc-browser-ex": "file:./packages/browser-ex",
     "lc-node-ex": "file:./packages/node-ex"
   },
@@ -14,6 +14,6 @@
     "jest": "^30.3.0"
   },
   "scripts": {
-    "preflight": "npm explore lc-painbrush -- npm run preflight && npm explore lc-browser-ex -- npm run preflight  && npm explore lc-node-ex -- npm run preflight"
+    "preflight": "npm explore painbrush -- npm run preflight && npm explore lc-browser-ex -- npm run preflight  && npm explore lc-node-ex -- npm run preflight"
   }
 }

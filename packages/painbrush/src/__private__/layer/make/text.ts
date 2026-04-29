@@ -1,17 +1,11 @@
-import { punchLayerOver } from '../transform.ts';
-import { importSingleChannelImage } from '../../image/import.ts';
-import { overlayLayersOver } from '../transform.ts';
+import { brush, type Brush, COLOR_BLACK } from 'painbrush/color';
+import { importSingleChannelImage } from '../../../image/import.ts';
+import { composeLayer, makeLayer, type Layer } from 'painbrush/layer';
+import type { Font } from 'painbrush/typography';
 
-import {
-  solidFillBrush,
-  alphaBrush,
-  type Brush,
-} from '../../color/brush.ts';
-import { makeBlankLayer } from './empty.ts';
-import type { Font } from '../../typography.ts';
-import type { Layer } from '../../layer.ts';
-import { COLOR_WHITE } from '../../color.ts';
-
+/**
+ * Step through for props docs
+ */
 type TextLayerProps = {
   /**
    * Total pixels before truncating the text
@@ -22,26 +16,23 @@ type TextLayerProps = {
    */
   letterPlateBrush?: Brush;
   /**
-   * Background for the whole bounding box of the text
-   *  */
-  bgPlateBrush?: Brush;
-  /**
    * Character to use to identify possible linebreaks.
    * Normally you just want a space ig??
    *  */
   breakLinesOn?: string;
 };
 
-/**
- * Writes the text
- */
+type CharLayer = [
+  Parameters<typeof composeLayer.punch>[1],
+  NonNullable<Parameters<typeof composeLayer.punch>[2]>,
+];
+
 export const makeTextLayer = (
   text: string,
   font: Font,
-  brush: Brush = solidFillBrush(COLOR_WHITE),
+  brushFn: Brush = brush.solidFill(COLOR_BLACK),
   {
-    letterPlateBrush = alphaBrush(),
-    bgPlateBrush = alphaBrush(),
+    letterPlateBrush = brush.alphaSolidFill(),
     maxLengthPx = Infinity,
     breakLinesOn = ` `,
   }: TextLayerProps = {},
@@ -50,7 +41,7 @@ export const makeTextLayer = (
 
   const lineHeight = getCharacter(`X`).height;
 
-  const charLayers: Parameters<typeof overlayLayersOver> = [];
+  const charLayers: CharLayer[] = [];
 
   const words = text
     .split(breakLinesOn)
@@ -85,7 +76,7 @@ export const makeTextLayer = (
       }
       const char = importSingleChannelImage(
         getCharacter(character),
-        brush,
+        brushFn,
         letterPlateBrush,
       );
 
@@ -103,29 +94,28 @@ export const makeTextLayer = (
       newline();
     }
     charLayers.push(
-      ...(wordLayers.map((layer) => [
-        layer[0],
-        {
-          skipBlending: true,
-          offset: {
-            x: prevLineOffset + (layer[1] as number),
-            y: verticalOffset,
-          },
-        },
-      ]) as Parameters<typeof overlayLayersOver>),
+      ...wordLayers.map(
+        (layer) =>
+          [
+            layer[0],
+            {
+              offset: {
+                x: prevLineOffset + (layer[1] as number),
+                y: verticalOffset,
+              },
+            },
+          ] as CharLayer,
+      ),
     );
   }
 
-  const textLayer = makeBlankLayer(
-    {
-      x: (maxWidth = Math.max(lineOffset, maxWidth)),
-      y: lineHeight * lines,
-    },
-    bgPlateBrush,
-  );
+  const textLayer = makeLayer.blankWithAlpha({
+    x: (maxWidth = Math.max(lineOffset, maxWidth)),
+    y: lineHeight * lines,
+  });
 
   for (const layer of charLayers) {
-    punchLayerOver(textLayer, layer[0], layer[1]);
+    composeLayer.punch(textLayer, layer[0], layer[1]);
   }
   return textLayer;
 };
